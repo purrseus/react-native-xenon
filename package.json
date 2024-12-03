@@ -2,8 +2,9 @@
   "name": "react-native-xenon-inspector",
   "version": "0.1.0",
   "description": "this is a description placeholder",
-  "source": "./src/index.tsx",
+  "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
+  "types": "./lib/typescript/commonjs/src/index.d.ts",
   "module": "./lib/module/index.js",
   "exports": {
     ".": {
@@ -130,16 +131,10 @@
       "prettier"
     ],
     "rules": {
+      "curly": "off",
       "react/react-in-jsx-scope": "off",
       "prettier/prettier": [
-        "error",
-        {
-          "quoteProps": "consistent",
-          "singleQuote": true,
-          "tabWidth": 2,
-          "trailingComma": "es5",
-          "useTabs": false
-        }
+        "error"
       ]
     }
   },
@@ -148,11 +143,20 @@
     "lib/"
   ],
   "prettier": {
-    "quoteProps": "consistent",
-    "singleQuote": true,
+    "printWidth": 100,
     "tabWidth": 2,
-    "trailingComma": "es5",
-    "useTabs": false
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "quoteProps": "as-needed",
+    "jsxSingleQuote": false,
+    "trailingComma": "all",
+    "bracketSpacing": true,
+    "bracketSameLine": false,
+    "arrowParens": "avoid",
+    "proseWrap": "preserve",
+    "endOfLine": "lf",
+    "singleAttributePerLine": false
   },
   "react-native-builder-bob": {
     "source": "src",
@@ -183,5 +187,11 @@
     "languages": "js",
     "type": "library",
     "version": "0.44.3"
+  },
+  "dependencies": {
+    "base64-js": "^1.5.1",
+    "immer": "^10.1.1",
+    "react-native-url-polyfill": "^2.0.0",
+    "use-immer": "^0.10.0"
   }
 }
