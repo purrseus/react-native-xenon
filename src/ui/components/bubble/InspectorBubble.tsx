@@ -1,5 +1,11 @@
 import { useContext, useRef, type MutableRefObject } from 'react';
-import { Animated, Image, PanResponder, StyleSheet } from 'react-native';
+import {
+  Animated,
+  Image,
+  PanResponder,
+  StyleSheet,
+  type PanResponderGestureState,
+} from 'react-native';
 import InspectorContext from '../../contexts/InspectorContext';
 
 interface InspectorBubbleProps {
@@ -27,8 +33,10 @@ export default function InspectorBubble({ bubbleSize, pan }: InspectorBubbleProp
       onPanResponderMove: Animated.event([null, { dx: pan.current.x, dy: pan.current.y }], {
         useNativeDriver: false,
       }),
-      onPanResponderRelease: (_, gesture) => {
-        if (!gesture.moveX && !gesture.moveY) showInspectorPanel();
+      onPanResponderRelease: (_, gesture: PanResponderGestureState) => {
+        if (gesture.dx < 10 && gesture.dx > -10 && gesture.dy < 10 && gesture.dy > -10) {
+          showInspectorPanel();
+        }
 
         pan.current.flattenOffset();
 
