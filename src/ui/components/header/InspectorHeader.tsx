@@ -68,7 +68,7 @@ export default function InspectorHeader() {
       <InspectorHeaderItem
         onPress={toggleNetworkInterception}
         isActive={networkInterceptor.isInterceptorEnabled}
-        content={require('../../../assets/connect.png')}
+        content={require('../../../assets/record.png')}
       />
 
       <InspectorHeaderItem
@@ -88,7 +88,7 @@ export default function InspectorHeader() {
       <InspectorHeaderItem
         onPress={toggleLogInterception}
         isActive={logInterceptor.isInterceptorEnabled}
-        content={require('../../../assets/terminal.png')}
+        content={require('../../../assets/record.png')}
       />
 
       <InspectorHeaderItem

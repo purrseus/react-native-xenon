@@ -38,11 +38,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
     borderRadius: 4,
     backgroundColor: '#888888',
+    borderWidth: 1,
+    borderColor: 'transparent',
   },
   labelContainer: {
     backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: 'transparent',
   },
   activeLabelContainer: {
     backgroundColor: 'transparent',
