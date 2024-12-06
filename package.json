@@ -4,7 +4,6 @@
   "description": "this is a description placeholder",
   "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
-  "types": "./lib/typescript/commonjs/src/index.d.ts",
   "module": "./lib/module/index.js",
   "exports": {
     ".": {
@@ -43,7 +42,7 @@
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli lib",
-    "prepare": "bob build",
+    "prepack": "bob build",
     "release": "release-it"
   },
   "keywords": [
