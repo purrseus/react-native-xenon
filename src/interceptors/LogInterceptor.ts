@@ -30,91 +30,64 @@ export default class LogInterceptor extends Interceptor {
 
     const callback = this.callback?.bind(this);
 
-    console.error = function () {
-      callback?.('error', arguments);
+    console.error = function (...args) {
+      callback?.('error', ...args);
 
-      originalConsoleError.apply(
-        this,
-        arguments as unknown as Parameters<typeof originalConsoleError>,
-      );
+      originalConsoleError.call(this, ...args);
     };
 
-    console.info = function () {
-      callback?.('info', arguments);
+    console.info = function (...args) {
+      callback?.('info', ...args);
 
-      originalConsoleInfo.apply(
-        this,
-        arguments as unknown as Parameters<typeof originalConsoleInfo>,
-      );
+      originalConsoleInfo.call(this, ...args);
     };
 
-    console.log = function () {
-      callback?.('log', arguments);
+    console.log = function (...args) {
+      callback?.('log', ...args);
 
-      originalConsoleLog.apply(this, arguments as unknown as Parameters<typeof originalConsoleLog>);
+      originalConsoleLog.call(this, ...args);
     };
 
-    console.warn = function () {
-      callback?.('warn', arguments);
+    console.warn = function (...args) {
+      callback?.('warn', ...args);
 
-      originalConsoleWarn.apply(
-        this,
-        arguments as unknown as Parameters<typeof originalConsoleWarn>,
-      );
+      originalConsoleWarn.call(this, ...args);
     };
 
-    console.trace = function () {
-      callback?.('trace', arguments);
+    console.trace = function (...args) {
+      callback?.('trace', ...args);
 
-      originalConsoleTrace.apply(
-        this,
-        arguments as unknown as Parameters<typeof originalConsoleTrace>,
-      );
+      originalConsoleTrace.call(this, ...args);
     };
 
-    console.debug = function () {
-      callback?.('debug', arguments);
+    console.debug = function (...args) {
+      callback?.('debug', ...args);
 
-      originalConsoleDebug.apply(
-        this,
-        arguments as unknown as Parameters<typeof originalConsoleDebug>,
-      );
+      originalConsoleDebug.call(this, ...args);
     };
 
-    console.table = function () {
-      callback?.('table', arguments);
+    console.table = function (...args) {
+      callback?.('table', ...args);
 
-      originalConsoleTable.apply(
-        this,
-        arguments as unknown as Parameters<typeof originalConsoleTable>,
-      );
+      originalConsoleTable.call(this, ...(args as Parameters<typeof originalConsoleTable>));
     };
 
-    console.groupCollapsed = function () {
-      callback?.('groupCollapsed', arguments);
+    console.groupCollapsed = function (...args) {
+      callback?.('groupCollapsed', ...args);
 
-      originalConsoleGroupCollapsed.apply(
-        this,
-        arguments as unknown as Parameters<typeof originalConsoleGroupCollapsed>,
-      );
+      originalConsoleGroupCollapsed.call(this, ...args);
     };
 
-    console.groupEnd = function () {
-      callback?.('groupEnd', arguments);
+    console.groupEnd = function (...args) {
+      callback?.('groupEnd', ...args);
 
-      originalConsoleGroupEnd.apply(
-        this,
-        arguments as unknown as Parameters<typeof originalConsoleGroupEnd>,
-      );
+      originalConsoleGroupEnd.call(this, ...args);
     };
 
-    console.group = function () {
-      callback?.('group', arguments);
+    console.group = function (...args) {
+      callback?.('group', ...args);
 
-      originalConsoleGroup.apply(
-        this,
-        arguments as unknown as Parameters<typeof originalConsoleGroup>,
-      );
+      originalConsoleGroup.call(this, ...args);
     };
 
     this.isInterceptorEnabled = true;

@@ -95,18 +95,17 @@ export default class WebSocketInterceptor extends NetworkInterceptor {
   private subscriptions: EmitterSubscription[] = [];
 
   private arrayBufferToString(data: string) {
-    const value = base64.toByteArray(data).buffer;
+    try {
+      const byteArray = base64.toByteArray(data);
+      const buffer = byteArray.buffer;
 
-    if (value === undefined || value === null) return '(no value)';
+      if (!buffer || byteArray.length === 0) return '(no value)';
 
-    if (
-      typeof ArrayBuffer !== 'undefined' &&
-      typeof Uint8Array !== 'undefined' &&
-      value instanceof ArrayBuffer
-    )
-      return `ArrayBuffer {${String(Array.from(new Uint8Array(value)))}}`;
-
-    return value;
+      const values = byteArray.join(', ');
+      return `ArrayBuffer { length: ${byteArray.length}, values: [${values}] }`;
+    } catch (error) {
+      return '(invalid data)';
+    }
   }
 
   private registerEvents(): void {
@@ -147,40 +146,28 @@ export default class WebSocketInterceptor extends NetworkInterceptor {
     const { connectCallback, sendCallback, closeCallback, arrayBufferToString } =
       this.getCallbacks();
 
-    NativeWebSocketModule.connect = function (url, protocols, options, socketId) {
-      connectCallback?.(url, protocols, options, socketId);
+    NativeWebSocketModule.connect = function (...args) {
+      connectCallback?.(...args);
 
-      originalWebSocketConnect.apply(
-        this,
-        arguments as unknown as Parameters<typeof originalWebSocketConnect>,
-      );
+      originalWebSocketConnect.call(this, ...args);
     };
 
-    NativeWebSocketModule.send = function (data, socketId) {
-      sendCallback?.(data, socketId);
+    NativeWebSocketModule.send = function (...args) {
+      sendCallback?.(...args);
 
-      originalWebSocketSend.apply(
-        this,
-        arguments as unknown as Parameters<typeof originalWebSocketSend>,
-      );
+      originalWebSocketSend.call(this, ...args);
     };
 
     NativeWebSocketModule.sendBinary = function (data, socketId) {
-      sendCallback?.(arrayBufferToString(data) as any, socketId);
+      sendCallback?.(arrayBufferToString(data), socketId);
 
-      originalWebSocketSendBinary.apply(
-        this,
-        arguments as unknown as Parameters<typeof originalWebSocketSendBinary>,
-      );
+      originalWebSocketSendBinary.call(this, data, socketId);
     };
 
     NativeWebSocketModule.close = function (code, reason, socketId) {
       closeCallback?.(code, reason, socketId);
 
-      originalWebSocketClose.apply(
-        this,
-        arguments as unknown as Parameters<typeof originalWebSocketClose>,
-      );
+      originalWebSocketClose.call(this, code, reason, socketId);
     };
 
     this.isInterceptorEnabled = true;

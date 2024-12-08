@@ -26,21 +26,18 @@ export default class XHRInterceptor extends HttpInterceptor {
 
     const isInterceptorEnabled = () => this.isInterceptorEnabled;
 
-    XMLHttpRequest.prototype.open = function (method, url) {
+    XMLHttpRequest.prototype.open = function (method, url, ...args) {
       this._interceptionId = getHttpInterceptorId();
 
       openCallback?.(this._interceptionId, NetworkType.XHR, method, url);
 
-      originalXHROpen.apply(this, arguments as unknown as Parameters<typeof originalXHROpen>);
+      originalXHROpen.call(this, method, url, ...args);
     };
 
     XMLHttpRequest.prototype.setRequestHeader = function (header, value) {
       requestHeaderCallback?.(this._interceptionId, header, value);
 
-      originalXHRSetRequestHeader.apply(
-        this,
-        arguments as unknown as Parameters<typeof originalXHRSetRequestHeader>,
-      );
+      originalXHRSetRequestHeader.call(this, header, value);
     };
 
     XMLHttpRequest.prototype.send = function (data) {
@@ -80,7 +77,7 @@ export default class XHRInterceptor extends HttpInterceptor {
         }
       });
 
-      originalXHRSend.apply(this, arguments as unknown as Parameters<typeof originalXHRSend>);
+      originalXHRSend.call(this, data);
     };
 
     this.isInterceptorEnabled = true;

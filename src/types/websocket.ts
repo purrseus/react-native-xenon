@@ -23,7 +23,7 @@ export type WebSocketConnectCallback =
     ) => void)
   | null;
 
-export type WebSocketSendCallback = ((data: string | ArrayBuffer, socketId: number) => void) | null;
+export type WebSocketSendCallback = ((data: string, socketId: number) => void) | null;
 
 export type WebSocketCloseCallback =
   | ((
