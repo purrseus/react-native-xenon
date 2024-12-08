@@ -1,4 +1,4 @@
-import { useContext, useRef, type MutableRefObject } from 'react';
+import { useContext, useMemo, type MutableRefObject } from 'react';
 import {
   Animated,
   Image,
@@ -17,48 +17,47 @@ export default function InspectorBubble({ bubbleSize, pan }: InspectorBubbleProp
   const { setInspectorVisibility, screenWidth, screenHeight, verticalSafeValue } =
     useContext(InspectorContext)!;
 
-  const panResponder = useRef(
-    PanResponder.create({
-      onStartShouldSetPanResponder: () => true,
-      onMoveShouldSetPanResponder: () => true,
-      onPanResponderGrant: () => {
-        pan.current.setOffset({
-          // @ts-ignore
-          x: pan.current.x._value,
-          // @ts-ignore
-          y: pan.current.y._value,
-        });
-        pan.current.setValue({ x: 0, y: 0 });
-      },
-      onPanResponderMove: Animated.event([null, { dx: pan.current.x, dy: pan.current.y }], {
-        useNativeDriver: false,
-      }),
-      onPanResponderRelease: (_, gesture: PanResponderGestureState) => {
-        if (gesture.dx < 10 && gesture.dx > -10 && gesture.dy < 10 && gesture.dy > -10) {
-          showInspectorPanel();
-        }
-
-        pan.current.flattenOffset();
-
-        const finalX =
-          gesture.moveX < (screenWidth - bubbleSize) / 2 ? 0 : screenWidth - bubbleSize;
-
-        const finalY = Math.min(
-          Math.max(verticalSafeValue, gesture.moveY),
-          screenHeight - verticalSafeValue - bubbleSize,
-        );
-
-        Animated.spring(pan.current, {
-          toValue: { x: finalX, y: finalY },
+  const panResponder = useMemo(
+    () =>
+      PanResponder.create({
+        onStartShouldSetPanResponder: () => true,
+        onMoveShouldSetPanResponder: () => true,
+        onPanResponderGrant: () => {
+          pan.current.setOffset({
+            // @ts-ignore
+            x: pan.current.x._value,
+            // @ts-ignore
+            y: pan.current.y._value,
+          });
+          pan.current.setValue({ x: 0, y: 0 });
+        },
+        onPanResponderMove: Animated.event([null, { dx: pan.current.x, dy: pan.current.y }], {
           useNativeDriver: false,
-        }).start();
-      },
-    }),
-  ).current;
+        }),
+        onPanResponderRelease: (_, gesture: PanResponderGestureState) => {
+          const isTapGesture =
+            gesture.dx > -10 && gesture.dx < 10 && gesture.dy > -10 && gesture.dy < 10;
 
-  const showInspectorPanel = () => {
-    setInspectorVisibility('panel');
-  };
+          if (isTapGesture) setInspectorVisibility('panel');
+
+          pan.current.flattenOffset();
+
+          const finalX =
+            gesture.moveX < (screenWidth - bubbleSize) / 2 ? 0 : screenWidth - bubbleSize;
+
+          const finalY = Math.min(
+            Math.max(verticalSafeValue, gesture.moveY),
+            screenHeight - verticalSafeValue - bubbleSize,
+          );
+
+          Animated.spring(pan.current, {
+            toValue: { x: finalX, y: finalY },
+            useNativeDriver: false,
+          }).start();
+        },
+      }),
+    [bubbleSize, pan, screenHeight, screenWidth, setInspectorVisibility, verticalSafeValue],
+  );
 
   return (
     <Animated.View
