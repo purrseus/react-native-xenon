@@ -1,22 +1,17 @@
 import { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { URL } from 'react-native-url-polyfill';
-import type { HttpRecord, NetworkType, WebSocketRecord } from '../../../types';
+import type { HttpRequest, NetworkType, WebSocketRequest } from '../../../types';
 import { formatStatusCode } from '../../../utils';
 
-interface NetworkRequestPanelItemProps {
-  name: HttpRecord['url'] | WebSocketRecord['uri'];
-  status?: HttpRecord['status'] | WebSocketRecord['status'];
+interface NetworkPanelItemProps {
+  name: HttpRequest['url'] | WebSocketRequest['uri'];
+  status?: HttpRequest['status'] | WebSocketRequest['status'];
   type: NetworkType;
   onPress: () => void;
 }
 
-export default function NetworkRequestPanelItem({
-  name,
-  status,
-  type,
-  onPress,
-}: NetworkRequestPanelItemProps) {
+export default function NetworkPanelItem({ name, status, type, onPress }: NetworkPanelItemProps) {
   const requestName = useMemo(() => {
     if (!name) return '[failed]';
 

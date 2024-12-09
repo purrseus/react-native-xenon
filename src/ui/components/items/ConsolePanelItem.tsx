@@ -1,12 +1,12 @@
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import type { LogRecord } from '../../../types';
+import type { LogMessage } from '../../../types';
 import { formatLog } from '../../../utils';
 
-interface LogMessagePanelItemProps extends LogRecord {
+interface ConsolePanelItemProps extends LogMessage {
   onPress: () => void;
 }
 
-export default function LogMessagePanelItem({ type, values, onPress }: LogMessagePanelItemProps) {
+export default function ConsolePanelItem({ type, values, onPress }: ConsolePanelItemProps) {
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
       <Text numberOfLines={1} style={styles.text}>

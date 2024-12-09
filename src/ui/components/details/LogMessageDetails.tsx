@@ -1,9 +1,9 @@
 import { ScrollView, StyleSheet, Text } from 'react-native';
-import type { LogRecord } from '../../../types';
+import type { LogMessage } from '../../../types';
 import { formatLog } from '../../../utils';
 
 interface LogMessageDetailsProps {
-  item: LogRecord;
+  item: LogMessage;
 }
 
 export default function LogMessageDetails({ item }: LogMessageDetailsProps) {

@@ -1,17 +1,20 @@
 import { useContext } from 'react';
-import type { HttpRecord, LogRecord, WebSocketRecord } from '../../../types';
-import Context from '../../Context';
+import { MainContext } from '../../../contexts';
+import { DebuggerPanel } from '../../../types';
 import LogMessageDetails from './LogMessageDetails';
 import NetworkRequestDetails from './NetworkRequestDetails';
 
 export default function DetailsViewer() {
-  const { detailsData } = useContext(Context)!;
+  const { detailsData } = useContext(MainContext)!;
 
-  if (!detailsData.current) return null;
-
-  return 'log' in detailsData.current ? (
-    <LogMessageDetails item={detailsData.current.log as LogRecord} />
-  ) : (
-    <NetworkRequestDetails item={detailsData.current.network as HttpRecord | WebSocketRecord} />
-  );
+  switch (true) {
+    case !detailsData.current:
+      return null;
+    case DebuggerPanel.Network in detailsData.current!:
+      return <NetworkRequestDetails item={detailsData.current.network} />;
+    case DebuggerPanel.Console in detailsData.current!:
+      return <LogMessageDetails item={detailsData.current.console} />;
+    default:
+      return null;
+  }
 }

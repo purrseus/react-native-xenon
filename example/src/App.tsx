@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Xenon from 'react-native-xenon';
 

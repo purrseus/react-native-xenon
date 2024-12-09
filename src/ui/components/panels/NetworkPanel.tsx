@@ -1,33 +1,35 @@
 import { useCallback, useContext } from 'react';
 import { FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
+import { MainContext } from '../../../contexts';
 import { useScrollToBottom } from '../../../hooks';
-import { NetworkType, type HttpRecord, type ID, type WebSocketRecord } from '../../../types';
-import Context from '../../Context';
+import { NetworkType, type HttpRequest, type ID, type WebSocketRequest } from '../../../types';
 import NetworkPanelHeader from '../header/NetworkPanelHeader';
-import NetworkRequestPanelItem from '../items/NetworkRequestPanelItem';
+import NetworkPanelItem from '../items/NetworkPanelItem';
 
 const Separator = () => <View style={styles.divider} />;
 
 export default function NetworkPanel() {
   const {
-    networkInterceptor: { networkRecords },
+    networkInterceptor: { networkRequests },
     setPanelSelected,
     detailsData,
-  } = useContext(Context)!;
+  } = useContext(MainContext)!;
 
-  const listRef = useScrollToBottom(networkRecords.size);
+  const listRef = useScrollToBottom(networkRequests.size);
 
-  const renderItem = useCallback<ListRenderItem<[NonNullable<ID>, HttpRecord | WebSocketRecord]>>(
+  const renderItem = useCallback<ListRenderItem<[NonNullable<ID>, HttpRequest | WebSocketRequest]>>(
     ({ item: [_, item] }) => {
+      const onPress = () => {
+        detailsData.current = { network: item };
+        setPanelSelected(null);
+      };
+
       return (
-        <NetworkRequestPanelItem
+        <NetworkPanelItem
           name={item.type === NetworkType.WS ? item.uri : item.url}
           status={item.status}
           type={item.type}
-          onPress={() => {
-            detailsData.current = { network: item };
-            setPanelSelected(null);
-          }}
+          onPress={onPress}
         />
       );
     },
@@ -37,7 +39,7 @@ export default function NetworkPanel() {
   return (
     <FlatList
       ref={listRef}
-      data={Array.from(networkRecords)}
+      data={Array.from(networkRequests)}
       style={styles.container}
       ListHeaderComponent={NetworkPanelHeader}
       stickyHeaderIndices={[0]}

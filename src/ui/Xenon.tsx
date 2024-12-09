@@ -1,16 +1,9 @@
-import { createRef, useImperativeHandle, useRef, useState } from 'react';
+import { createRef, useImperativeHandle, useRef, useState, type JSX } from 'react';
 import { Animated, SafeAreaView, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { useLogInterceptor, useNetworkInterceptor } from '../hooks';
-import type {
-  DebuggerPanel,
-  DebuggerPosition,
-  DebuggerVisibility,
-  HttpRecord,
-  LogRecord,
-  WebSocketRecord,
-} from '../types';
+import { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
+import { DebuggerPanel, type DebuggerPosition, type DebuggerVisibility } from '../types';
 import { Bubble, ConsolePanel, DebuggerHeader, DetailsViewer, NetworkPanel } from './components';
-import Context from './Context';
+import MainContext, { type MainContextValue } from '../contexts/MainContext';
 
 interface XenonComponentMethods {
   show: () => void;
@@ -23,6 +16,10 @@ interface XenonComponentProps {
   bubbleSize?: number;
 }
 
+interface ReactNativeXenon extends XenonComponentMethods {
+  Component(props: XenonComponentProps): JSX.Element;
+}
+
 const rootRef = createRef<XenonComponentMethods>();
 
 function XenonComponent({
@@ -31,25 +28,23 @@ function XenonComponent({
   bubbleSize = 40,
 }: XenonComponentProps) {
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
-  const verticalSafeValue = screenHeight / 8;
+  const verticalSafeMargin = screenHeight / 8;
 
-  const pan = useRef(new Animated.ValueXY({ x: 0, y: verticalSafeValue }));
+  const pan = useRef(new Animated.ValueXY({ x: 0, y: verticalSafeMargin }));
 
-  const detailsData = useRef<Partial<
-    Record<DebuggerPanel, LogRecord | HttpRecord | WebSocketRecord>
-  > | null>(null);
+  const detailsData: MainContextValue['detailsData'] = useRef(null);
 
   const [debuggerVisibility, setDebuggerVisibility] = useState<DebuggerVisibility>('hidden');
 
   const [debuggerPosition, setDebuggerPosition] = useState<DebuggerPosition>('bottom');
 
-  const [panelSelected, setPanelSelected] = useState<DebuggerPanel | null>('network');
+  const [panelSelected, setPanelSelected] = useState<DebuggerPanel | null>(DebuggerPanel.Network);
 
   const networkInterceptor = useNetworkInterceptor({
     autoEnabled: autoRecordNetwork,
   });
 
-  const logInterceptor = useLogInterceptor({
+  const logInterceptor = useConsoleInterceptor({
     autoEnabled: autoRecordLogs,
   });
 
@@ -90,8 +85,8 @@ function XenonComponent({
         >
           <DebuggerHeader />
 
-          {panelSelected === 'network' && <NetworkPanel />}
-          {panelSelected === 'log' && <ConsolePanel />}
+          {panelSelected === DebuggerPanel.Network && <NetworkPanel />}
+          {panelSelected === DebuggerPanel.Console && <ConsolePanel />}
 
           {!panelSelected && !!detailsData.current && <DetailsViewer />}
         </SafeAreaView>
@@ -102,7 +97,7 @@ function XenonComponent({
   }
 
   return (
-    <Context.Provider
+    <MainContext.Provider
       value={{
         debuggerVisibility,
         setDebuggerVisibility,
@@ -115,11 +110,11 @@ function XenonComponent({
         detailsData,
         screenWidth,
         screenHeight,
-        verticalSafeValue,
+        verticalSafeMargin,
       }}
     >
       {content}
-    </Context.Provider>
+    </MainContext.Provider>
   );
 }
 
@@ -141,7 +136,7 @@ const styles = StyleSheet.create({
 
 XenonComponent.displayName = 'Xenon';
 
-const Xenon = {
+const Xenon: ReactNativeXenon = {
   show() {
     rootRef.current?.show();
   },

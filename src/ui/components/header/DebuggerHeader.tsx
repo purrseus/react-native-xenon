@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import Context from '../../Context';
+import { MainContext } from '../../../contexts';
+import { DebuggerPanel } from '../../../types';
 import DebuggerHeaderItem from '../items/DebuggerHeaderItem';
 
 export default function DebuggerHeader() {
@@ -11,7 +12,7 @@ export default function DebuggerHeader() {
     setPanelSelected,
     networkInterceptor,
     logInterceptor,
-  } = useContext(Context)!;
+  } = useContext(MainContext)!;
 
   const hideDebugger = () => {
     setDebuggerVisibility('bubble');
@@ -33,12 +34,12 @@ export default function DebuggerHeader() {
     setDebuggerPosition(prevState => (prevState === 'bottom' ? 'top' : 'bottom'));
   };
 
-  const switchToNetwork = () => {
-    setPanelSelected('network');
+  const switchToNetworkPanel = () => {
+    setPanelSelected(DebuggerPanel.Network);
   };
 
-  const switchToLog = () => {
-    setPanelSelected('log');
+  const switchToConsolePanel = () => {
+    setPanelSelected(DebuggerPanel.Console);
   };
 
   return (
@@ -57,9 +58,9 @@ export default function DebuggerHeader() {
 
       <DebuggerHeaderItem
         isLabel
-        isActive={panelSelected === 'network'}
+        isActive={panelSelected === DebuggerPanel.Network}
         content="Network Panel"
-        onPress={switchToNetwork}
+        onPress={switchToNetworkPanel}
       />
 
       <DebuggerHeaderItem
@@ -69,7 +70,7 @@ export default function DebuggerHeader() {
       />
 
       <DebuggerHeaderItem
-        onPress={networkInterceptor.clearAllRecords}
+        onPress={networkInterceptor.clearAllNetworkRequests}
         content={require('../../../assets/delete.png')}
       />
 
@@ -77,9 +78,9 @@ export default function DebuggerHeader() {
 
       <DebuggerHeaderItem
         isLabel
-        isActive={panelSelected === 'log'}
+        isActive={panelSelected === DebuggerPanel.Console}
         content="Log Panel"
-        onPress={switchToLog}
+        onPress={switchToConsolePanel}
       />
 
       <DebuggerHeaderItem
@@ -89,7 +90,7 @@ export default function DebuggerHeader() {
       />
 
       <DebuggerHeaderItem
-        onPress={logInterceptor.clearAllRecords}
+        onPress={logInterceptor.clearAllLogMessages}
         content={require('../../../assets/delete.png')}
       />
     </ScrollView>

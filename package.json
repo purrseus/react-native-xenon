@@ -127,13 +127,22 @@
     "root": true,
     "extends": [
       "@react-native",
-      "prettier"
+      "plugin:prettier/recommended"
     ],
     "rules": {
       "curly": "off",
       "react/react-in-jsx-scope": "off",
-      "prettier/prettier": [
-        "error"
+      "no-alert": "error",
+      "no-console": "error",
+      "no-var": "error",
+      "no-duplicate-imports": "error",
+      "max-lines": [
+        "error",
+        {
+          "skipBlankLines": true,
+          "skipComments": true,
+          "max": 500
+        }
       ]
     }
   },

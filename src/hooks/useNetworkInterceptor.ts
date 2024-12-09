@@ -6,7 +6,7 @@ import {
   NetworkType,
   type HttpHeaderReceivedCallback,
   type HttpOpenCallback,
-  type HttpRecord,
+  type HttpRequest,
   type HttpRequestHeaderCallback,
   type HttpResponseCallback,
   type HttpSendCallback,
@@ -17,7 +17,7 @@ import {
   type WebSocketOnErrorCallback,
   type WebSocketOnMessageCallback,
   type WebSocketOnOpenCallback,
-  type WebSocketRecord,
+  type WebSocketRequest,
   type WebSocketSendCallback,
 } from '../types';
 import { createHttpHeaderLine, createSocketDataLine } from '../utils';
@@ -27,32 +27,32 @@ interface NetworkInterceptorParams {
   autoEnabled?: boolean;
 }
 
-type NetworkRecords<T> = Map<NonNullable<ID>, T>;
+type NetworkRequests<T> = Map<NonNullable<ID>, T>;
 
 enableMapSet();
 
-const initRecords = new Map<NonNullable<ID>, HttpRecord & WebSocketRecord>();
+const initRequests = new Map<NonNullable<ID>, HttpRequest & WebSocketRequest>();
 
 export default function useNetworkInterceptor(params?: NetworkInterceptorParams) {
   const { autoEnabled = false } = params || {};
   const [isInterceptorEnabled, setIsInterceptorEnabled] = useState(autoEnabled);
 
-  const [networkRecords, setNetworkRecords] = useImmer(initRecords);
+  const [networkRequests, setNetworkRequests] = useImmer(initRequests);
 
   const _isInterceptorEnabled = () =>
     XHRInterceptor.instance.isInterceptorEnabled &&
     FetchInterceptor.instance.isInterceptorEnabled &&
     WebSocketInterceptor.instance.isInterceptorEnabled;
 
-  const clearAllRecords = () => {
-    setNetworkRecords(initRecords);
+  const clearAllNetworkRequests = () => {
+    setNetworkRequests(initRequests);
   };
 
   const enableHttpInterceptions = useCallback(() => {
     const openCallback: HttpOpenCallback = (id, type, method, url) => {
       if (!id) return;
 
-      setNetworkRecords((draft: NetworkRecords<HttpRecord>) => {
+      setNetworkRequests((draft: NetworkRequests<HttpRequest>) => {
         draft.set(id, { type, method, url });
       });
     };
@@ -60,7 +60,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
     const requestHeaderCallback: HttpRequestHeaderCallback = (id, header, value) => {
       if (!id) return;
 
-      setNetworkRecords((draft: NetworkRecords<HttpRecord>) => {
+      setNetworkRequests((draft: NetworkRequests<HttpRequest>) => {
         if (!draft.get(id)) return draft;
 
         const currentHeaderLine = createHttpHeaderLine(header, value);
@@ -86,7 +86,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
     const sendCallback: HttpSendCallback = (id, data) => {
       if (!id) return;
 
-      setNetworkRecords((draft: NetworkRecords<HttpRecord>) => {
+      setNetworkRequests((draft: NetworkRequests<HttpRequest>) => {
         if (!draft.get(id)) return draft;
 
         draft.get(id)!.body = data;
@@ -101,7 +101,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
     ) => {
       if (!id) return;
 
-      setNetworkRecords((draft: NetworkRecords<HttpRecord>) => {
+      setNetworkRequests((draft: NetworkRequests<HttpRequest>) => {
         if (!draft.get(id)) return draft;
 
         draft.get(id)!.responseContentType = responseContentType;
@@ -120,7 +120,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
     ) => {
       if (!id) return;
 
-      setNetworkRecords((draft: NetworkRecords<HttpRecord>) => {
+      setNetworkRequests((draft: NetworkRequests<HttpRequest>) => {
         if (!draft.get(id)) return draft;
 
         draft.get(id)!.status = status;
@@ -146,13 +146,13 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
       .setHeaderReceivedCallback(headerReceivedCallback)
       .setResponseCallback(responseCallback)
       .enableInterception();
-  }, [setNetworkRecords]);
+  }, [setNetworkRequests]);
 
   const enableWebSocketInterception = useCallback(() => {
     const connectCallback: WebSocketConnectCallback = (uri, protocols, options, socketId) => {
       if (typeof socketId !== 'number') return;
 
-      setNetworkRecords((draft: NetworkRecords<WebSocketRecord>) => {
+      setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
         draft.set(`${socketId}`, {
           uri,
           type: NetworkType.WS,
@@ -165,7 +165,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
     const sendCallback: WebSocketSendCallback = (data, socketId) => {
       if (typeof socketId !== 'number') return;
 
-      setNetworkRecords((draft: NetworkRecords<WebSocketRecord>) => {
+      setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
         if (!draft.get(`${socketId}`)) return draft;
 
         draft.get(`${socketId}`)!.messages ??= '';
@@ -176,7 +176,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
     const closeCallback: WebSocketCloseCallback = (code, reason, socketId) => {
       if (typeof socketId !== 'number') return;
 
-      setNetworkRecords((draft: NetworkRecords<WebSocketRecord>) => {
+      setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
         if (!draft.get(`${socketId}`)) return draft;
 
         draft.get(`${socketId}`)!.status = code;
@@ -189,7 +189,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
     const onMessageCallback: WebSocketOnMessageCallback = (socketId, message) => {
       if (typeof socketId !== 'number') return;
 
-      setNetworkRecords((draft: NetworkRecords<WebSocketRecord>) => {
+      setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
         if (!draft.get(`${socketId}`)) return draft;
 
         draft.get(`${socketId}`)!.messages ??= '';
@@ -200,7 +200,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
     const onErrorCallback: WebSocketOnErrorCallback = (socketId, data) => {
       if (typeof socketId !== 'number') return;
 
-      setNetworkRecords((draft: NetworkRecords<WebSocketRecord>) => {
+      setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
         if (!draft.get(`${socketId}`)) return draft;
 
         draft.get(`${socketId}`)!.serverError = data;
@@ -210,7 +210,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
     const onCloseCallback: WebSocketOnCloseCallback = (socketId, data) => {
       if (typeof socketId !== 'number') return;
 
-      setNetworkRecords((draft: NetworkRecords<WebSocketRecord>) => {
+      setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
         if (!draft.get(`${socketId}`)) return draft;
 
         draft.get(`${socketId}`)!.serverClose = data;
@@ -226,7 +226,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
       .setOnErrorCallback(onErrorCallback)
       .setOnCloseCallback(onCloseCallback)
       .enableInterception();
-  }, [setNetworkRecords]);
+  }, [setNetworkRequests]);
 
   const enableInterception = useCallback(() => {
     if (_isInterceptorEnabled()) return;
@@ -255,7 +255,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
     isInterceptorEnabled,
     enableInterception,
     disableInterception,
-    clearAllRecords,
-    networkRecords,
+    clearAllNetworkRequests,
+    networkRequests,
   };
 }

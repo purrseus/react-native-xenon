@@ -6,17 +6,20 @@ export enum NetworkType {
   WS = 'ws',
 }
 
+export enum DebuggerPanel {
+  Network = 'network',
+  Console = 'console',
+}
+
 export type ID = string | undefined;
 
-export interface NetworkRecord {
+export interface NetworkRequest {
   status?: number;
 }
 
 export type DebuggerVisibility = 'hidden' | 'bubble' | 'panel';
 
 export type DebuggerPosition = 'top' | 'bottom';
-
-export type DebuggerPanel = 'network' | 'log';
 
 export type SetState<T> = Dispatch<SetStateAction<T>>;
 

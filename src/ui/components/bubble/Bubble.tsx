@@ -6,7 +6,7 @@ import {
   StyleSheet,
   type PanResponderGestureState,
 } from 'react-native';
-import Context from '../../Context';
+import { MainContext } from '../../../contexts';
 
 interface BubbleProps {
   bubbleSize: number;
@@ -14,8 +14,8 @@ interface BubbleProps {
 }
 
 export default function Bubble({ bubbleSize, pan }: BubbleProps) {
-  const { setDebuggerVisibility, screenWidth, screenHeight, verticalSafeValue } =
-    useContext(Context)!;
+  const { setDebuggerVisibility, screenWidth, screenHeight, verticalSafeMargin } =
+    useContext(MainContext)!;
 
   const panResponder = useMemo(
     () =>
@@ -46,8 +46,8 @@ export default function Bubble({ bubbleSize, pan }: BubbleProps) {
             gesture.moveX < (screenWidth - bubbleSize) / 2 ? 0 : screenWidth - bubbleSize;
 
           const finalY = Math.min(
-            Math.max(verticalSafeValue, gesture.moveY),
-            screenHeight - verticalSafeValue - bubbleSize,
+            Math.max(verticalSafeMargin, gesture.moveY),
+            screenHeight - verticalSafeMargin - bubbleSize,
           );
 
           Animated.spring(pan.current, {
@@ -56,7 +56,7 @@ export default function Bubble({ bubbleSize, pan }: BubbleProps) {
           }).start();
         },
       }),
-    [bubbleSize, pan, screenHeight, screenWidth, setDebuggerVisibility, verticalSafeValue],
+    [bubbleSize, pan, screenHeight, screenWidth, setDebuggerVisibility, verticalSafeMargin],
   );
 
   return (

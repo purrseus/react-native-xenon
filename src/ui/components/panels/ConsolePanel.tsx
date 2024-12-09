@@ -1,28 +1,28 @@
 import { useCallback, useContext } from 'react';
 import { FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
+import { MainContext } from '../../../contexts';
 import { useScrollToBottom } from '../../../hooks';
-import type { LogRecord } from '../../../types';
-import Context from '../../Context';
-import LogMessagePanelItem from '../items/LogMessagePanelItem';
+import type { LogMessage } from '../../../types';
+import ConsolePanelItem from '../items/ConsolePanelItem';
 
 const Separator = () => <View style={styles.divider} />;
 
 export default function ConsolePanel() {
   const {
-    logInterceptor: { logRecords },
+    logInterceptor: { logMessages },
     setPanelSelected,
     detailsData,
-  } = useContext(Context)!;
+  } = useContext(MainContext)!;
 
-  const listRef = useScrollToBottom(logRecords.length);
+  const listRef = useScrollToBottom(logMessages.length);
 
-  const renderItem = useCallback<ListRenderItem<LogRecord>>(
+  const renderItem = useCallback<ListRenderItem<LogMessage>>(
     ({ item }) => {
       return (
-        <LogMessagePanelItem
+        <ConsolePanelItem
           {...item}
           onPress={() => {
-            detailsData.current = { log: item };
+            detailsData.current = { console: item };
             setPanelSelected(null);
           }}
         />
@@ -35,7 +35,7 @@ export default function ConsolePanel() {
     <FlatList
       ref={listRef}
       style={styles.container}
-      data={logRecords}
+      data={logMessages}
       renderItem={renderItem}
       ItemSeparatorComponent={Separator}
       keyExtractor={(_, index) => index.toString()}

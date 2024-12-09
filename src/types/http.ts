@@ -1,6 +1,6 @@
-import type { ID, NetworkRecord, NetworkType } from './common';
+import type { ID, NetworkRequest, NetworkType } from './common';
 
-export interface HttpRecord extends NetworkRecord {
+export interface HttpRequest extends NetworkRequest {
   type: NetworkType.Fetch | NetworkType.XHR;
   method: string;
   url: string;
@@ -15,7 +15,7 @@ export interface HttpRecord extends NetworkRecord {
 }
 
 export type HttpOpenCallback =
-  | ((id: ID, type: HttpRecord['type'], method: string, url: string) => void)
+  | ((id: ID, type: HttpRequest['type'], method: string, url: string) => void)
   | null;
 
 export type HttpRequestHeaderCallback = ((id: ID, header: string, value: string) => void) | null;

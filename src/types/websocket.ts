@@ -1,6 +1,6 @@
-import type { NetworkRecord, NetworkType } from './common';
+import type { NetworkRequest, NetworkType } from './common';
 
-export interface WebSocketRecord extends NetworkRecord {
+export interface WebSocketRequest extends NetworkRequest {
   type: NetworkType.WS;
   uri: string;
   protocols?: string | string[] | null;
@@ -16,9 +16,9 @@ export interface WebSocketRecord extends NetworkRecord {
 
 export type WebSocketConnectCallback =
   | ((
-      uri: WebSocketRecord['uri'],
-      protocols?: WebSocketRecord['protocols'],
-      options?: WebSocketRecord['options'],
+      uri: WebSocketRequest['uri'],
+      protocols?: WebSocketRequest['protocols'],
+      options?: WebSocketRequest['options'],
       socketId?: number,
     ) => void)
   | null;
@@ -27,8 +27,8 @@ export type WebSocketSendCallback = ((data: string, socketId: number) => void) |
 
 export type WebSocketCloseCallback =
   | ((
-      code: WebSocketRecord['status'],
-      reason: WebSocketRecord['closeReason'],
+      code: WebSocketRequest['status'],
+      reason: WebSocketRequest['closeReason'],
       socketId: number,
     ) => void)
   | null;
@@ -38,9 +38,9 @@ export type WebSocketOnOpenCallback = ((socketId: number) => void) | null;
 export type WebSocketOnMessageCallback = ((socketId: number, message: any) => void) | null;
 
 export type WebSocketOnErrorCallback =
-  | ((socketId: number, data: WebSocketRecord['serverError']) => void)
+  | ((socketId: number, data: WebSocketRequest['serverError']) => void)
   | null;
 
 export type WebSocketOnCloseCallback =
-  | ((socketId: number, data: WebSocketRecord['serverClose']) => void)
+  | ((socketId: number, data: WebSocketRequest['serverClose']) => void)
   | null;

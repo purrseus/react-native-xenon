@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Interceptor from './Interceptor';
 
 const originalConsoleError = console.error;
@@ -11,8 +12,8 @@ const originalConsoleGroupCollapsed = console.groupCollapsed;
 const originalConsoleGroupEnd = console.groupEnd;
 const originalConsoleGroup = console.group;
 
-export default class LogInterceptor extends Interceptor {
-  static instance = new LogInterceptor();
+export default class ConsoleInterceptor extends Interceptor {
+  static instance = new ConsoleInterceptor();
 
   private constructor() {
     super();

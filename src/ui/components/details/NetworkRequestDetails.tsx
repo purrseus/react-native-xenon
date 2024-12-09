@@ -3,16 +3,16 @@ import { ScrollView, StyleSheet } from 'react-native';
 import { URL } from 'react-native-url-polyfill';
 import {
   NetworkType,
-  type HttpRecord,
+  type HttpRequest,
   type NetworkTab,
-  type WebSocketRecord,
+  type WebSocketRequest,
 } from '../../../types';
 import { formatMethod, formatStatusCode, limitChar } from '../../../utils';
 import NetworkDetailsHeader from '../header/NetworkRequestDetailsHeader';
 import NetworkRequestDetailsItem from '../items/NetworkRequestDetailsItem';
 
 interface NetworkRequestDetailsProps {
-  item: HttpRecord | WebSocketRecord;
+  item: HttpRequest | WebSocketRequest;
 }
 
 export default function NetworkRequestDetails({ item }: NetworkRequestDetailsProps) {

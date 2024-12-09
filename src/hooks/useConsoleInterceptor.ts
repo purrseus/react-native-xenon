@@ -1,43 +1,43 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useImmer } from 'use-immer';
-import LogInterceptor from '../interceptors/LogInterceptor';
-import type { LogRecord } from '../types';
+import { ConsoleInterceptor } from '../interceptors';
+import type { LogMessage } from '../types';
 
-interface LogInterceptorParams {
+interface ConsoleInterceptorParams {
   autoEnabled?: boolean;
 }
 
-export default function useLogInterceptor(params: LogInterceptorParams) {
+export default function useConsoleInterceptor(params: ConsoleInterceptorParams) {
   const { autoEnabled = false } = params || {};
 
   const [isInterceptorEnabled, setIsInterceptorEnabled] = useState(autoEnabled);
 
-  const [logRecords, setLogRecords] = useImmer<LogRecord[]>([]);
+  const [logMessages, setLogMessages] = useImmer<LogMessage[]>([]);
 
-  const clearAllRecords = () => {
-    setLogRecords([]);
+  const clearAllLogMessages = () => {
+    setLogMessages([]);
   };
 
-  const _isInterceptorEnabled = () => LogInterceptor.instance.isInterceptorEnabled;
+  const _isInterceptorEnabled = () => ConsoleInterceptor.instance.isInterceptorEnabled;
 
   const enableInterception = useCallback(() => {
     if (_isInterceptorEnabled()) return;
 
-    LogInterceptor.instance
+    ConsoleInterceptor.instance
       .setCallback((type, args) => {
-        setLogRecords(draft => {
+        setLogMessages(draft => {
           draft.push({ type, values: Array.from(args) });
         });
       })
       .enableInterception();
 
     setIsInterceptorEnabled(true);
-  }, [setLogRecords]);
+  }, [setLogMessages]);
 
   const disableInterception = useCallback(() => {
     if (!_isInterceptorEnabled()) return;
 
-    LogInterceptor.instance.disableInterception();
+    ConsoleInterceptor.instance.disableInterception();
 
     setIsInterceptorEnabled(false);
   }, []);
@@ -52,7 +52,7 @@ export default function useLogInterceptor(params: LogInterceptorParams) {
     isInterceptorEnabled,
     enableInterception,
     disableInterception,
-    clearAllRecords,
-    logRecords,
+    clearAllLogMessages,
+    logMessages,
   };
 }
