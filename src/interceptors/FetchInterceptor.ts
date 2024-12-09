@@ -1,4 +1,4 @@
-import { NETWORK_INSPECTOR_REQUEST_HEADER } from '../constants';
+import { NETWORK_REQUEST_HEADER } from '../constants';
 import { NetworkType } from '../types';
 import { createHttpHeaderLine, formatMethod, getHttpInterceptorId } from '../utils';
 import HttpInterceptor from './HttpInterceptor';
@@ -28,7 +28,7 @@ export default class FetchInterceptor extends HttpInterceptor {
 
       const requestHeaders = new Headers(init?.headers);
 
-      requestHeaders.append(NETWORK_INSPECTOR_REQUEST_HEADER, NetworkType.Fetch);
+      requestHeaders.append(NETWORK_REQUEST_HEADER, NetworkType.Fetch);
 
       const requestInit: RequestInit = { ...init, headers: requestHeaders };
 

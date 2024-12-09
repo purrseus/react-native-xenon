@@ -1,20 +1,20 @@
 import { useContext } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
-import InspectorContext from '../../contexts/InspectorContext';
-import InspectorHeaderItem from '../items/InspectorHeaderItem';
+import Context from '../../Context';
+import DebuggerHeaderItem from '../items/DebuggerHeaderItem';
 
-export default function InspectorHeader() {
+export default function DebuggerHeader() {
   const {
-    setInspectorVisibility,
-    setInspectorPosition,
+    setDebuggerVisibility,
+    setDebuggerPosition,
     panelSelected,
     setPanelSelected,
     networkInterceptor,
     logInterceptor,
-  } = useContext(InspectorContext)!;
+  } = useContext(Context)!;
 
-  const hideInspectorPanel = () => {
-    setInspectorVisibility('bubble');
+  const hideDebugger = () => {
+    setDebuggerVisibility('bubble');
   };
 
   const toggleNetworkInterception = () => {
@@ -29,8 +29,8 @@ export default function InspectorHeader() {
       : logInterceptor.enableInterception();
   };
 
-  const toggleInspectorPosition = () => {
-    setInspectorPosition(prevState => (prevState === 'bottom' ? 'top' : 'bottom'));
+  const toggleDebuggerPosition = () => {
+    setDebuggerPosition(prevState => (prevState === 'bottom' ? 'top' : 'bottom'));
   };
 
   const switchToNetwork = () => {
@@ -48,50 +48,47 @@ export default function InspectorHeader() {
       contentContainerStyle={styles.contentContainer}
       showsHorizontalScrollIndicator={false}
     >
-      <InspectorHeaderItem
-        onPress={hideInspectorPanel}
-        content={require('../../../assets/hide.png')}
-      />
+      <DebuggerHeaderItem onPress={hideDebugger} content={require('../../../assets/hide.png')} />
 
-      <InspectorHeaderItem
-        onPress={toggleInspectorPosition}
+      <DebuggerHeaderItem
+        onPress={toggleDebuggerPosition}
         content={require('../../../assets/move.png')}
       />
 
-      <InspectorHeaderItem
+      <DebuggerHeaderItem
         isLabel
         isActive={panelSelected === 'network'}
         content="Network Panel"
         onPress={switchToNetwork}
       />
 
-      <InspectorHeaderItem
+      <DebuggerHeaderItem
         onPress={toggleNetworkInterception}
         isActive={networkInterceptor.isInterceptorEnabled}
         content={require('../../../assets/record.png')}
       />
 
-      <InspectorHeaderItem
+      <DebuggerHeaderItem
         onPress={networkInterceptor.clearAllRecords}
         content={require('../../../assets/delete.png')}
       />
 
       <View style={styles.divider} />
 
-      <InspectorHeaderItem
+      <DebuggerHeaderItem
         isLabel
         isActive={panelSelected === 'log'}
         content="Log Panel"
         onPress={switchToLog}
       />
 
-      <InspectorHeaderItem
+      <DebuggerHeaderItem
         onPress={toggleLogInterception}
         isActive={logInterceptor.isInterceptorEnabled}
         content={require('../../../assets/record.png')}
       />
 
-      <InspectorHeaderItem
+      <DebuggerHeaderItem
         onPress={logInterceptor.clearAllRecords}
         content={require('../../../assets/delete.png')}
       />

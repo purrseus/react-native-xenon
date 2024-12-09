@@ -2,24 +2,24 @@ import { useCallback, useContext } from 'react';
 import { FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
 import { useScrollToBottom } from '../../../hooks';
 import type { LogRecord } from '../../../types';
-import InspectorContext from '../../contexts/InspectorContext';
-import LogInspectorItem from '../items/LogInspectorItem';
+import Context from '../../Context';
+import LogMessagePanelItem from '../items/LogMessagePanelItem';
 
 const Separator = () => <View style={styles.divider} />;
 
-export default function LogInspectorList() {
+export default function ConsolePanel() {
   const {
     logInterceptor: { logRecords },
     setPanelSelected,
     detailsData,
-  } = useContext(InspectorContext)!;
+  } = useContext(Context)!;
 
   const listRef = useScrollToBottom(logRecords.length);
 
   const renderItem = useCallback<ListRenderItem<LogRecord>>(
     ({ item }) => {
       return (
-        <LogInspectorItem
+        <LogMessagePanelItem
           {...item}
           onPress={() => {
             detailsData.current = { log: item };

@@ -1,18 +1,18 @@
-# react-native-xenon-inspector
+# react-native-xenon
 
 this is a description placeholder
 
 ## Installation
 
 ```sh
-npm install react-native-xenon-inspector
+npm install react-native-xenon
 ```
 
 ## Usage
 
 
 ```js
-import { multiply } from 'react-native-xenon-inspector';
+import { multiply } from 'react-native-xenon';
 
 // ...
 

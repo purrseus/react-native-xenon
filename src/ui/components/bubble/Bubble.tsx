@@ -6,16 +6,16 @@ import {
   StyleSheet,
   type PanResponderGestureState,
 } from 'react-native';
-import InspectorContext from '../../contexts/InspectorContext';
+import Context from '../../Context';
 
-interface InspectorBubbleProps {
+interface BubbleProps {
   bubbleSize: number;
   pan: MutableRefObject<Animated.ValueXY>;
 }
 
-export default function InspectorBubble({ bubbleSize, pan }: InspectorBubbleProps) {
-  const { setInspectorVisibility, screenWidth, screenHeight, verticalSafeValue } =
-    useContext(InspectorContext)!;
+export default function Bubble({ bubbleSize, pan }: BubbleProps) {
+  const { setDebuggerVisibility, screenWidth, screenHeight, verticalSafeValue } =
+    useContext(Context)!;
 
   const panResponder = useMemo(
     () =>
@@ -38,7 +38,7 @@ export default function InspectorBubble({ bubbleSize, pan }: InspectorBubbleProp
           const isTapGesture =
             gesture.dx > -10 && gesture.dx < 10 && gesture.dy > -10 && gesture.dy < 10;
 
-          if (isTapGesture) setInspectorVisibility('panel');
+          if (isTapGesture) setDebuggerVisibility('panel');
 
           pan.current.flattenOffset();
 
@@ -56,7 +56,7 @@ export default function InspectorBubble({ bubbleSize, pan }: InspectorBubbleProp
           }).start();
         },
       }),
-    [bubbleSize, pan, screenHeight, screenWidth, setInspectorVisibility, verticalSafeValue],
+    [bubbleSize, pan, screenHeight, screenWidth, setDebuggerVisibility, verticalSafeValue],
   );
 
   return (

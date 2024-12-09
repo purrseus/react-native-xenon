@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import XenonInspector from 'react-native-xenon-inspector';
+import Xenon from 'react-native-xenon';
 
 export default function App() {
   return (
@@ -60,21 +60,21 @@ export default function App() {
 
       <TouchableOpacity
         onPress={() => {
-          XenonInspector.show();
+          Xenon.show();
         }}
       >
-        <Text>Show Inspector</Text>
+        <Text>Show Debugger</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
         onPress={() => {
-          XenonInspector.hide();
+          Xenon.hide();
         }}
       >
-        <Text>Hide Inspector</Text>
+        <Text>Hide Debugger</Text>
       </TouchableOpacity>
 
-      <XenonInspector.Component logInspectorAutoEnabled networkInspectorAutoEnabled />
+      <Xenon.Component />
     </View>
   );
 }

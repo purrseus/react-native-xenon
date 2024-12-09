@@ -1,13 +1,13 @@
 import { Image, StyleSheet, Text, TouchableOpacity, type ImageRequireSource } from 'react-native';
 
-interface InspectorHeaderItemProps {
+interface DebuggerHeaderItemProps {
   content?: ImageRequireSource | string;
   isLabel?: boolean;
   isActive?: boolean;
   onPress: () => void;
 }
 
-export default function InspectorHeaderItem(props: InspectorHeaderItemProps) {
+export default function DebuggerHeaderItem(props: DebuggerHeaderItemProps) {
   return (
     <TouchableOpacity
       onPress={props.onPress}

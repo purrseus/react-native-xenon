@@ -1,5 +1,5 @@
-export { default as InspectorBubble } from './bubble/InspectorBubble';
-export { default as InspectorHeader } from './header/InspectorHeader';
-export { default as NetworkInspectorList } from './lists/NetworkInspectorList';
-export { default as LogInspectorList } from './lists/LogInspectorList';
-export { default as InspectorDetails } from './details/InspectorDetails';
+export { default as Bubble } from './bubble/Bubble';
+export { default as DebuggerHeader } from './header/DebuggerHeader';
+export { default as NetworkPanel } from './lists/NetworkPanel';
+export { default as ConsolePanel } from './lists/ConsolePanel';
+export { default as DetailsViewer } from './details/DetailsViewer';

@@ -1,5 +1,5 @@
 {
-  "name": "react-native-xenon-inspector",
+  "name": "react-native-xenon",
   "version": "0.1.0",
   "description": "this is a description placeholder",
   "source": "./src/index.ts",
@@ -37,7 +37,7 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace react-native-xenon-inspector-example",
+    "example": "yarn workspace react-native-xenon-example",
     "test": "jest",
     "typecheck": "tsc",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",

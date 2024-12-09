@@ -14,14 +14,14 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "xenoninspector.example"
+      "bundleIdentifier": "xenon.example"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "xenoninspector.example"
+      "package": "xenon.example"
     },
     "web": {
       "favicon": "./assets/favicon.png"

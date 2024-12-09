@@ -2,11 +2,11 @@ import { ScrollView, StyleSheet, Text } from 'react-native';
 import type { LogRecord } from '../../../types';
 import { formatLog } from '../../../utils';
 
-interface LogDetailsProps {
+interface LogMessageDetailsProps {
   item: LogRecord;
 }
 
-export default function LogDetails({ item }: LogDetailsProps) {
+export default function LogMessageDetails({ item }: LogMessageDetailsProps) {
   return (
     <ScrollView style={styles.container}>
       <Text>{formatLog(item.type, item.values)}</Text>

@@ -11681,9 +11681,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-xenon-inspector-example@workspace:example":
+"react-native-xenon-example@workspace:example":
   version: 0.0.0-use.local
-  resolution: "react-native-xenon-inspector-example@workspace:example"
+  resolution: "react-native-xenon-example@workspace:example"
   dependencies:
     "@babel/core": "npm:^7.20.0"
     "@expo/metro-runtime": "npm:~4.0.0"
@@ -11697,9 +11697,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"react-native-xenon-inspector@workspace:.":
+"react-native-xenon@workspace:.":
   version: 0.0.0-use.local
-  resolution: "react-native-xenon-inspector@workspace:."
+  resolution: "react-native-xenon@workspace:."
   dependencies:
     "@commitlint/config-conventional": "npm:^17.0.2"
     "@evilmartians/lefthook": "npm:^1.5.0"

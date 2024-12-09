@@ -1,11 +1,14 @@
 import { StyleSheet, Text } from 'react-native';
 
-interface NetworkDetailsItemProps {
+interface NetworkRequestDetailsItemProps {
   label?: string;
   content?: string;
 }
 
-export default function NetworkDetailsItem({ label, content }: NetworkDetailsItemProps) {
+export default function NetworkRequestDetailsItem({
+  label,
+  content,
+}: NetworkRequestDetailsItemProps) {
   return (
     <Text style={styles.text}>
       {!!label && (

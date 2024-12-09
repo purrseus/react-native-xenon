@@ -4,19 +4,19 @@ import { URL } from 'react-native-url-polyfill';
 import type { HttpRecord, NetworkType, WebSocketRecord } from '../../../types';
 import { formatStatusCode } from '../../../utils';
 
-interface NetworkInspectorItemProps {
+interface NetworkRequestPanelItemProps {
   name: HttpRecord['url'] | WebSocketRecord['uri'];
   status?: HttpRecord['status'] | WebSocketRecord['status'];
   type: NetworkType;
   onPress: () => void;
 }
 
-export default function NetworkInspectorItem({
+export default function NetworkRequestPanelItem({
   name,
   status,
   type,
   onPress,
-}: NetworkInspectorItemProps) {
+}: NetworkRequestPanelItemProps) {
   const requestName = useMemo(() => {
     if (!name) return '[failed]';
 

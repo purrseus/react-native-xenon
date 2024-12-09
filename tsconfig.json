@@ -2,7 +2,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "paths": {
-      "react-native-xenon-inspector": ["./src/index"]
+      "react-native-xenon": ["./src/index"]
     },
     "allowUnreachableCode": false,
     "allowUnusedLabels": false,

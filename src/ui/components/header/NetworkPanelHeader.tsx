@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 
-export default function NetworkInspectorListHeader() {
+export default function NetworkPanelHeader() {
   return (
     <View style={styles.container}>
       <View style={[styles.headerColumn, styles.headerMainColumn]}>

@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import type { NetworkTab } from '../../../types';
 
-interface NetworkDetailsHeaderItemProps {
+interface NetworkRequestDetailsHeaderItemProps {
   visible: boolean;
   isSelected: boolean;
   name: NetworkTab;
@@ -9,13 +9,13 @@ interface NetworkDetailsHeaderItemProps {
   onPress: () => void;
 }
 
-export default function NetworkDetailsHeaderItem({
+export default function NetworkRequestDetailsHeaderItem({
   visible,
   name,
   isSelected,
   label,
   onPress,
-}: NetworkDetailsHeaderItemProps) {
+}: NetworkRequestDetailsHeaderItemProps) {
   if (!visible) return null;
 
   return (

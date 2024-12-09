@@ -8,14 +8,14 @@ import {
   type WebSocketRecord,
 } from '../../../types';
 import { formatMethod, formatStatusCode, limitChar } from '../../../utils';
-import NetworkDetailsHeader from '../header/NetworkDetailsHeader';
-import NetworkDetailsItem from '../items/NetworkDetailsItem';
+import NetworkDetailsHeader from '../header/NetworkRequestDetailsHeader';
+import NetworkRequestDetailsItem from '../items/NetworkRequestDetailsItem';
 
-interface NetworkDetailsProps {
+interface NetworkRequestDetailsProps {
   item: HttpRecord | WebSocketRecord;
 }
 
-export default function NetworkDetails({ item }: NetworkDetailsProps) {
+export default function NetworkRequestDetails({ item }: NetworkRequestDetailsProps) {
   const [selectedTab, setSelectedTab] = useState<NetworkTab>('headers');
 
   const isWebSocket = item.type === NetworkType.WS;
@@ -39,27 +39,30 @@ export default function NetworkDetails({ item }: NetworkDetailsProps) {
   if (headerShown && !content.current.headers) {
     content.current.headers = (
       <>
-        <NetworkDetailsItem label="Request Type" content={item.type} />
+        <NetworkRequestDetailsItem label="Request Type" content={item.type} />
 
-        <NetworkDetailsItem label="Request URL" content={isWebSocket ? item.uri : item.url} />
+        <NetworkRequestDetailsItem
+          label="Request URL"
+          content={isWebSocket ? item.uri : item.url}
+        />
 
-        <NetworkDetailsItem
+        <NetworkRequestDetailsItem
           label="Request Method"
           content={formatMethod(isWebSocket ? undefined : item.method)}
         />
 
-        <NetworkDetailsItem label="Status Code" content={formatStatusCode(item.status)} />
+        <NetworkRequestDetailsItem label="Status Code" content={formatStatusCode(item.status)} />
 
         {isWebSocket && (
-          <NetworkDetailsItem label="Headers" content={limitChar(item.options?.headers)} />
+          <NetworkRequestDetailsItem label="Headers" content={limitChar(item.options?.headers)} />
         )}
 
         {!isWebSocket && (
-          <NetworkDetailsItem label="Response Headers" content={item.responseHeaders} />
+          <NetworkRequestDetailsItem label="Response Headers" content={item.responseHeaders} />
         )}
 
         {!isWebSocket && (
-          <NetworkDetailsItem label="Request Headers" content={item.requestHeaders} />
+          <NetworkRequestDetailsItem label="Request Headers" content={item.requestHeaders} />
         )}
       </>
     );
@@ -75,7 +78,7 @@ export default function NetworkDetails({ item }: NetworkDetailsProps) {
     content.current.queryStringParameters = (
       <>
         {queryStringParameters.map(({ name, value }, index) => (
-          <NetworkDetailsItem key={index} label={name} content={value} />
+          <NetworkRequestDetailsItem key={index} label={name} content={value} />
         ))}
       </>
     );
@@ -84,7 +87,7 @@ export default function NetworkDetails({ item }: NetworkDetailsProps) {
   if (bodyShown && !content.current.body) {
     content.current.body = (
       <>
-        <NetworkDetailsItem content={limitChar(item.body)} />
+        <NetworkRequestDetailsItem content={limitChar(item.body)} />
       </>
     );
   }
@@ -92,7 +95,7 @@ export default function NetworkDetails({ item }: NetworkDetailsProps) {
   if (responseShown && !content.current.response) {
     content.current.response = (
       <>
-        <NetworkDetailsItem content={limitChar(item.response)} />
+        <NetworkRequestDetailsItem content={limitChar(item.response)} />
       </>
     );
   }
@@ -100,7 +103,7 @@ export default function NetworkDetails({ item }: NetworkDetailsProps) {
   if (messagesShown && !content.current.messages) {
     content.current.messages = (
       <>
-        <NetworkDetailsItem content={item.messages} />
+        <NetworkRequestDetailsItem content={item.messages} />
       </>
     );
   }

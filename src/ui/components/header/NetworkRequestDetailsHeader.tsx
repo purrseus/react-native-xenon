@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import type { NetworkTab } from '../../../types';
-import NetworkDetailsHeaderItem from '../items/NetworkDetailsHeaderItem';
+import NetworkRequestDetailsHeaderItem from '../items/NetworkRequestDetailsHeaderItem';
 
 interface NetworkDetailsHeaderProps {
   selectedTab: NetworkTab;
@@ -67,7 +67,7 @@ export default function NetworkDetailsHeader({
       showsHorizontalScrollIndicator={false}
     >
       {data.map(item => (
-        <NetworkDetailsHeaderItem
+        <NetworkRequestDetailsHeaderItem
           key={item.name}
           onPress={() => onChangeTab(item.name)}
           isSelected={item.name === selectedTab}

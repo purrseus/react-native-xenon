@@ -1,7 +1,7 @@
 import { enableMapSet } from 'immer';
 import { useCallback, useEffect, useState } from 'react';
 import { useImmer } from 'use-immer';
-import { NETWORK_INSPECTOR_REQUEST_HEADER } from '../constants';
+import { NETWORK_REQUEST_HEADER } from '../constants';
 import {
   NetworkType,
   type HttpHeaderReceivedCallback,
@@ -66,7 +66,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
         const currentHeaderLine = createHttpHeaderLine(header, value);
 
         const fetchRequestHeaderLineRegex = RegExp(
-          createHttpHeaderLine(NETWORK_INSPECTOR_REQUEST_HEADER, NetworkType.Fetch),
+          createHttpHeaderLine(NETWORK_REQUEST_HEADER, NetworkType.Fetch),
           'gi',
         );
 

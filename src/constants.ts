@@ -1,1 +1,1 @@
-export const NETWORK_INSPECTOR_REQUEST_HEADER = 'X-React-Native-Xenon-Inspector';
+export const NETWORK_REQUEST_HEADER = 'X-React-Native-Xenon';

@@ -12,11 +12,11 @@ export interface NetworkRecord {
   status?: number;
 }
 
-export type InspectorVisibility = 'hidden' | 'bubble' | 'panel';
+export type DebuggerVisibility = 'hidden' | 'bubble' | 'panel';
 
-export type InspectorPosition = 'top' | 'bottom';
+export type DebuggerPosition = 'top' | 'bottom';
 
-export type InspectorPanel = 'network' | 'log';
+export type DebuggerPanel = 'network' | 'log';
 
 export type SetState<T> = Dispatch<SetStateAction<T>>;
 

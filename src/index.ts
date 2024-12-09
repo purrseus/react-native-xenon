@@ -1,1 +1,1 @@
-export { default } from './ui/XenonInspector';
+export { default } from './ui/Xenon';

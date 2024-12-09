@@ -2,25 +2,25 @@ import { useCallback, useContext } from 'react';
 import { FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
 import { useScrollToBottom } from '../../../hooks';
 import { NetworkType, type HttpRecord, type ID, type WebSocketRecord } from '../../../types';
-import InspectorContext from '../../contexts/InspectorContext';
-import NetworkInspectorListHeader from '../header/NetworkInspectorListHeader';
-import NetworkInspectorItem from '../items/NetworkInspectorItem';
+import Context from '../../Context';
+import NetworkPanelHeader from '../header/NetworkPanelHeader';
+import NetworkRequestPanelItem from '../items/NetworkRequestPanelItem';
 
 const Separator = () => <View style={styles.divider} />;
 
-export default function NetworkInspectorList() {
+export default function NetworkPanel() {
   const {
     networkInterceptor: { networkRecords },
     setPanelSelected,
     detailsData,
-  } = useContext(InspectorContext)!;
+  } = useContext(Context)!;
 
   const listRef = useScrollToBottom(networkRecords.size);
 
   const renderItem = useCallback<ListRenderItem<[NonNullable<ID>, HttpRecord | WebSocketRecord]>>(
     ({ item: [_, item] }) => {
       return (
-        <NetworkInspectorItem
+        <NetworkRequestPanelItem
           name={item.type === NetworkType.WS ? item.uri : item.url}
           status={item.status}
           type={item.type}
@@ -39,7 +39,7 @@ export default function NetworkInspectorList() {
       ref={listRef}
       data={Array.from(networkRecords)}
       style={styles.container}
-      ListHeaderComponent={NetworkInspectorListHeader}
+      ListHeaderComponent={NetworkPanelHeader}
       stickyHeaderIndices={[0]}
       ItemSeparatorComponent={Separator}
       keyExtractor={([key]) => key}
