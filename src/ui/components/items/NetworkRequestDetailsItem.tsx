@@ -3,20 +3,28 @@ import { StyleSheet, Text } from 'react-native';
 interface NetworkRequestDetailsItemProps {
   label?: string;
   content?: string;
+  selectable?: boolean;
 }
 
 export default function NetworkRequestDetailsItem({
   label,
   content,
+  selectable,
 }: NetworkRequestDetailsItemProps) {
-  return (
-    <Text style={styles.text}>
-      {!!label && (
+  if (label) {
+    return (
+      <Text style={styles.text} selectable={selectable}>
         <Text style={styles.label}>
           {label}
           {': '}
         </Text>
-      )}
+        {content}
+      </Text>
+    );
+  }
+
+  return (
+    <Text style={styles.text} selectable={selectable}>
       {content}
     </Text>
   );

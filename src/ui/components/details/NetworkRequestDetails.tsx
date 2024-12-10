@@ -20,10 +20,10 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
 
   const isWebSocket = item.type === NetworkType.WS;
 
-  const url = new URL(isWebSocket ? item.uri : item.url);
+  const requestUrl = new URL(isWebSocket ? item.uri : item.url);
 
   const headerShown = (isWebSocket ? 'uri' : 'url') in item;
-  const queryStringParametersShown = !!url.search;
+  const queryStringParametersShown = !!requestUrl.search;
   const bodyShown = !isWebSocket && !!item.body;
   const responseShown = !isWebSocket && !!item.response;
   const messagesShown = isWebSocket && !!item.messages;
@@ -36,9 +36,38 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
     messages: null,
   });
 
+  const convertToCurl = (
+    method: HttpRequest['method'],
+    url: HttpRequest['url'],
+    headers: HttpRequest['requestHeaders'],
+    body: HttpRequest['body'],
+  ) => {
+    let curlCommand = `curl -X ${method.toUpperCase()} "${url}"`;
+
+    if (headers) {
+      for (const [key, value] of Object.entries(headers)) {
+        curlCommand += ` -H "${key}: ${value}"`;
+      }
+    }
+
+    if (body) {
+      const bodyString = typeof body === 'string' ? body : JSON.stringify(body);
+      curlCommand += ` -d '${bodyString}'`;
+    }
+
+    return curlCommand;
+  };
+
   if (headerShown && !content.current.headers) {
     content.current.headers = (
       <>
+        {!isWebSocket && (
+          <NetworkRequestDetailsItem
+            content={convertToCurl(item.method, item.url, item.requestHeaders, item.body)}
+            selectable
+          />
+        )}
+
         <NetworkRequestDetailsItem label="Request Type" content={item.type} />
 
         <NetworkRequestDetailsItem
@@ -62,7 +91,7 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
         )}
 
         {!isWebSocket && (
-          <NetworkRequestDetailsItem label="Request Headers" content={item.requestHeaders} />
+          <NetworkRequestDetailsItem label="Request Headers" content={item.requestHeadersString} />
         )}
       </>
     );
@@ -71,7 +100,7 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
   if (queryStringParametersShown && !content.current.queryStringParameters) {
     const queryStringParameters: Record<'name' | 'value', string>[] = [];
 
-    url.searchParams.forEach((value, name) => {
+    requestUrl.searchParams.forEach((value, name) => {
       queryStringParameters.push({ name, value });
     });
 
@@ -85,27 +114,15 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
   }
 
   if (bodyShown && !content.current.body) {
-    content.current.body = (
-      <>
-        <NetworkRequestDetailsItem content={limitChar(item.body)} />
-      </>
-    );
+    content.current.body = <NetworkRequestDetailsItem content={limitChar(item.body)} />;
   }
 
   if (responseShown && !content.current.response) {
-    content.current.response = (
-      <>
-        <NetworkRequestDetailsItem content={limitChar(item.response)} />
-      </>
-    );
+    content.current.response = <NetworkRequestDetailsItem content={limitChar(item.response)} />;
   }
 
   if (messagesShown && !content.current.messages) {
-    content.current.messages = (
-      <>
-        <NetworkRequestDetailsItem content={item.messages} />
-      </>
-    );
+    content.current.messages = <NetworkRequestDetailsItem content={item.messages} />;
   }
 
   return (
@@ -127,7 +144,7 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 8,
+    paddingHorizontal: 8,
   },
   divider: {
     height: 1,
