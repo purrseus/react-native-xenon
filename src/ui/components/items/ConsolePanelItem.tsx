@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import type { LogMessage } from '../../../types';
-import { formatLog } from '../../../utils';
+import { formatLogMessage } from '../../../utils';
 
 interface ConsolePanelItemProps extends LogMessage {
   onPress: () => void;
@@ -10,7 +10,7 @@ export default function ConsolePanelItem({ type, values, onPress }: ConsolePanel
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
       <Text numberOfLines={1} style={styles.text}>
-        {formatLog(type, values)}
+        {formatLogMessage(type, values)}
       </Text>
     </TouchableOpacity>
   );

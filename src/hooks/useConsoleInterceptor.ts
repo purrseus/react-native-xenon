@@ -26,7 +26,7 @@ export default function useConsoleInterceptor(params: ConsoleInterceptorParams) 
     ConsoleInterceptor.instance
       .setCallback((type, args) => {
         setLogMessages(draft => {
-          draft.push({ type, values: Array.from(args) });
+          draft.push({ type, values: args });
         });
       })
       .enableInterception();

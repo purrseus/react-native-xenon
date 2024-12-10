@@ -19,7 +19,7 @@ export default class ConsoleInterceptor extends Interceptor {
     super();
   }
 
-  private callback: ((type: string, ...args: any[]) => void) | null = null;
+  private callback: ((type: string, args: any[]) => void) | null = null;
 
   setCallback(callback: typeof this.callback) {
     this.callback = callback;
@@ -32,61 +32,61 @@ export default class ConsoleInterceptor extends Interceptor {
     const callback = this.callback?.bind(this);
 
     console.error = function (...args) {
-      callback?.('error', ...args);
+      callback?.('error', args);
 
       originalConsoleError.call(this, ...args);
     };
 
     console.info = function (...args) {
-      callback?.('info', ...args);
+      callback?.('info', args);
 
       originalConsoleInfo.call(this, ...args);
     };
 
     console.log = function (...args) {
-      callback?.('log', ...args);
+      callback?.('log', args);
 
       originalConsoleLog.call(this, ...args);
     };
 
     console.warn = function (...args) {
-      callback?.('warn', ...args);
+      callback?.('warn', args);
 
       originalConsoleWarn.call(this, ...args);
     };
 
     console.trace = function (...args) {
-      callback?.('trace', ...args);
+      callback?.('trace', args);
 
       originalConsoleTrace.call(this, ...args);
     };
 
     console.debug = function (...args) {
-      callback?.('debug', ...args);
+      callback?.('debug', args);
 
       originalConsoleDebug.call(this, ...args);
     };
 
     console.table = function (...args) {
-      callback?.('table', ...args);
+      callback?.('table', args);
 
       originalConsoleTable.call(this, ...(args as Parameters<typeof originalConsoleTable>));
     };
 
     console.groupCollapsed = function (...args) {
-      callback?.('groupCollapsed', ...args);
+      callback?.('groupCollapsed', args);
 
       originalConsoleGroupCollapsed.call(this, ...args);
     };
 
     console.groupEnd = function (...args) {
-      callback?.('groupEnd', ...args);
+      callback?.('groupEnd', args);
 
       originalConsoleGroupEnd.call(this, ...args);
     };
 
     console.group = function (...args) {
-      callback?.('group', ...args);
+      callback?.('group', args);
 
       originalConsoleGroup.call(this, ...args);
     };
