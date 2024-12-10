@@ -1,17 +1,17 @@
 import { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { URL } from 'react-native-url-polyfill';
-import type { HttpRequest, NetworkType, WebSocketRequest } from '../../../types';
-import { formatStatusCode } from '../../../utils';
+import type { HttpRequest, WebSocketRequest } from '../../../types';
+import { formatMethod, formatStatusCode } from '../../../utils';
 
 interface NetworkPanelItemProps {
   name: HttpRequest['url'] | WebSocketRequest['uri'];
+  method?: HttpRequest['method'];
   status?: HttpRequest['status'] | WebSocketRequest['status'];
-  type: NetworkType;
   onPress: () => void;
 }
 
-export default function NetworkPanelItem({ name, status, type, onPress }: NetworkPanelItemProps) {
+export default function NetworkPanelItem({ name, status, method, onPress }: NetworkPanelItemProps) {
   const requestName = useMemo(() => {
     if (!name) return '[failed]';
 
@@ -36,13 +36,13 @@ export default function NetworkPanelItem({ name, status, type, onPress }: Networ
 
       <View style={styles.column}>
         <Text numberOfLines={1} style={styles.text}>
-          {formatStatusCode(status)}
+          {formatMethod(method)}
         </Text>
       </View>
 
       <View style={styles.column}>
         <Text numberOfLines={1} style={styles.text}>
-          {type}
+          {formatStatusCode(status)}
         </Text>
       </View>
     </TouchableOpacity>
@@ -62,6 +62,7 @@ const styles = StyleSheet.create({
     flex: 1.5,
     flexShrink: 1,
     padding: 8,
+    paddingRight: 0,
   },
   text: {
     color: '#000000',

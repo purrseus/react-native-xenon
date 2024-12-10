@@ -4,19 +4,25 @@ export default function NetworkPanelHeader() {
   return (
     <View style={styles.container}>
       <View style={[styles.headerColumn, styles.headerMainColumn]}>
-        <Text style={styles.itemText}>Name</Text>
+        <Text numberOfLines={1} style={styles.itemText}>
+          Name
+        </Text>
       </View>
 
       <View style={styles.divider} />
 
       <View style={styles.headerColumn}>
-        <Text style={styles.itemText}>Status</Text>
+        <Text numberOfLines={1} style={styles.itemText}>
+          Method
+        </Text>
       </View>
 
       <View style={styles.divider} />
 
       <View style={styles.headerColumn}>
-        <Text style={styles.itemText}>Type</Text>
+        <Text numberOfLines={1} style={styles.itemText}>
+          Status
+        </Text>
       </View>
     </View>
   );
@@ -38,7 +44,7 @@ const styles = StyleSheet.create({
     flex: 1.5,
     flexShrink: 1,
     paddingVertical: 4,
-    paddingHorizontal: 8,
+    paddingLeft: 8,
   },
   divider: {
     height: 16,

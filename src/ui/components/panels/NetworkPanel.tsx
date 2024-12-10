@@ -3,7 +3,7 @@ import { FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
 import { MainContext } from '../../../contexts';
 import { useScrollToBottom } from '../../../hooks';
 import { NetworkType, type HttpRequest, type ID, type WebSocketRequest } from '../../../types';
-import NetworkPanelHeader from '../header/NetworkPanelHeader';
+import NetworkPanelHeader from '../headers/NetworkPanelHeader';
 import NetworkPanelItem from '../items/NetworkPanelItem';
 
 const Separator = () => <View style={styles.divider} />;
@@ -19,6 +19,8 @@ export default function NetworkPanel() {
 
   const renderItem = useCallback<ListRenderItem<[NonNullable<ID>, HttpRequest | WebSocketRequest]>>(
     ({ item: [_, item] }) => {
+      const isWebSocket = item.type === NetworkType.WS;
+
       const onPress = () => {
         detailsData.current = { network: item };
         setPanelSelected(null);
@@ -26,9 +28,9 @@ export default function NetworkPanel() {
 
       return (
         <NetworkPanelItem
-          name={item.type === NetworkType.WS ? item.uri : item.url}
+          name={isWebSocket ? item.uri : item.url}
+          method={isWebSocket ? undefined : item.method}
           status={item.status}
-          type={item.type}
           onPress={onPress}
         />
       );

@@ -8,7 +8,7 @@ import {
   type WebSocketRequest,
 } from '../../../types';
 import { convertToCurl, formatMethod, formatStatusCode, limitChar } from '../../../utils';
-import NetworkDetailsHeader from '../header/NetworkRequestDetailsHeader';
+import NetworkDetailsHeader from '../headers/NetworkRequestDetailsHeader';
 import NetworkRequestDetailsItem from '../items/NetworkRequestDetailsItem';
 
 interface NetworkRequestDetailsProps {
