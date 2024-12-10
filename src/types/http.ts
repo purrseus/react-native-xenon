@@ -4,7 +4,8 @@ export interface HttpRequest extends NetworkRequest {
   type: NetworkType.Fetch | NetworkType.XHR;
   method: string;
   url: string;
-  requestHeaders?: string;
+  requestHeaders?: Record<string, string>;
+  requestHeadersString?: string;
   body?: any;
   responseContentType?: string;
   responseSize?: number;

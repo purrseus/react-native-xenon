@@ -77,8 +77,10 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
         if (isFetchInXHR) {
           draft.delete(id);
         } else {
-          draft.get(id)!.requestHeaders ??= '';
-          draft.get(id)!.requestHeaders += currentHeaderLine;
+          draft.get(id)!.requestHeadersString ??= '';
+          draft.get(id)!.requestHeadersString += currentHeaderLine;
+          draft.get(id)!.requestHeaders ??= {};
+          draft.get(id)!.requestHeaders![header] = value;
         }
       });
     };

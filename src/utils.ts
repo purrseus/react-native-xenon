@@ -21,10 +21,10 @@ export const formatMethod = (method?: string) => method ?? 'GET';
 
 export const formatStatusCode = (statusCode?: number) => `${statusCode ?? 'pending'}`;
 
-export const formatLog = (type: string, values: any[]) => {
-  return `${type.toUpperCase()}: ${values.map((value, index, array) => {
+export const formatLogMessage = (type: string, values: any[]) => {
+  return `${type.toUpperCase()}: ${values.reduce((pre, cur, index, array) => {
     const isLastItem = index === array.length - 1;
 
-    return limitChar(value) + (isLastItem ? '' : ' ');
-  })}}`;
+    return pre + limitChar(cur) + (isLastItem ? '' : ', ');
+  }, '')}}`;
 };
