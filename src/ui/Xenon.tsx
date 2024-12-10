@@ -6,13 +6,13 @@ import { Bubble, ConsolePanel, DebuggerHeader, DetailsViewer, NetworkPanel } fro
 import MainContext, { type MainContextValue } from '../contexts/MainContext';
 
 interface XenonComponentMethods {
-  show: () => void;
-  hide: () => void;
+  show(): void;
+  hide(): void;
 }
 
 interface XenonComponentProps {
-  autoRecordNetwork?: boolean;
-  autoRecordLogs?: boolean;
+  autoInspectNetwork?: boolean;
+  autoInspectConsole?: boolean;
   bubbleSize?: number;
 }
 
@@ -23,8 +23,8 @@ interface ReactNativeXenon extends XenonComponentMethods {
 const rootRef = createRef<XenonComponentMethods>();
 
 function XenonComponent({
-  autoRecordNetwork = true,
-  autoRecordLogs = true,
+  autoInspectNetwork = true,
+  autoInspectConsole = true,
   bubbleSize = 40,
 }: XenonComponentProps) {
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
@@ -41,20 +41,20 @@ function XenonComponent({
   const [panelSelected, setPanelSelected] = useState<DebuggerPanel | null>(DebuggerPanel.Network);
 
   const networkInterceptor = useNetworkInterceptor({
-    autoEnabled: autoRecordNetwork,
+    autoEnabled: autoInspectNetwork,
   });
 
   const logInterceptor = useConsoleInterceptor({
-    autoEnabled: autoRecordLogs,
+    autoEnabled: autoInspectConsole,
   });
 
   useImperativeHandle(
     rootRef,
     () => ({
-      show: () => {
+      show() {
         setDebuggerVisibility('bubble');
       },
-      hide: () => {
+      hide() {
         setDebuggerVisibility('hidden');
       },
     }),
