@@ -1,6 +1,6 @@
 import { NETWORK_REQUEST_HEADER } from '../constants';
 import { NetworkType } from '../types';
-import { createHttpHeaderLine, formatMethod, getHttpInterceptorId } from '../utils';
+import { keyValueToString, formatMethod, getHttpInterceptorId } from '../utils';
 import HttpInterceptor from './HttpInterceptor';
 
 const originalFetch = global.fetch;
@@ -97,7 +97,7 @@ export default class FetchInterceptor extends HttpInterceptor {
       if (contentLengthString) responseSize = parseInt(contentLengthString, 10);
 
       for (const [headerKey, headerValue] of clonedResponseHeaders.entries()) {
-        responseHeaders += createHttpHeaderLine(headerKey, headerValue);
+        responseHeaders += keyValueToString(headerKey, headerValue);
       }
 
       headerReceivedCallback?.(interceptionId, responseContentType, responseSize, responseHeaders);

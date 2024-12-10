@@ -20,7 +20,7 @@ import {
   type WebSocketRequest,
   type WebSocketSendCallback,
 } from '../types';
-import { createHttpHeaderLine, createSocketDataLine } from '../utils';
+import { keyValueToString } from '../utils';
 import { XHRInterceptor, FetchInterceptor, WebSocketInterceptor } from '../interceptors';
 
 interface NetworkInterceptorParams {
@@ -63,10 +63,10 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
       setNetworkRequests((draft: NetworkRequests<HttpRequest>) => {
         if (!draft.get(id)) return draft;
 
-        const currentHeaderLine = createHttpHeaderLine(header, value);
+        const currentHeaderLine = keyValueToString(header, value);
 
         const fetchRequestHeaderLineRegex = RegExp(
-          createHttpHeaderLine(NETWORK_REQUEST_HEADER, NetworkType.Fetch),
+          keyValueToString(NETWORK_REQUEST_HEADER, NetworkType.Fetch),
           'gi',
         );
 
@@ -171,7 +171,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
         if (!draft.get(`${socketId}`)) return draft;
 
         draft.get(`${socketId}`)!.messages ??= '';
-        draft.get(`${socketId}`)!.messages += createSocketDataLine('Sent', data);
+        draft.get(`${socketId}`)!.messages += keyValueToString('Sent', data);
       });
     };
 
@@ -195,7 +195,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
         if (!draft.get(`${socketId}`)) return draft;
 
         draft.get(`${socketId}`)!.messages ??= '';
-        draft.get(`${socketId}`)!.messages += createSocketDataLine('Received', message);
+        draft.get(`${socketId}`)!.messages += keyValueToString('Received', message);
       });
     };
 
