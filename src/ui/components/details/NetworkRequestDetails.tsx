@@ -7,7 +7,7 @@ import {
   type NetworkTab,
   type WebSocketRequest,
 } from '../../../types';
-import { formatMethod, formatStatusCode, limitChar } from '../../../utils';
+import { convertToCurl, formatMethod, formatStatusCode, limitChar } from '../../../utils';
 import NetworkDetailsHeader from '../header/NetworkRequestDetailsHeader';
 import NetworkRequestDetailsItem from '../items/NetworkRequestDetailsItem';
 
@@ -36,38 +36,9 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
     messages: null,
   });
 
-  const convertToCurl = (
-    method: HttpRequest['method'],
-    url: HttpRequest['url'],
-    headers: HttpRequest['requestHeaders'],
-    body: HttpRequest['body'],
-  ) => {
-    let curlCommand = `curl -X ${method.toUpperCase()} "${url}"`;
-
-    if (headers) {
-      for (const [key, value] of Object.entries(headers)) {
-        curlCommand += ` -H "${key}: ${value}"`;
-      }
-    }
-
-    if (body) {
-      const bodyString = typeof body === 'string' ? body : JSON.stringify(body);
-      curlCommand += ` -d '${bodyString}'`;
-    }
-
-    return curlCommand;
-  };
-
   if (headerShown && !content.current.headers) {
     content.current.headers = (
       <>
-        {!isWebSocket && (
-          <NetworkRequestDetailsItem
-            content={convertToCurl(item.method, item.url, item.requestHeaders, item.body)}
-            selectable
-          />
-        )}
-
         <NetworkRequestDetailsItem label="Request Type" content={item.type} />
 
         <NetworkRequestDetailsItem
@@ -92,6 +63,13 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
 
         {!isWebSocket && (
           <NetworkRequestDetailsItem label="Request Headers" content={item.requestHeadersString} />
+        )}
+
+        {!isWebSocket && (
+          <NetworkRequestDetailsItem
+            content={convertToCurl(item.method, item.url, item.requestHeaders, item.body)}
+            selectable
+          />
         )}
       </>
     );

@@ -1,5 +1,7 @@
+import type { HttpRequest } from './types';
+
 export const limitChar = (value: any, limit = 5000) => {
-  const stringValue = typeof value === 'string' ? value : JSON.stringify(value);
+  const stringValue = typeof value === 'string' ? value : JSON.stringify(value ?? '');
 
   return stringValue.length > limit
     ? `${stringValue.slice(0, limit)}\n---LIMITED TO ${limit} CHARACTERS---`
@@ -22,9 +24,33 @@ export const formatMethod = (method?: string) => method ?? 'GET';
 export const formatStatusCode = (statusCode?: number) => `${statusCode ?? 'pending'}`;
 
 export const formatLogMessage = (type: string, values: any[]) => {
-  return `${type.toUpperCase()}: ${values.reduce((pre, cur, index, array) => {
+  const message: string = values.reduce((pre, cur, index, array) => {
     const isLastItem = index === array.length - 1;
 
     return pre + limitChar(cur) + (isLastItem ? '' : ', ');
-  }, '')}}`;
+  }, '');
+
+  return `${type.toUpperCase()}: ${message}`;
+};
+
+export const convertToCurl = (
+  method: HttpRequest['method'],
+  url: HttpRequest['url'],
+  headers: HttpRequest['requestHeaders'],
+  body: HttpRequest['body'],
+) => {
+  let curlCommand = `curl -X ${method.toUpperCase()} "${url}"`;
+
+  if (headers) {
+    for (const [key, value] of Object.entries(headers)) {
+      curlCommand += ` -H "${key}: ${value}"`;
+    }
+  }
+
+  if (body) {
+    const bodyString = typeof body === 'string' ? body : JSON.stringify(body);
+    curlCommand += ` -d '${bodyString}'`;
+  }
+
+  return curlCommand;
 };

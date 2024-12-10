@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import axios from 'axios';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Xenon from 'react-native-xenon';
 
@@ -33,6 +34,28 @@ export default function App() {
         }}
       >
         <Text>FetchAPI: Create post</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => {
+          axios('https://jsonplaceholder.typicode.com/posts?userId=1').then(console.log);
+        }}
+      >
+        <Text>Axios: Get posts</Text>
+      </TouchableOpacity>
+
+      <TouchableOpacity
+        onPress={() => {
+          axios
+            .post('https://jsonplaceholder.typicode.com/posts', {
+              title: 'foo',
+              body: 'bar',
+              userId: 1,
+            })
+            .then(console.log);
+        }}
+      >
+        <Text>Axios: Create post</Text>
       </TouchableOpacity>
 
       <TouchableOpacity
