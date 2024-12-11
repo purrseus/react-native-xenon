@@ -171,7 +171,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
         if (!draft.get(`${socketId}`)) return draft;
 
         draft.get(`${socketId}`)!.messages ??= '';
-        draft.get(`${socketId}`)!.messages += keyValueToString('Sent', data);
+        draft.get(`${socketId}`)!.messages += keyValueToString('SENT', data);
       });
     };
 
@@ -195,7 +195,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
         if (!draft.get(`${socketId}`)) return draft;
 
         draft.get(`${socketId}`)!.messages ??= '';
-        draft.get(`${socketId}`)!.messages += keyValueToString('Received', message);
+        draft.get(`${socketId}`)!.messages += keyValueToString('RECEIVED', message);
       });
     };
 
