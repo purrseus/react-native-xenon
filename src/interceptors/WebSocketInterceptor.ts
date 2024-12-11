@@ -1,4 +1,3 @@
-import base64 from 'base64-js';
 import { NativeEventEmitter, type EmitterSubscription } from 'react-native';
 import NativeWebSocketModule from 'react-native/Libraries/WebSocket/NativeWebSocketModule';
 import type {
@@ -94,17 +93,17 @@ export default class WebSocketInterceptor extends NetworkInterceptor {
   private eventEmitter: NativeEventEmitter | null = null;
   private subscriptions: EmitterSubscription[] = [];
 
-  private arrayBufferToString(data: string) {
+  private arrayBufferToString(data?: string) {
     try {
-      const byteArray = base64.toByteArray(data);
-      const buffer = byteArray.buffer;
+      if (!data) return '(no input)';
 
-      if (!buffer || byteArray.length === 0) return '(no value)';
+      const byteArray = Buffer.from(data, 'base64');
 
-      const values = byteArray.join(', ');
-      return `ArrayBuffer { length: ${byteArray.length}, values: [${values}] }`;
+      if (byteArray.length === 0) return '(empty array)';
+
+      return `ArrayBuffer { length: ${byteArray.length}, values: [${byteArray.join(', ')}] }`;
     } catch (error) {
-      return '(invalid data)';
+      return `(invalid data: ${error instanceof Error ? error.message : error})`;
     }
   }
 

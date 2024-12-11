@@ -197,7 +197,6 @@
     "version": "0.44.3"
   },
   "dependencies": {
-    "base64-js": "^1.5.1",
     "immer": "^10.1.1",
     "react-native-url-polyfill": "^2.0.0",
     "use-immer": "^0.10.0"
