@@ -1,7 +1,7 @@
 {
   "name": "react-native-xenon",
   "version": "0.1.0",
-  "description": "this is a description placeholder",
+  "description": "",
   "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",
@@ -47,19 +47,32 @@
   },
   "keywords": [
     "react-native",
+    "android",
     "ios",
-    "android"
+    "xenon",
+    "inspector",
+    "debugger",
+    "https",
+    "network",
+    "nsurlsession",
+    "okhttp",
+    "logger",
+    "console"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://this-is-a-repo-url-placeholder.com.git"
+    "url": "git+https://github.com/purrseus/react-native-xenon.git"
   },
-  "author": "purrseus <contact@thiendo.dev> (https://this-is-a-pkg-url-placeholder.com)",
+  "author": {
+    "name": "Purrseus",
+    "email": "contact@thiendo.dev",
+    "url": "https://github.com/purrseus"
+  },
   "license": "MIT",
   "bugs": {
-    "url": "https://this-is-a-repo-url-placeholder.com/issues"
+    "url": "https://github.com/purrseus/react-native-xenon/issues"
   },
-  "homepage": "https://this-is-a-repo-url-placeholder.com#readme",
+  "homepage": "https://github.com/purrseus/react-native-xenon#readme",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
