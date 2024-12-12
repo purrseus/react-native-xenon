@@ -11,8 +11,8 @@ interface XenonComponentMethods {
 }
 
 interface XenonComponentProps {
-  autoInspectNetwork?: boolean;
-  autoInspectConsole?: boolean;
+  autoInspectNetworkEnabled?: boolean;
+  autoInspectConsoleEnabled?: boolean;
   bubbleSize?: number;
 }
 
@@ -23,8 +23,8 @@ interface ReactNativeXenon extends XenonComponentMethods {
 const rootRef = createRef<XenonComponentMethods>();
 
 function XenonComponent({
-  autoInspectNetwork = true,
-  autoInspectConsole = true,
+  autoInspectNetworkEnabled = true,
+  autoInspectConsoleEnabled = true,
   bubbleSize = 40,
 }: XenonComponentProps) {
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
@@ -41,11 +41,11 @@ function XenonComponent({
   const [panelSelected, setPanelSelected] = useState<DebuggerPanel | null>(DebuggerPanel.Network);
 
   const networkInterceptor = useNetworkInterceptor({
-    autoEnabled: autoInspectNetwork,
+    autoEnabled: autoInspectNetworkEnabled,
   });
 
   const logInterceptor = useConsoleInterceptor({
-    autoEnabled: autoInspectConsole,
+    autoEnabled: autoInspectConsoleEnabled,
   });
 
   useImperativeHandle(
