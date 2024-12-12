@@ -47,11 +47,11 @@ Xenon.hide();
 
 ## Props
 
-| **Prop**                    | **Description**                                                                        | **Required** | **Type**  | **Default** |
-| --------------------------- | -------------------------------------------------------------------------------------- | ------------ | --------- | ----------- |
-| `autoInspectNetworkEnabled` | Determines whether the network inspector is automatically enabled upon initialization. | No           | `boolean` | `true`      |
-| `autoInspectConsoleEnabled` | Determines whether the console inspector is automatically enabled upon initialization. | No           | `boolean` | `true`      |
-| `bubbleSize`                | Defines the size of the interactive bubble used in the UI                              | No           | `number`  | `40`        |
+| **Prop**                    | **Type**  | **Description**                                                                                            |
+| --------------------------- | --------- | ---------------------------------------------------------------------------------------------------------- |
+| `autoInspectNetworkEnabled` | `boolean` | Determines whether the network inspector is automatically enabled upon initialization. Defaults to `true`. |
+| `autoInspectConsoleEnabled` | `boolean` | Determines whether the console inspector is automatically enabled upon initialization. Defaults to `true`. |
+| `bubbleSize`                | `number`  | Defines the size of the interactive bubble used in the UI. Defaults to `40`.                               |
 
 ## Contributing
 
