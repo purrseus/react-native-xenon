@@ -1,7 +1,7 @@
-import { enableMapSet } from 'immer';
 import { useCallback, useEffect, useState } from 'react';
 import { useImmer } from 'use-immer';
 import { NETWORK_REQUEST_HEADER } from '../constants';
+import { FetchInterceptor, WebSocketInterceptor, XHRInterceptor } from '../interceptors';
 import {
   NetworkType,
   type HttpHeaderReceivedCallback,
@@ -21,20 +21,16 @@ import {
   type WebSocketSendCallback,
 } from '../types';
 import { keyValueToString } from '../utils';
-import { XHRInterceptor, FetchInterceptor, WebSocketInterceptor } from '../interceptors';
 
 interface NetworkInterceptorParams {
-  autoEnabled?: boolean;
+  autoEnabled: boolean;
 }
 
 type NetworkRequests<T> = Map<NonNullable<ID>, T>;
 
-enableMapSet();
-
 const initRequests = new Map<NonNullable<ID>, HttpRequest & WebSocketRequest>();
 
-export default function useNetworkInterceptor(params?: NetworkInterceptorParams) {
-  const { autoEnabled = false } = params || {};
+export default function useNetworkInterceptor({ autoEnabled }: NetworkInterceptorParams) {
   const [isInterceptorEnabled, setIsInterceptorEnabled] = useState(autoEnabled);
 
   const [networkRequests, setNetworkRequests] = useImmer(initRequests);
@@ -116,6 +112,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
       id,
       status,
       timeout,
+      duration,
       response,
       responseURL,
       responseType,
@@ -127,6 +124,7 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
 
         draft.get(id)!.status = status;
         draft.get(id)!.timeout = timeout;
+        draft.get(id)!.duration = duration;
         draft.get(id)!.response = response;
         if (responseURL) draft.get(id)!.url = responseURL;
         draft.get(id)!.responseType = responseType;
@@ -151,12 +149,12 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
   }, [setNetworkRequests]);
 
   const enableWebSocketInterception = useCallback(() => {
-    const connectCallback: WebSocketConnectCallback = (uri, protocols, options, socketId) => {
+    const connectCallback: WebSocketConnectCallback = (url, protocols, options, socketId) => {
       if (typeof socketId !== 'number') return;
 
       setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
         draft.set(`${socketId}`, {
-          uri,
+          url,
           type: NetworkType.WS,
           protocols,
           options,
@@ -186,7 +184,15 @@ export default function useNetworkInterceptor(params?: NetworkInterceptorParams)
       });
     };
 
-    const onOpenCallback: WebSocketOnOpenCallback = () => {};
+    const onOpenCallback: WebSocketOnOpenCallback = (socketId, duration) => {
+      if (typeof socketId !== 'number') return;
+
+      setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
+        if (!draft.get(`${socketId}`)) return draft;
+
+        draft.get(`${socketId}`)!.duration = duration;
+      });
+    };
 
     const onMessageCallback: WebSocketOnMessageCallback = (socketId, message) => {
       if (typeof socketId !== 'number') return;

@@ -1,17 +1,28 @@
 import { useMemo } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { URL } from 'react-native-url-polyfill';
-import type { HttpRequest, WebSocketRequest } from '../../../types';
-import { formatMethod, formatStatusCode } from '../../../utils';
+import type { HttpRequest, NetworkRequest } from '../../../types';
+import {
+  formatRequestDuration,
+  formatRequestMethod,
+  formatRequestStatusCode,
+} from '../../../utils';
 
 interface NetworkPanelItemProps {
-  name: HttpRequest['url'] | WebSocketRequest['uri'];
   method?: HttpRequest['method'];
-  status?: HttpRequest['status'] | WebSocketRequest['status'];
+  name: NetworkRequest['url'];
+  duration?: NetworkRequest['duration'];
+  status?: NetworkRequest['status'];
   onPress: () => void;
 }
 
-export default function NetworkPanelItem({ name, status, method, onPress }: NetworkPanelItemProps) {
+export default function NetworkPanelItem({
+  method,
+  name,
+  duration,
+  status,
+  onPress,
+}: NetworkPanelItemProps) {
   const requestName = useMemo(() => {
     if (!name) return '[failed]';
 
@@ -28,6 +39,12 @@ export default function NetworkPanelItem({ name, status, method, onPress }: Netw
 
   return (
     <TouchableOpacity onPress={onPress} style={styles.container}>
+      <View style={styles.column}>
+        <Text numberOfLines={1} style={styles.text}>
+          {formatRequestMethod(method)}
+        </Text>
+      </View>
+
       <View style={[styles.column, styles.mainColumn]}>
         <Text numberOfLines={1} style={styles.text}>
           {requestName}
@@ -36,13 +53,13 @@ export default function NetworkPanelItem({ name, status, method, onPress }: Netw
 
       <View style={styles.column}>
         <Text numberOfLines={1} style={styles.text}>
-          {formatMethod(method)}
+          {formatRequestDuration(duration)}
         </Text>
       </View>
 
       <View style={styles.column}>
         <Text numberOfLines={1} style={styles.text}>
-          {formatStatusCode(status)}
+          {formatRequestStatusCode(status)}
         </Text>
       </View>
     </TouchableOpacity>
@@ -55,7 +72,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   mainColumn: {
-    flex: 7,
+    flex: 5.5,
     flexShrink: 1,
   },
   column: {

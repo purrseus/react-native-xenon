@@ -28,8 +28,9 @@ export default function NetworkPanel() {
 
       return (
         <NetworkPanelItem
-          name={isWebSocket ? item.uri : item.url}
           method={isWebSocket ? undefined : item.method}
+          name={item.url}
+          duration={item.duration}
           status={item.status}
           onPress={onPress}
         />

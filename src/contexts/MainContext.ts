@@ -1,10 +1,10 @@
 import { createContext, type MutableRefObject } from 'react';
 import type { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
 import type {
-  HttpRequest,
   DebuggerPanel,
   DebuggerPosition,
   DebuggerVisibility,
+  HttpRequest,
   LogMessage,
   SetState,
   WebSocketRequest,

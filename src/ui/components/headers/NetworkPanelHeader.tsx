@@ -3,6 +3,14 @@ import { StyleSheet, Text, View } from 'react-native';
 export default function NetworkPanelHeader() {
   return (
     <View style={styles.container}>
+      <View style={styles.headerColumn}>
+        <Text numberOfLines={1} style={styles.itemText}>
+          Method
+        </Text>
+      </View>
+
+      <View style={styles.divider} />
+
       <View style={[styles.headerColumn, styles.headerMainColumn]}>
         <Text numberOfLines={1} style={styles.itemText}>
           Name
@@ -13,7 +21,7 @@ export default function NetworkPanelHeader() {
 
       <View style={styles.headerColumn}>
         <Text numberOfLines={1} style={styles.itemText}>
-          Method
+          Duration
         </Text>
       </View>
 
@@ -37,7 +45,7 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   headerMainColumn: {
-    flex: 7,
+    flex: 5.5,
     flexShrink: 1,
   },
   headerColumn: {

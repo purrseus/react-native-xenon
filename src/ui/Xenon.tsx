@@ -1,9 +1,10 @@
+import { enableMapSet } from 'immer';
 import { createRef, useImperativeHandle, useRef, useState, type JSX } from 'react';
 import { Animated, SafeAreaView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import MainContext, { type MainContextValue } from '../contexts/MainContext';
 import { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
 import { DebuggerPanel, type DebuggerPosition, type DebuggerVisibility } from '../types';
 import { Bubble, ConsolePanel, DebuggerHeader, DetailsViewer, NetworkPanel } from './components';
-import MainContext, { type MainContextValue } from '../contexts/MainContext';
 
 interface XenonComponentMethods {
   show(): void;
@@ -11,8 +12,8 @@ interface XenonComponentMethods {
 }
 
 interface XenonComponentProps {
-  autoInspectNetwork?: boolean;
-  autoInspectConsole?: boolean;
+  autoInspectNetworkEnabled?: boolean;
+  autoInspectConsoleEnabled?: boolean;
   bubbleSize?: number;
 }
 
@@ -20,11 +21,12 @@ interface ReactNativeXenon extends XenonComponentMethods {
   Component(props: XenonComponentProps): JSX.Element;
 }
 
+enableMapSet();
 const rootRef = createRef<XenonComponentMethods>();
 
 function XenonComponent({
-  autoInspectNetwork = true,
-  autoInspectConsole = true,
+  autoInspectNetworkEnabled = true,
+  autoInspectConsoleEnabled = true,
   bubbleSize = 40,
 }: XenonComponentProps) {
   const { width: screenWidth, height: screenHeight } = useWindowDimensions();
@@ -41,11 +43,11 @@ function XenonComponent({
   const [panelSelected, setPanelSelected] = useState<DebuggerPanel | null>(DebuggerPanel.Network);
 
   const networkInterceptor = useNetworkInterceptor({
-    autoEnabled: autoInspectNetwork,
+    autoEnabled: autoInspectNetworkEnabled,
   });
 
   const logInterceptor = useConsoleInterceptor({
-    autoEnabled: autoInspectConsole,
+    autoEnabled: autoInspectConsoleEnabled,
   });
 
   useImperativeHandle(
