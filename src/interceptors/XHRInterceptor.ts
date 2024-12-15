@@ -43,6 +43,8 @@ export default class XHRInterceptor extends HttpInterceptor {
     XMLHttpRequest.prototype.send = function (data) {
       sendCallback?.(this._interceptionId, data);
 
+      const timeStart = Date.now();
+
       this.addEventListener?.('readystatechange', () => {
         if (!isInterceptorEnabled()) return;
 
@@ -66,10 +68,14 @@ export default class XHRInterceptor extends HttpInterceptor {
         }
 
         if (this.readyState === this.DONE) {
+          const timeEnd = Date.now();
+          const duration = timeEnd - timeStart;
+
           responseCallback?.(
             this._interceptionId,
             this.status,
             this.timeout,
+            duration,
             this.response,
             this.responseURL,
             this.responseType,

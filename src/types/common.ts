@@ -14,7 +14,9 @@ export enum DebuggerPanel {
 export type ID = string | undefined;
 
 export interface NetworkRequest {
+  url: string;
   status?: number;
+  duration?: number;
 }
 
 export type DebuggerVisibility = 'hidden' | 'bubble' | 'panel';

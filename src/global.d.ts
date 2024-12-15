@@ -5,18 +5,18 @@ interface XMLHttpRequest {
 declare module 'react-native/Libraries/WebSocket/NativeWebSocketModule' {
   interface NativeWebSocketModule extends NativeModule {
     connect(
-      uri: string,
-      protocols?: string | string[] | null,
+      url: string,
+      protocols?: string | string[],
       options?: {
         headers: { [headerName: string]: string };
         [optionName: string]: any;
-      } | null,
+      },
       socketId: number,
     ): void;
 
     send(data: string, socketId: number): void;
 
-    sendBinary(data: string, socketId: number): void;
+    sendBinary(base64String: string, socketId: number): void;
 
     close(code: number, reason: string, socketId: number): void;
 

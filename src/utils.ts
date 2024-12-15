@@ -17,9 +17,12 @@ export const getHttpInterceptorId = () => {
 export const keyValueToString = (key: string, value: any): string =>
   `${key}: ${limitChar(value)}\n`;
 
-export const formatMethod = (method?: string) => method ?? 'GET';
+export const formatRequestMethod = (method?: string) => method ?? 'GET';
 
-export const formatStatusCode = (statusCode?: number) => `${statusCode ?? 'pending'}`;
+export const formatRequestDuration = (duration?: number) =>
+  duration ? `${duration}ms` : 'pending';
+
+export const formatRequestStatusCode = (statusCode?: number) => `${statusCode ?? 'pending'}`;
 
 export const formatLogMessage = (type: string, values: any[]) => {
   const message: string = values.reduce((pre, cur, index, array) => {

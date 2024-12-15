@@ -3,7 +3,6 @@ import type { ID, NetworkRequest, NetworkType } from './common';
 export interface HttpRequest extends NetworkRequest {
   type: NetworkType.Fetch | NetworkType.XHR;
   method: string;
-  url: string;
   requestHeaders?: Record<string, string>;
   requestHeadersString?: string;
   body?: any;
@@ -37,6 +36,7 @@ export type HttpResponseCallback =
       id: ID,
       status: number | undefined,
       timeout: number | undefined,
+      duration: number,
       response: any,
       responseURL: string | undefined,
       responseType: string | undefined,

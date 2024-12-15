@@ -1,6 +1,6 @@
 import { NETWORK_REQUEST_HEADER } from '../constants';
 import { NetworkType } from '../types';
-import { formatMethod, getHttpInterceptorId, keyValueToString } from '../utils';
+import { formatRequestMethod, getHttpInterceptorId, keyValueToString } from '../utils';
 import HttpInterceptor from './HttpInterceptor';
 
 const originalFetch = global.fetch;
@@ -33,7 +33,7 @@ export default class FetchInterceptor extends HttpInterceptor {
       const requestInit: RequestInit = { ...init, headers: requestHeaders };
 
       //#region open
-      const method = formatMethod(init?.method);
+      const method = formatRequestMethod(init?.method);
 
       let url: string;
 
@@ -76,11 +76,13 @@ export default class FetchInterceptor extends HttpInterceptor {
       //#endregion
 
       //#region send
+      const timeStart = Date.now();
       sendCallback?.(interceptionId, init?.body ?? null);
       //#endregion
 
       const response = await originalFetch.call(this, input, requestInit);
 
+      const timeEnd = Date.now();
       const clonedResponse = response.clone();
       const clonedResponseHeaders = clonedResponse.headers;
 
@@ -105,11 +107,13 @@ export default class FetchInterceptor extends HttpInterceptor {
 
       //#region response
       const responseBody: string | null = await clonedResponse.text().catch(() => null);
+      const duration = timeEnd - timeStart;
 
       responseCallback?.(
         interceptionId,
         clonedResponse.status,
         0,
+        duration,
         responseBody,
         clonedResponse.url,
         clonedResponse.type,

@@ -2,12 +2,11 @@ import type { NetworkRequest, NetworkType } from './common';
 
 export interface WebSocketRequest extends NetworkRequest {
   type: NetworkType.WS;
-  uri: string;
-  protocols?: string | string[] | null;
+  protocols?: string | string[];
   options?: {
     headers: { [headerName: string]: string };
     [optionName: string]: any;
-  } | null;
+  };
   messages?: string;
   closeReason?: string;
   serverError?: { message?: string };
@@ -16,7 +15,7 @@ export interface WebSocketRequest extends NetworkRequest {
 
 export type WebSocketConnectCallback =
   | ((
-      uri: WebSocketRequest['uri'],
+      url: string,
       protocols?: WebSocketRequest['protocols'],
       options?: WebSocketRequest['options'],
       socketId?: number,
@@ -26,19 +25,15 @@ export type WebSocketConnectCallback =
 export type WebSocketSendCallback = ((data: string, socketId: number) => void) | null;
 
 export type WebSocketCloseCallback =
-  | ((
-      code: WebSocketRequest['status'],
-      reason: WebSocketRequest['closeReason'],
-      socketId: number,
-    ) => void)
+  | ((code: number, reason: string, socketId: number) => void)
   | null;
 
-export type WebSocketOnOpenCallback = ((socketId: number) => void) | null;
+export type WebSocketOnOpenCallback = ((socketId: number, duration: number) => void) | null;
 
 export type WebSocketOnMessageCallback = ((socketId: number, message: any) => void) | null;
 
 export type WebSocketOnErrorCallback =
-  | ((socketId: number, data: WebSocketRequest['serverError']) => void)
+  | ((socketId: number, error: WebSocketRequest['serverError']) => void)
   | null;
 
 export type WebSocketOnCloseCallback =

@@ -7,7 +7,13 @@ import {
   type NetworkTab,
   type WebSocketRequest,
 } from '../../../types';
-import { convertToCurl, formatMethod, formatStatusCode, limitChar } from '../../../utils';
+import {
+  convertToCurl,
+  formatRequestDuration,
+  formatRequestMethod,
+  formatRequestStatusCode,
+  limitChar,
+} from '../../../utils';
 import NetworkDetailsHeader from '../headers/NetworkRequestDetailsHeader';
 import NetworkRequestDetailsItem from '../items/NetworkRequestDetailsItem';
 
@@ -20,9 +26,9 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
 
   const isWebSocket = item.type === NetworkType.WS;
 
-  const requestUrl = new URL(isWebSocket ? item.uri : item.url);
+  const requestUrl = new URL(item.url);
 
-  const headerShown = (isWebSocket ? 'uri' : 'url') in item;
+  const headerShown = !!item.url;
   const queryStringParametersShown = !!requestUrl.search;
   const bodyShown = !isWebSocket && !!item.body;
   const responseShown = !isWebSocket && !!item.response;
@@ -41,17 +47,22 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
       <>
         <NetworkRequestDetailsItem label="Request Type" content={item.type} />
 
-        <NetworkRequestDetailsItem
-          label="Request URL"
-          content={isWebSocket ? item.uri : item.url}
-        />
+        <NetworkRequestDetailsItem label="Request URL" content={item.url} />
 
         <NetworkRequestDetailsItem
           label="Request Method"
-          content={formatMethod(isWebSocket ? undefined : item.method)}
+          content={formatRequestMethod(isWebSocket ? undefined : item.method)}
         />
 
-        <NetworkRequestDetailsItem label="Status Code" content={formatStatusCode(item.status)} />
+        <NetworkRequestDetailsItem
+          label="Duration"
+          content={formatRequestDuration(item.duration)}
+        />
+
+        <NetworkRequestDetailsItem
+          label="Status Code"
+          content={formatRequestStatusCode(item.status)}
+        />
 
         {isWebSocket && (
           <NetworkRequestDetailsItem label="Headers" content={limitChar(item.options?.headers)} />

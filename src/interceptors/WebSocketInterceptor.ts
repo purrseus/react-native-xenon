@@ -92,6 +92,7 @@ export default class WebSocketInterceptor extends NetworkInterceptor {
 
   private eventEmitter: NativeEventEmitter | null = null;
   private subscriptions: EmitterSubscription[] = [];
+  private timeStart: Map<number, number> = new Map();
 
   private arrayBufferToString(data?: string) {
     try {
@@ -112,7 +113,12 @@ export default class WebSocketInterceptor extends NetworkInterceptor {
 
     this.subscriptions = [
       this.eventEmitter.addListener('websocketOpen', ev => {
-        this.onOpenCallback?.(ev.id);
+        const timeStart = this.timeStart.get(ev.id);
+        const timeEnd = Date.now();
+        const duration = timeEnd - (timeStart ?? 0);
+        this.timeStart.delete(ev.id);
+
+        this.onOpenCallback?.(ev.id, duration);
       }),
       this.eventEmitter.addListener('websocketMessage', ev => {
         this.onMessageCallback?.(
@@ -145,8 +151,11 @@ export default class WebSocketInterceptor extends NetworkInterceptor {
     const { connectCallback, sendCallback, closeCallback, arrayBufferToString } =
       this.getCallbacks();
 
+    const timeStart = this.timeStart;
     NativeWebSocketModule.connect = function (...args) {
       connectCallback?.(...args);
+
+      timeStart.set(args[3], Date.now());
 
       originalWebSocketConnect.call(this, ...args);
     };
@@ -157,10 +166,10 @@ export default class WebSocketInterceptor extends NetworkInterceptor {
       originalWebSocketSend.call(this, ...args);
     };
 
-    NativeWebSocketModule.sendBinary = function (data, socketId) {
-      sendCallback?.(arrayBufferToString(data), socketId);
+    NativeWebSocketModule.sendBinary = function (base64String, socketId) {
+      sendCallback?.(arrayBufferToString(base64String), socketId);
 
-      originalWebSocketSendBinary.call(this, data, socketId);
+      originalWebSocketSendBinary.call(this, base64String, socketId);
     };
 
     NativeWebSocketModule.close = function (code, reason, socketId) {

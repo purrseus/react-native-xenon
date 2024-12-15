@@ -112,6 +112,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       id,
       status,
       timeout,
+      duration,
       response,
       responseURL,
       responseType,
@@ -123,6 +124,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
 
         draft.get(id)!.status = status;
         draft.get(id)!.timeout = timeout;
+        draft.get(id)!.duration = duration;
         draft.get(id)!.response = response;
         if (responseURL) draft.get(id)!.url = responseURL;
         draft.get(id)!.responseType = responseType;
@@ -147,12 +149,12 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
   }, [setNetworkRequests]);
 
   const enableWebSocketInterception = useCallback(() => {
-    const connectCallback: WebSocketConnectCallback = (uri, protocols, options, socketId) => {
+    const connectCallback: WebSocketConnectCallback = (url, protocols, options, socketId) => {
       if (typeof socketId !== 'number') return;
 
       setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
         draft.set(`${socketId}`, {
-          uri,
+          url,
           type: NetworkType.WS,
           protocols,
           options,
@@ -182,7 +184,15 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       });
     };
 
-    const onOpenCallback: WebSocketOnOpenCallback = () => {};
+    const onOpenCallback: WebSocketOnOpenCallback = (socketId, duration) => {
+      if (typeof socketId !== 'number') return;
+
+      setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
+        if (!draft.get(`${socketId}`)) return draft;
+
+        draft.get(`${socketId}`)!.duration = duration;
+      });
+    };
 
     const onMessageCallback: WebSocketOnMessageCallback = (socketId, message) => {
       if (typeof socketId !== 'number') return;
