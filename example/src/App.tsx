@@ -1,22 +1,22 @@
 /* eslint-disable no-console */
 import axios from 'axios';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, StyleSheet, View } from 'react-native';
 import Xenon from 'react-native-xenon';
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <TouchableOpacity
+      <Button
+        title="Fetch: Get posts"
         onPress={() => {
           fetch('https://jsonplaceholder.typicode.com/posts?userId=1')
             .then(res => res.json())
             .then(console.log);
         }}
-      >
-        <Text>FetchAPI: Get posts</Text>
-      </TouchableOpacity>
+      />
 
-      <TouchableOpacity
+      <Button
+        title="Fetch: Create post"
         onPress={() => {
           fetch('https://jsonplaceholder.typicode.com/posts', {
             method: 'POST',
@@ -32,19 +32,17 @@ export default function App() {
             .then(res => res.json())
             .then(console.log);
         }}
-      >
-        <Text>FetchAPI: Create post</Text>
-      </TouchableOpacity>
+      />
 
-      <TouchableOpacity
+      <Button
+        title="Axios: Get posts"
         onPress={() => {
           axios('https://jsonplaceholder.typicode.com/posts?userId=1').then(console.log);
         }}
-      >
-        <Text>Axios: Get posts</Text>
-      </TouchableOpacity>
+      />
 
-      <TouchableOpacity
+      <Button
+        title="Axios: Create post"
         onPress={() => {
           axios
             .post('https://jsonplaceholder.typicode.com/posts', {
@@ -54,49 +52,42 @@ export default function App() {
             })
             .then(console.log);
         }}
-      >
-        <Text>Axios: Create post</Text>
-      </TouchableOpacity>
+      />
 
-      <TouchableOpacity
+      <Button
+        title="Echo Websocket"
         onPress={() => {
-          // Create WebSocket connection.
           const socket = new WebSocket('wss://echo.websocket.org');
 
           const message = `Hello Server! It's ${new Date().toISOString()}`;
 
-          // Connection opened
           socket.onopen = () => {
             socket.send(message);
-            console.log('send', message);
+            console.log('WebSocket.send:', message);
           };
 
           socket.onmessage = event => {
-            console.log('onmessage', event.data);
+            console.log('WebSocket.onmessage:', event.data);
             if (event.data === message) {
               socket.close();
             }
           };
         }}
-      >
-        <Text>Echo Websocket</Text>
-      </TouchableOpacity>
+      />
 
-      <TouchableOpacity
+      <Button
+        title="Show Debugger"
         onPress={() => {
           Xenon.show();
         }}
-      >
-        <Text>Show Debugger</Text>
-      </TouchableOpacity>
+      />
 
-      <TouchableOpacity
+      <Button
+        title="Hide Debugger"
         onPress={() => {
           Xenon.hide();
         }}
-      >
-        <Text>Hide Debugger</Text>
-      </TouchableOpacity>
+      />
 
       <Xenon.Component />
     </View>
@@ -109,5 +100,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'white',
+    rowGap: 8,
   },
 });
