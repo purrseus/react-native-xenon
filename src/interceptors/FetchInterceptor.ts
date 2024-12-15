@@ -1,6 +1,6 @@
 import { NETWORK_REQUEST_HEADER } from '../constants';
 import { NetworkType } from '../types';
-import { keyValueToString, formatMethod, getHttpInterceptorId } from '../utils';
+import { formatMethod, getHttpInterceptorId, keyValueToString } from '../utils';
 import HttpInterceptor from './HttpInterceptor';
 
 const originalFetch = global.fetch;

@@ -4,12 +4,10 @@ import { ConsoleInterceptor } from '../interceptors';
 import type { LogMessage } from '../types';
 
 interface ConsoleInterceptorParams {
-  autoEnabled?: boolean;
+  autoEnabled: boolean;
 }
 
-export default function useConsoleInterceptor(params: ConsoleInterceptorParams) {
-  const { autoEnabled = false } = params || {};
-
+export default function useConsoleInterceptor({ autoEnabled }: ConsoleInterceptorParams) {
   const [isInterceptorEnabled, setIsInterceptorEnabled] = useState(autoEnabled);
 
   const [logMessages, setLogMessages] = useImmer<LogMessage[]>([]);

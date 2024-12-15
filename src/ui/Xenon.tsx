@@ -1,9 +1,10 @@
+import { enableMapSet } from 'immer';
 import { createRef, useImperativeHandle, useRef, useState, type JSX } from 'react';
 import { Animated, SafeAreaView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import MainContext, { type MainContextValue } from '../contexts/MainContext';
 import { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
 import { DebuggerPanel, type DebuggerPosition, type DebuggerVisibility } from '../types';
 import { Bubble, ConsolePanel, DebuggerHeader, DetailsViewer, NetworkPanel } from './components';
-import MainContext, { type MainContextValue } from '../contexts/MainContext';
 
 interface XenonComponentMethods {
   show(): void;
@@ -20,6 +21,7 @@ interface ReactNativeXenon extends XenonComponentMethods {
   Component(props: XenonComponentProps): JSX.Element;
 }
 
+enableMapSet();
 const rootRef = createRef<XenonComponentMethods>();
 
 function XenonComponent({
