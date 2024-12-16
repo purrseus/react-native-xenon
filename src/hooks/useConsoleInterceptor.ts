@@ -16,10 +16,10 @@ export default function useConsoleInterceptor({ autoEnabled }: ConsoleIntercepto
     setLogMessages([]);
   };
 
-  const _isInterceptorEnabled = () => ConsoleInterceptor.instance.isInterceptorEnabled;
+  const isEnabled = () => ConsoleInterceptor.instance.isInterceptorEnabled;
 
   const enableInterception = useCallback(() => {
-    if (_isInterceptorEnabled()) return;
+    if (isEnabled()) return;
 
     ConsoleInterceptor.instance
       .setCallback((type, args) => {
@@ -33,7 +33,7 @@ export default function useConsoleInterceptor({ autoEnabled }: ConsoleIntercepto
   }, [setLogMessages]);
 
   const disableInterception = useCallback(() => {
-    if (!_isInterceptorEnabled()) return;
+    if (!isEnabled()) return;
 
     ConsoleInterceptor.instance.disableInterception();
 

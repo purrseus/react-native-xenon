@@ -7,7 +7,7 @@ const originalXHRSend = XMLHttpRequest.prototype.send;
 const originalXHRSetRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
 
 export default class XHRInterceptor extends HttpInterceptor {
-  static instance = new XHRInterceptor();
+  static readonly instance = new XHRInterceptor();
 
   private constructor() {
     super();

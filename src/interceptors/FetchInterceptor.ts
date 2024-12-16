@@ -6,7 +6,7 @@ import HttpInterceptor from './HttpInterceptor';
 const originalFetch = global.fetch;
 
 export default class FetchInterceptor extends HttpInterceptor {
-  static instance = new FetchInterceptor();
+  static readonly instance = new FetchInterceptor();
 
   private constructor() {
     super();
