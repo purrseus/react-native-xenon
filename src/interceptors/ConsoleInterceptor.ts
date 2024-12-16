@@ -13,7 +13,7 @@ const originalConsoleGroupEnd = console.groupEnd;
 const originalConsoleGroup = console.group;
 
 export default class ConsoleInterceptor extends Interceptor {
-  static instance = new ConsoleInterceptor();
+  static readonly instance = new ConsoleInterceptor();
 
   private constructor() {
     super();
@@ -67,10 +67,10 @@ export default class ConsoleInterceptor extends Interceptor {
       originalConsoleDebug.call(this, ...args);
     };
 
-    console.table = function (...args) {
+    console.table = function (...args: Parameters<typeof originalConsoleTable>) {
       callback?.('table', args);
 
-      originalConsoleTable.call(this, ...(args as Parameters<typeof originalConsoleTable>));
+      originalConsoleTable.call(this, ...args);
     };
 
     console.groupCollapsed = function (...args) {

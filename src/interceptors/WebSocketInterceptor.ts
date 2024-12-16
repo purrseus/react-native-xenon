@@ -17,7 +17,7 @@ const originalWebSocketSendBinary = NativeWebSocketModule.sendBinary;
 const originalWebSocketClose = NativeWebSocketModule.close;
 
 export default class WebSocketInterceptor extends NetworkInterceptor {
-  static instance = new WebSocketInterceptor();
+  static readonly instance = new WebSocketInterceptor();
 
   private constructor() {
     super();
@@ -92,7 +92,7 @@ export default class WebSocketInterceptor extends NetworkInterceptor {
 
   private eventEmitter: NativeEventEmitter | null = null;
   private subscriptions: EmitterSubscription[] = [];
-  private timeStart: Map<number, number> = new Map();
+  private readonly timeStart: Map<number, number> = new Map();
 
   private arrayBufferToString(data?: string) {
     try {
