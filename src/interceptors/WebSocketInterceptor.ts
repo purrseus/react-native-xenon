@@ -2,6 +2,7 @@ import { NativeEventEmitter, type EmitterSubscription } from 'react-native';
 import NativeWebSocketModule from 'react-native/Libraries/WebSocket/NativeWebSocketModule';
 import type { WebSocketHandlers } from '../types';
 import { NetworkInterceptor } from './NetworkInterceptor';
+import { Frozen } from '../utils';
 
 const originalWebSocketConnect = NativeWebSocketModule.connect;
 const originalWebSocketSend = NativeWebSocketModule.send;
@@ -95,6 +96,7 @@ export default class WebSocketInterceptor extends NetworkInterceptor<WebSocketHa
     this.eventEmitter = null;
   }
 
+  @Frozen()
   enableInterception(): void {
     if (this.isInterceptorEnabled) return;
 
@@ -134,6 +136,7 @@ export default class WebSocketInterceptor extends NetworkInterceptor<WebSocketHa
     this.isInterceptorEnabled = true;
   }
 
+  @Frozen()
   disableInterception(): void {
     if (!this.isInterceptorEnabled) return;
 
