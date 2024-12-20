@@ -7,26 +7,31 @@ interface DebuggerHeaderItemProps {
   onPress: () => void;
 }
 
-export default function DebuggerHeaderItem(props: DebuggerHeaderItemProps) {
+export default function DebuggerHeaderItem({
+  content,
+  isLabel,
+  isActive,
+  onPress,
+}: DebuggerHeaderItemProps) {
   return (
     <TouchableOpacity
-      onPress={props.onPress}
+      onPress={onPress}
       activeOpacity={0.8}
       style={[
         styles.container,
-        props.isLabel
-          ? props.isActive
+        isLabel
+          ? isActive
             ? styles.activeLabelContainer
             : styles.labelContainer
-          : props.isActive
+          : isActive
             ? styles.activeContainer
             : undefined,
       ]}
     >
-      {typeof props.content === 'string' ? (
-        <Text style={styles.title}>{props.content}</Text>
+      {typeof content === 'string' ? (
+        <Text style={styles.title}>{content}</Text>
       ) : (
-        <Image source={props.content} style={styles.icon} />
+        <Image source={content} style={styles.icon} />
       )}
     </TouchableOpacity>
   );

@@ -11,7 +11,7 @@ export default function NetworkPanelHeader() {
 
       <View style={styles.divider} />
 
-      <View style={[styles.headerColumn, styles.headerMainColumn]}>
+      <View style={[styles.headerColumn, styles.headerNameColumn]}>
         <Text numberOfLines={1} style={styles.itemText}>
           Name
         </Text>
@@ -19,7 +19,7 @@ export default function NetworkPanelHeader() {
 
       <View style={styles.divider} />
 
-      <View style={styles.headerColumn}>
+      <View style={[styles.headerColumn, styles.headerDurationColumn]}>
         <Text numberOfLines={1} style={styles.itemText}>
           Duration
         </Text>
@@ -44,9 +44,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#888888',
     borderRadius: 4,
   },
-  headerMainColumn: {
-    flex: 5.5,
-    flexShrink: 1,
+  headerNameColumn: {
+    flex: 5,
+  },
+  headerDurationColumn: {
+    flex: 2,
   },
   headerColumn: {
     flex: 1.5,

@@ -45,13 +45,13 @@ export default function NetworkPanelItem({
         </Text>
       </View>
 
-      <View style={[styles.column, styles.mainColumn]}>
+      <View style={[styles.column, styles.nameColumn]}>
         <Text numberOfLines={1} style={styles.text}>
           {requestName}
         </Text>
       </View>
 
-      <View style={styles.column}>
+      <View style={[styles.column, styles.durationColumn]}>
         <Text numberOfLines={1} style={styles.text}>
           {formatRequestDuration(duration)}
         </Text>
@@ -71,9 +71,11 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
-  mainColumn: {
-    flex: 5.5,
-    flexShrink: 1,
+  nameColumn: {
+    flex: 5,
+  },
+  durationColumn: {
+    flex: 2,
   },
   column: {
     flex: 1.5,
