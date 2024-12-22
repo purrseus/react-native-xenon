@@ -1,4 +1,4 @@
-import { useRef, useState, type JSX } from 'react';
+import { useRef, useState, type JSX, type ReactNode } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { URL } from 'react-native-url-polyfill';
 import {
@@ -87,19 +87,15 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
   }
 
   if (queryStringParametersShown && !content.current.queryStringParameters) {
-    const queryStringParameters: Record<'name' | 'value', string>[] = [];
+    const queryStringParameters: ReactNode[] = [];
 
     requestUrl.searchParams.forEach((value, name) => {
-      queryStringParameters.push({ name, value });
+      queryStringParameters.push(
+        <NetworkRequestDetailsItem key={name} label={name} content={value} />,
+      );
     });
 
-    content.current.queryStringParameters = (
-      <>
-        {queryStringParameters.map(({ name, value }, index) => (
-          <NetworkRequestDetailsItem key={index} label={name} content={value} />
-        ))}
-      </>
-    );
+    content.current.queryStringParameters = <>{queryStringParameters}</>;
   }
 
   if (bodyShown && !content.current.body) {
