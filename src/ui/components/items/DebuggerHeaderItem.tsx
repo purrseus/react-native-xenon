@@ -1,4 +1,5 @@
 import { Image, StyleSheet, Text, TouchableOpacity, type ImageRequireSource } from 'react-native';
+import colors from '../../../colors';
 
 interface DebuggerHeaderItemProps {
   content?: ImageRequireSource | string;
@@ -42,7 +43,7 @@ const styles = StyleSheet.create({
     paddingVertical: 4,
     paddingHorizontal: 8,
     borderRadius: 4,
-    backgroundColor: '#888888',
+    backgroundColor: colors.gray,
     borderWidth: 1,
     borderColor: 'transparent',
   },
@@ -52,16 +53,16 @@ const styles = StyleSheet.create({
   activeLabelContainer: {
     backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: '#000000',
+    borderColor: colors.black,
   },
   activeContainer: {
-    backgroundColor: '#ef4444',
+    backgroundColor: colors.red,
   },
   title: {
     fontSize: 14,
     lineHeight: 17,
     fontWeight: '500',
-    color: '#000000',
+    color: colors.black,
   },
   icon: {
     width: 17,

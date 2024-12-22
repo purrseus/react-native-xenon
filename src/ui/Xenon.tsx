@@ -5,6 +5,7 @@ import MainContext, { type MainContextValue } from '../contexts/MainContext';
 import { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
 import { DebuggerPanel, type DebuggerPosition, type DebuggerVisibility } from '../types';
 import { Bubble, ConsolePanel, DebuggerHeader, DetailsViewer, NetworkPanel } from './components';
+import colors from '../colors';
 
 interface XenonComponentMethods {
   show(): void;
@@ -127,7 +128,7 @@ const styles = StyleSheet.create({
     top: undefined,
     bottom: undefined,
     zIndex: 9999,
-    backgroundColor: '#AAAAAA',
+    backgroundColor: colors.lightGray,
   },
   bubbleBackdrop: {
     flex: 1,

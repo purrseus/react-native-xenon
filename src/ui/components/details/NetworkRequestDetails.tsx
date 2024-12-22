@@ -16,6 +16,7 @@ import {
 } from '../../../utils';
 import NetworkDetailsHeader from '../headers/NetworkRequestDetailsHeader';
 import NetworkRequestDetailsItem from '../items/NetworkRequestDetailsItem';
+import colors from '../../../colors';
 
 interface NetworkRequestDetailsProps {
   item: HttpRequest | WebSocketRequest;
@@ -133,15 +134,15 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: '#888888',
+    backgroundColor: colors.gray,
   },
   text: {
     fontSize: 14,
-    color: '#000000',
+    color: colors.black,
   },
   label: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#000000',
+    color: colors.black,
   },
 });

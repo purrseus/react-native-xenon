@@ -7,6 +7,7 @@ import {
   formatRequestMethod,
   formatRequestStatusCode,
 } from '../../../utils';
+import colors from '../../../colors';
 
 interface NetworkPanelItemProps {
   method?: HttpRequest['method'];
@@ -84,7 +85,7 @@ const styles = StyleSheet.create({
     paddingRight: 0,
   },
   text: {
-    color: '#000000',
+    color: colors.black,
     fontSize: 14,
   },
 });

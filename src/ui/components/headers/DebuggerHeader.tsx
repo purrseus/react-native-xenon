@@ -3,6 +3,8 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { MainContext } from '../../../contexts';
 import { DebuggerPanel } from '../../../types';
 import DebuggerHeaderItem from '../items/DebuggerHeaderItem';
+import icons from '../../../icons';
+import colors from '../../../colors';
 
 export default function DebuggerHeader() {
   const {
@@ -49,12 +51,9 @@ export default function DebuggerHeader() {
       contentContainerStyle={styles.contentContainer}
       showsHorizontalScrollIndicator={false}
     >
-      <DebuggerHeaderItem onPress={hideDebugger} content={require('../../../assets/hide.png')} />
+      <DebuggerHeaderItem onPress={hideDebugger} content={icons.hide} />
 
-      <DebuggerHeaderItem
-        onPress={toggleDebuggerPosition}
-        content={require('../../../assets/move.png')}
-      />
+      <DebuggerHeaderItem onPress={toggleDebuggerPosition} content={icons.move} />
 
       <DebuggerHeaderItem
         isLabel
@@ -66,12 +65,12 @@ export default function DebuggerHeader() {
       <DebuggerHeaderItem
         onPress={toggleNetworkInterception}
         isActive={networkInterceptor.isInterceptorEnabled}
-        content={require('../../../assets/record.png')}
+        content={icons.record}
       />
 
       <DebuggerHeaderItem
         onPress={networkInterceptor.clearAllNetworkRequests}
-        content={require('../../../assets/delete.png')}
+        content={icons.delete}
       />
 
       <View style={styles.divider} />
@@ -86,13 +85,10 @@ export default function DebuggerHeader() {
       <DebuggerHeaderItem
         onPress={toggleLogInterception}
         isActive={logInterceptor.isInterceptorEnabled}
-        content={require('../../../assets/record.png')}
+        content={icons.record}
       />
 
-      <DebuggerHeaderItem
-        onPress={logInterceptor.clearAllLogMessages}
-        content={require('../../../assets/delete.png')}
-      />
+      <DebuggerHeaderItem onPress={logInterceptor.clearAllLogMessages} content={icons.delete} />
     </ScrollView>
   );
 }
@@ -107,6 +103,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     width: 1,
-    backgroundColor: '#888888',
+    backgroundColor: colors.gray,
   },
 });

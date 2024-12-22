@@ -1,5 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import type { NetworkTab } from '../../../types';
+import colors from '../../../colors';
 
 interface NetworkRequestDetailsHeaderItemProps {
   visible: boolean;
@@ -43,10 +44,10 @@ const styles = StyleSheet.create({
   activeItem: {
     backgroundColor: 'transparent',
     borderWidth: 1,
-    borderColor: '#000000',
+    borderColor: colors.black,
   },
   itemText: {
     fontSize: 14,
-    color: '#000000',
+    color: colors.black,
   },
 });

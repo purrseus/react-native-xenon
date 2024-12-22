@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import colors from '../../../colors';
 
 export default function NetworkPanelHeader() {
   return (
@@ -41,7 +42,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#888888',
+    backgroundColor: colors.gray,
     borderRadius: 4,
   },
   headerNameColumn: {
@@ -59,10 +60,10 @@ const styles = StyleSheet.create({
   divider: {
     height: 16,
     width: 1,
-    backgroundColor: '#888888',
+    backgroundColor: colors.gray,
   },
   itemText: {
     fontSize: 14,
-    color: '#000000',
+    color: colors.black,
   },
 });
