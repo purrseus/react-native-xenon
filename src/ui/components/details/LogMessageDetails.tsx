@@ -1,6 +1,7 @@
 import { ScrollView, StyleSheet, Text } from 'react-native';
 import type { LogMessage } from '../../../types';
 import { formatLogMessage } from '../../../utils';
+import colors from '../../../colors';
 
 interface LogMessageDetailsProps {
   item: LogMessage;
@@ -21,6 +22,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: '#888888',
+    backgroundColor: colors.gray,
   },
 });

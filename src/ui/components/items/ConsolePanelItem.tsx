@@ -1,6 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import type { LogMessage } from '../../../types';
 import { formatLogMessage } from '../../../utils';
+import colors from '../../../colors';
 
 interface ConsolePanelItemProps extends LogMessage {
   onPress: () => void;
@@ -22,7 +23,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   text: {
-    color: '#000000',
+    color: colors.black,
     fontSize: 14,
   },
 });

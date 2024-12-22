@@ -1,4 +1,4 @@
-import { useRef, useState, type JSX } from 'react';
+import { useRef, useState, type JSX, type ReactNode } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { URL } from 'react-native-url-polyfill';
 import {
@@ -16,6 +16,7 @@ import {
 } from '../../../utils';
 import NetworkDetailsHeader from '../headers/NetworkRequestDetailsHeader';
 import NetworkRequestDetailsItem from '../items/NetworkRequestDetailsItem';
+import colors from '../../../colors';
 
 interface NetworkRequestDetailsProps {
   item: HttpRequest | WebSocketRequest;
@@ -87,19 +88,15 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
   }
 
   if (queryStringParametersShown && !content.current.queryStringParameters) {
-    const queryStringParameters: Record<'name' | 'value', string>[] = [];
+    const queryStringParameters: ReactNode[] = [];
 
     requestUrl.searchParams.forEach((value, name) => {
-      queryStringParameters.push({ name, value });
+      queryStringParameters.push(
+        <NetworkRequestDetailsItem key={name} label={name} content={value} />,
+      );
     });
 
-    content.current.queryStringParameters = (
-      <>
-        {queryStringParameters.map(({ name, value }, index) => (
-          <NetworkRequestDetailsItem key={index} label={name} content={value} />
-        ))}
-      </>
-    );
+    content.current.queryStringParameters = <>{queryStringParameters}</>;
   }
 
   if (bodyShown && !content.current.body) {
@@ -137,15 +134,15 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: '#888888',
+    backgroundColor: colors.gray,
   },
   text: {
     fontSize: 14,
-    color: '#000000',
+    color: colors.black,
   },
   label: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#000000',
+    color: colors.black,
   },
 });

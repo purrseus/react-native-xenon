@@ -4,6 +4,7 @@ import { MainContext } from '../../../contexts';
 import { useScrollToBottom } from '../../../hooks';
 import type { LogMessage } from '../../../types';
 import ConsolePanelItem from '../items/ConsolePanelItem';
+import colors from '../../../colors';
 
 const Separator = () => <View style={styles.divider} />;
 
@@ -50,6 +51,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: '#888888',
+    backgroundColor: colors.gray,
   },
 });

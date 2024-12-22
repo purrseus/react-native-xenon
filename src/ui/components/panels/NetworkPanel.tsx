@@ -5,6 +5,7 @@ import { useScrollToBottom } from '../../../hooks';
 import { NetworkType, type HttpRequest, type ID, type WebSocketRequest } from '../../../types';
 import NetworkPanelHeader from '../headers/NetworkPanelHeader';
 import NetworkPanelItem from '../items/NetworkPanelItem';
+import colors from '../../../colors';
 
 const Separator = () => <View style={styles.divider} />;
 
@@ -60,6 +61,6 @@ const styles = StyleSheet.create({
   },
   divider: {
     height: 1,
-    backgroundColor: '#888888',
+    backgroundColor: colors.gray,
   },
 });

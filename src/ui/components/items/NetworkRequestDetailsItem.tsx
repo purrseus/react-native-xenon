@@ -1,4 +1,5 @@
 import { StyleSheet, Text } from 'react-native';
+import colors from '../../../colors';
 
 interface NetworkRequestDetailsItemProps {
   label?: string;
@@ -33,11 +34,11 @@ export default function NetworkRequestDetailsItem({
 const styles = StyleSheet.create({
   text: {
     fontSize: 14,
-    color: '#000000',
+    color: colors.black,
   },
   label: {
     fontSize: 14,
     fontWeight: 'bold',
-    color: '#000000',
+    color: colors.black,
   },
 });

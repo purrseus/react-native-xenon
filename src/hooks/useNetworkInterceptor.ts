@@ -35,7 +35,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
 
   const [networkRequests, setNetworkRequests] = useImmer(initRequests);
 
-  const _isInterceptorEnabled = () =>
+  const isEnabled = () =>
     XHRInterceptor.instance.isInterceptorEnabled &&
     FetchInterceptor.instance.isInterceptorEnabled &&
     WebSocketInterceptor.instance.isInterceptorEnabled;
@@ -237,7 +237,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
   }, [setNetworkRequests]);
 
   const enableInterception = useCallback(() => {
-    if (_isInterceptorEnabled()) return;
+    if (isEnabled()) return;
 
     enableHttpInterceptions();
     enableWebSocketInterception();
@@ -245,7 +245,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
   }, [enableHttpInterceptions, enableWebSocketInterception]);
 
   const disableInterception = useCallback(() => {
-    if (!_isInterceptorEnabled()) return;
+    if (!isEnabled()) return;
 
     XHRInterceptor.instance.disableInterception();
     FetchInterceptor.instance.disableInterception();
