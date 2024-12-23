@@ -39,7 +39,7 @@ export default function NetworkPanelHeader() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    marginHorizontal: 8,
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: colors.gray,

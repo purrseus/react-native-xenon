@@ -1,10 +1,9 @@
 import { useCallback, useContext } from 'react';
 import { FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
+import colors from '../../../colors';
 import { MainContext } from '../../../contexts';
-import { useScrollToBottom } from '../../../hooks';
 import type { LogMessage } from '../../../types';
 import ConsolePanelItem from '../items/ConsolePanelItem';
-import colors from '../../../colors';
 
 const Separator = () => <View style={styles.divider} />;
 
@@ -14,8 +13,6 @@ export default function ConsolePanel() {
     setPanelSelected,
     detailsData,
   } = useContext(MainContext)!;
-
-  const listRef = useScrollToBottom(logMessages.length);
 
   const renderItem = useCallback<ListRenderItem<LogMessage>>(
     ({ item }) => {
@@ -34,12 +31,12 @@ export default function ConsolePanel() {
 
   return (
     <FlatList
-      ref={listRef}
-      style={styles.container}
-      data={logMessages}
+      inverted
+      data={logMessages.toReversed()}
       renderItem={renderItem}
-      ItemSeparatorComponent={Separator}
       keyExtractor={(_, index) => index.toString()}
+      ItemSeparatorComponent={Separator}
+      style={styles.container}
     />
   );
 }
