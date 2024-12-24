@@ -11,8 +11,8 @@ export default abstract class Interceptor<T extends Object> {
 
   protected abstract handlers: T;
 
-  set(key: keyof T, value: T[keyof T]): this {
-    if (key in this.handlers) this.handlers[key] = value;
+  set<K extends keyof T>(key: K, handler: T[K]) {
+    this.handlers[key] = handler;
     return this;
   }
 
