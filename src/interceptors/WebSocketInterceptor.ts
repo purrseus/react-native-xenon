@@ -1,14 +1,6 @@
 import { NativeEventEmitter, type EmitterSubscription } from 'react-native';
 import NativeWebSocketModule from 'react-native/Libraries/WebSocket/NativeWebSocketModule';
-import type {
-  WebSocketCloseCallback,
-  WebSocketConnectCallback,
-  WebSocketOnCloseCallback,
-  WebSocketOnErrorCallback,
-  WebSocketOnMessageCallback,
-  WebSocketOnOpenCallback,
-  WebSocketSendCallback,
-} from '../types';
+import type { WebSocketHandlers } from '../types';
 import { NetworkInterceptor } from './NetworkInterceptor';
 
 const originalWebSocketConnect = NativeWebSocketModule.connect;
@@ -16,78 +8,40 @@ const originalWebSocketSend = NativeWebSocketModule.send;
 const originalWebSocketSendBinary = NativeWebSocketModule.sendBinary;
 const originalWebSocketClose = NativeWebSocketModule.close;
 
-export default class WebSocketInterceptor extends NetworkInterceptor {
+export default class WebSocketInterceptor extends NetworkInterceptor<WebSocketHandlers> {
   static readonly instance = new WebSocketInterceptor();
+
+  protected handlers: WebSocketHandlers = {
+    connect: null,
+    send: null,
+    close: null,
+    onOpen: null,
+    onMessage: null,
+    onError: null,
+    onClose: null,
+  };
 
   private constructor() {
     super();
   }
 
-  private connectCallback: WebSocketConnectCallback = null;
-  private sendCallback: WebSocketSendCallback = null;
-  private closeCallback: WebSocketCloseCallback = null;
-  private onOpenCallback: WebSocketOnOpenCallback = null;
-  private onMessageCallback: WebSocketOnMessageCallback = null;
-  private onErrorCallback: WebSocketOnErrorCallback = null;
-  private onCloseCallback: WebSocketOnCloseCallback = null;
-
-  setConnectCallback(callback: typeof this.connectCallback) {
-    this.connectCallback = callback;
-    return this;
-  }
-
-  setSendCallback(callback: typeof this.sendCallback) {
-    this.sendCallback = callback;
-    return this;
-  }
-
-  setCloseCallback(callback: typeof this.closeCallback) {
-    this.closeCallback = callback;
-    return this;
-  }
-
-  setOnOpenCallback(callback: typeof this.onOpenCallback) {
-    this.onOpenCallback = callback;
-    return this;
-  }
-
-  setOnMessageCallback(callback: typeof this.onMessageCallback) {
-    this.onMessageCallback = callback;
-    return this;
-  }
-
-  setOnErrorCallback(callback: typeof this.onErrorCallback) {
-    this.onErrorCallback = callback;
-    return this;
-  }
-
-  setOnCloseCallback(callback: typeof this.onCloseCallback) {
-    this.onCloseCallback = callback;
-    return this;
-  }
-
   protected getCallbacks() {
-    const connectCallback = this.connectCallback?.bind(this);
-    const sendCallback = this.sendCallback?.bind(this);
-    const closeCallback = this.closeCallback?.bind(this);
-    const arrayBufferToString = this.arrayBufferToString?.bind(this);
+    const connect = this.handlers.connect;
+    const send = this.handlers.send;
+    const close = this.handlers.close;
+    const arrayBufferToString = this.arrayBufferToString;
 
-    return {
-      connectCallback,
-      sendCallback,
-      closeCallback,
-      arrayBufferToString,
-    };
+    return { connect, send, close, arrayBufferToString };
   }
 
   protected clearCallbacks(): void {
-    this.connectCallback = null;
-    this.sendCallback = null;
-    this.closeCallback = null;
-    this.onOpenCallback = null;
-    this.onMessageCallback = null;
-    this.onErrorCallback = null;
-    this.onCloseCallback = null;
+    this.handlers.connect = null;
+    this.handlers.send = null;
+    this.handlers.close = null;
+    this.handlers.onOpen = null;
+    this.handlers.onMessage = null;
+    this.handlers.onError = null;
+    this.handlers.onClose = null;
   }
 
   private eventEmitter: NativeEventEmitter | null = null;
@@ -118,19 +72,19 @@ export default class WebSocketInterceptor extends NetworkInterceptor {
         const duration = timeEnd - (timeStart ?? 0);
         this.timeStart.delete(ev.id);
 
-        this.onOpenCallback?.(ev.id, duration);
+        this.handlers.onOpen?.(ev.id, duration);
       }),
       this.eventEmitter.addListener('websocketMessage', ev => {
-        this.onMessageCallback?.(
+        this.handlers.onMessage?.(
           ev.id,
           ev.type === 'binary' ? this.arrayBufferToString(ev.data) : ev.data,
         );
       }),
       this.eventEmitter.addListener('websocketClosed', ev => {
-        this.onCloseCallback?.(ev.id, { code: ev.code, reason: ev.reason });
+        this.handlers.onClose?.(ev.id, { code: ev.code, reason: ev.reason });
       }),
       this.eventEmitter.addListener('websocketFailed', ev => {
-        this.onErrorCallback?.(ev.id, { message: ev.message });
+        this.handlers.onError?.(ev.id, { message: ev.message });
       }),
     ];
   }
@@ -148,12 +102,11 @@ export default class WebSocketInterceptor extends NetworkInterceptor {
 
     this.registerEvents();
 
-    const { connectCallback, sendCallback, closeCallback, arrayBufferToString } =
-      this.getCallbacks();
+    const { connect, send, close, arrayBufferToString } = this.getCallbacks();
 
     const timeStart = this.timeStart;
     NativeWebSocketModule.connect = function (...args) {
-      connectCallback?.(...args);
+      connect?.(...args);
 
       timeStart.set(args[3], Date.now());
 
@@ -161,19 +114,19 @@ export default class WebSocketInterceptor extends NetworkInterceptor {
     };
 
     NativeWebSocketModule.send = function (...args) {
-      sendCallback?.(...args);
+      send?.(...args);
 
       originalWebSocketSend.call(this, ...args);
     };
 
     NativeWebSocketModule.sendBinary = function (base64String, socketId) {
-      sendCallback?.(arrayBufferToString(base64String), socketId);
+      send?.(arrayBufferToString(base64String), socketId);
 
       originalWebSocketSendBinary.call(this, base64String, socketId);
     };
 
     NativeWebSocketModule.close = function (code, reason, socketId) {
-      closeCallback?.(code, reason, socketId);
+      close?.(code, reason, socketId);
 
       originalWebSocketClose.call(this, code, reason, socketId);
     };

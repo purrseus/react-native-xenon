@@ -22,7 +22,7 @@ export default function useConsoleInterceptor({ autoEnabled }: ConsoleIntercepto
     if (isEnabled()) return;
 
     ConsoleInterceptor.instance
-      .setCallback((type, args) => {
+      .set('callback', (type, args) => {
         setLogMessages(draft => {
           draft.push({ type, values: args });
         });

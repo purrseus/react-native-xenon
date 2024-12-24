@@ -1,4 +1,5 @@
 /* eslint-disable no-console */
+import type { ConsoleHandlers } from '../types';
 import Interceptor from './Interceptor';
 
 const originalConsoleError = console.error;
@@ -12,24 +13,21 @@ const originalConsoleGroupCollapsed = console.groupCollapsed;
 const originalConsoleGroupEnd = console.groupEnd;
 const originalConsoleGroup = console.group;
 
-export default class ConsoleInterceptor extends Interceptor {
+export default class ConsoleInterceptor extends Interceptor<ConsoleHandlers> {
   static readonly instance = new ConsoleInterceptor();
+
+  protected readonly handlers: ConsoleHandlers = {
+    callback: null,
+  };
 
   private constructor() {
     super();
   }
 
-  private callback: ((type: string, args: any[]) => void) | null = null;
-
-  setCallback(callback: typeof this.callback) {
-    this.callback = callback;
-    return this;
-  }
-
   enableInterception(): void {
     if (this.isInterceptorEnabled) return;
 
-    const callback = this.callback?.bind(this);
+    const callback = this.handlers.callback;
 
     console.error = function (...args) {
       callback?.('error', args);
@@ -110,6 +108,6 @@ export default class ConsoleInterceptor extends Interceptor {
     console.groupEnd = originalConsoleGroupEnd;
     console.group = originalConsoleGroup;
 
-    this.callback = null;
+    this.handlers.callback = null;
   }
 }

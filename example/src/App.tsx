@@ -1,7 +1,15 @@
 /* eslint-disable no-console */
 import axios from 'axios';
-import { Button, StyleSheet, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Xenon from 'react-native-xenon';
+
+function Button({ title, onPress }: { title: string; onPress: () => void }) {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.button}>
+      <Text style={styles.buttonText}>{title}</Text>
+    </TouchableOpacity>
+  );
+}
 
 export default function App() {
   return (
@@ -101,5 +109,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: 'white',
     rowGap: 8,
+  },
+  button: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 8,
+    backgroundColor: '#007AFF',
+  },
+  buttonText: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: 'white',
   },
 });

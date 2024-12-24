@@ -4,21 +4,11 @@ import { NETWORK_REQUEST_HEADER } from '../constants';
 import { FetchInterceptor, WebSocketInterceptor, XHRInterceptor } from '../interceptors';
 import {
   NetworkType,
-  type HttpHeaderReceivedCallback,
-  type HttpOpenCallback,
+  type HttpHandlers,
   type HttpRequest,
-  type HttpRequestHeaderCallback,
-  type HttpResponseCallback,
-  type HttpSendCallback,
   type ID,
-  type WebSocketCloseCallback,
-  type WebSocketConnectCallback,
-  type WebSocketOnCloseCallback,
-  type WebSocketOnErrorCallback,
-  type WebSocketOnMessageCallback,
-  type WebSocketOnOpenCallback,
+  type WebSocketHandlers,
   type WebSocketRequest,
-  type WebSocketSendCallback,
 } from '../types';
 import { keyValueToString } from '../utils';
 
@@ -45,7 +35,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
   };
 
   const enableHttpInterceptions = useCallback(() => {
-    const openCallback: HttpOpenCallback = (id, type, method, url) => {
+    const openCallback: HttpHandlers['open'] = (id, type, method, url) => {
       if (!id) return;
 
       setNetworkRequests((draft: NetworkRequests<HttpRequest>) => {
@@ -53,7 +43,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       });
     };
 
-    const requestHeaderCallback: HttpRequestHeaderCallback = (id, header, value) => {
+    const requestHeaderCallback: HttpHandlers['requestHeader'] = (id, header, value) => {
       if (!id) return;
 
       setNetworkRequests((draft: NetworkRequests<HttpRequest>) => {
@@ -81,7 +71,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       });
     };
 
-    const sendCallback: HttpSendCallback = (id, data) => {
+    const sendCallback: HttpHandlers['send'] = (id, data) => {
       if (!id) return;
 
       setNetworkRequests((draft: NetworkRequests<HttpRequest>) => {
@@ -91,7 +81,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       });
     };
 
-    const headerReceivedCallback: HttpHeaderReceivedCallback = (
+    const headerReceivedCallback: HttpHandlers['headerReceived'] = (
       id,
       responseContentType,
       responseSize,
@@ -108,7 +98,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       });
     };
 
-    const responseCallback: HttpResponseCallback = (
+    const responseCallback: HttpHandlers['response'] = (
       id,
       status,
       timeout,
@@ -132,24 +122,24 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
     };
 
     XHRInterceptor.instance
-      .setOpenCallback(openCallback)
-      .setRequestHeaderCallback(requestHeaderCallback)
-      .setSendCallback(sendCallback)
-      .setHeaderReceivedCallback(headerReceivedCallback)
-      .setResponseCallback(responseCallback)
+      .set('open', openCallback)
+      .set('requestHeader', requestHeaderCallback)
+      .set('send', sendCallback)
+      .set('headerReceived', headerReceivedCallback)
+      .set('response', responseCallback)
       .enableInterception();
 
     FetchInterceptor.instance
-      .setOpenCallback(openCallback)
-      .setRequestHeaderCallback(requestHeaderCallback)
-      .setSendCallback(sendCallback)
-      .setHeaderReceivedCallback(headerReceivedCallback)
-      .setResponseCallback(responseCallback)
+      .set('open', openCallback)
+      .set('requestHeader', requestHeaderCallback)
+      .set('send', sendCallback)
+      .set('headerReceived', headerReceivedCallback)
+      .set('response', responseCallback)
       .enableInterception();
   }, [setNetworkRequests]);
 
   const enableWebSocketInterception = useCallback(() => {
-    const connectCallback: WebSocketConnectCallback = (url, protocols, options, socketId) => {
+    const connectCallback: WebSocketHandlers['connect'] = (url, protocols, options, socketId) => {
       if (typeof socketId !== 'number') return;
 
       setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
@@ -162,7 +152,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       });
     };
 
-    const sendCallback: WebSocketSendCallback = (data, socketId) => {
+    const sendCallback: WebSocketHandlers['send'] = (data, socketId) => {
       if (typeof socketId !== 'number') return;
 
       setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
@@ -173,7 +163,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       });
     };
 
-    const closeCallback: WebSocketCloseCallback = (code, reason, socketId) => {
+    const closeCallback: WebSocketHandlers['close'] = (code, reason, socketId) => {
       if (typeof socketId !== 'number') return;
 
       setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
@@ -184,7 +174,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       });
     };
 
-    const onOpenCallback: WebSocketOnOpenCallback = (socketId, duration) => {
+    const onOpenCallback: WebSocketHandlers['onOpen'] = (socketId, duration) => {
       if (typeof socketId !== 'number') return;
 
       setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
@@ -194,7 +184,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       });
     };
 
-    const onMessageCallback: WebSocketOnMessageCallback = (socketId, message) => {
+    const onMessageCallback: WebSocketHandlers['onMessage'] = (socketId, message) => {
       if (typeof socketId !== 'number') return;
 
       setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
@@ -205,7 +195,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       });
     };
 
-    const onErrorCallback: WebSocketOnErrorCallback = (socketId, data) => {
+    const onErrorCallback: WebSocketHandlers['onError'] = (socketId, data) => {
       if (typeof socketId !== 'number') return;
 
       setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
@@ -215,7 +205,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       });
     };
 
-    const onCloseCallback: WebSocketOnCloseCallback = (socketId, data) => {
+    const onCloseCallback: WebSocketHandlers['onClose'] = (socketId, data) => {
       if (typeof socketId !== 'number') return;
 
       setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
@@ -226,13 +216,13 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
     };
 
     WebSocketInterceptor.instance
-      .setConnectCallback(connectCallback)
-      .setSendCallback(sendCallback)
-      .setCloseCallback(closeCallback)
-      .setOnOpenCallback(onOpenCallback)
-      .setOnMessageCallback(onMessageCallback)
-      .setOnErrorCallback(onErrorCallback)
-      .setOnCloseCallback(onCloseCallback)
+      .set('connect', connectCallback)
+      .set('send', sendCallback)
+      .set('close', closeCallback)
+      .set('onOpen', onOpenCallback)
+      .set('onMessage', onMessageCallback)
+      .set('onError', onErrorCallback)
+      .set('onClose', onCloseCallback)
       .enableInterception();
   }, [setNetworkRequests]);
 

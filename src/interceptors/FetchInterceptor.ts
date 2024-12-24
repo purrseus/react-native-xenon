@@ -90,13 +90,10 @@ export default class FetchInterceptor extends HttpInterceptor {
       const contentTypeString = clonedResponseHeaders.get('Content-Type');
       const contentLengthString = clonedResponseHeaders.get('Content-Length');
 
-      let responseContentType: string | undefined;
-      let responseSize: number | undefined;
+      const responseContentType = contentTypeString ? contentTypeString.split(';')[0] : undefined;
+      const responseSize = contentLengthString ? parseInt(contentLengthString, 10) : undefined;
+
       let responseHeaders: string = '';
-
-      if (contentTypeString) responseContentType = contentTypeString.split(';')[0];
-
-      if (contentLengthString) responseSize = parseInt(contentLengthString, 10);
 
       for (const [headerKey, headerValue] of clonedResponseHeaders.entries()) {
         responseHeaders += keyValueToString(headerKey, headerValue);
