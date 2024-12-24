@@ -52,12 +52,11 @@ export default class XHRInterceptor extends HttpInterceptor {
           const contentTypeString = this.getResponseHeader('Content-Type');
           const contentLengthString = this.getResponseHeader('Content-Length');
 
-          let responseContentType: string | undefined;
-          let responseSize: number | undefined;
+          const responseContentType = contentTypeString
+            ? contentTypeString.split(';')[0]
+            : undefined;
 
-          if (contentTypeString) responseContentType = contentTypeString.split(';')[0];
-
-          if (contentLengthString) responseSize = parseInt(contentLengthString, 10);
+          const responseSize = contentLengthString ? parseInt(contentLengthString, 10) : undefined;
 
           headerReceivedCallback?.(
             this._interceptionId,
