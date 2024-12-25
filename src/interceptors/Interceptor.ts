@@ -1,4 +1,4 @@
-import { Frozen } from '../utils';
+import { frozen } from '../utils';
 
 export default abstract class Interceptor<T extends Object> {
   #isInterceptorEnabled = false;
@@ -13,7 +13,7 @@ export default abstract class Interceptor<T extends Object> {
 
   protected abstract handlers: T;
 
-  @Frozen()
+  @frozen
   set<K extends keyof T>(key: K, handler: T[K]) {
     this.handlers[key] = handler;
     return this;

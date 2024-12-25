@@ -1,5 +1,5 @@
 import { NetworkType } from '../types';
-import { Frozen, getHttpInterceptorId } from '../utils';
+import { frozen, getHttpInterceptorId } from '../utils';
 import HttpInterceptor from './HttpInterceptor';
 
 const originalXHROpen = XMLHttpRequest.prototype.open;
@@ -13,7 +13,7 @@ export default class XHRInterceptor extends HttpInterceptor {
     super();
   }
 
-  @Frozen()
+  @frozen
   enableInterception() {
     if (this.isInterceptorEnabled) return;
 
@@ -89,7 +89,7 @@ export default class XHRInterceptor extends HttpInterceptor {
     this.isInterceptorEnabled = true;
   }
 
-  @Frozen()
+  @frozen
   disableInterception() {
     if (!this.isInterceptorEnabled) return;
 
