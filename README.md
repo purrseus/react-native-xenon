@@ -53,6 +53,14 @@ Xenon.hide();
 | `autoInspectConsoleEnabled` | `boolean` | Determines whether the console inspector is automatically enabled upon initialization. Defaults to `true`. |
 | `bubbleSize`                | `number`  | Defines the size of the interactive bubble used in the UI. Defaults to `40`.                               |
 
+## Methods
+
+| **Method**    | **Return type** | **Description**                                                                             |
+| ------------- | --------------- | ------------------------------------------------------------------------------------------- |
+| `isVisible()` | `boolean`       | Checks whether the debugger is currently visible.                                           |
+| `show()`      | `void`          | Makes the debugger visible. If it is already visible, this method has no additional effect. |
+| `hide()	`      | `void`          | Hides the debugger. If it is already hidden, this method has no additional effect.          |
+
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.

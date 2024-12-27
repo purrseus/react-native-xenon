@@ -15,6 +15,7 @@ import { DebuggerPanel, type DebuggerPosition, type DebuggerVisibility } from '.
 import { Bubble, ConsolePanel, DebuggerHeader, DetailsViewer, NetworkPanel } from './components';
 
 interface XenonComponentMethods {
+  isVisible(): boolean;
   show(): void;
   hide(): void;
 }
@@ -59,6 +60,9 @@ const XenonComponent = memo<XenonComponentProps>(
     useImperativeHandle(
       rootRef,
       () => ({
+        isVisible() {
+          return debuggerVisibility !== 'hidden';
+        },
         show() {
           setDebuggerVisibility('bubble');
         },
@@ -66,7 +70,7 @@ const XenonComponent = memo<XenonComponentProps>(
           setDebuggerVisibility('hidden');
         },
       }),
-      [],
+      [debuggerVisibility],
     );
 
     let content;
@@ -146,6 +150,9 @@ const styles = StyleSheet.create({
 XenonComponent.displayName = 'Xenon';
 
 const Xenon: ReactNativeXenon = {
+  isVisible() {
+    return rootRef.current?.isVisible() ?? false;
+  },
   show() {
     rootRef.current?.show();
   },

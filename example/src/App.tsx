@@ -84,16 +84,9 @@ export default function App() {
       />
 
       <Button
-        title="Show Debugger"
+        title="Toggle Debugger"
         onPress={() => {
-          Xenon.show();
-        }}
-      />
-
-      <Button
-        title="Hide Debugger"
-        onPress={() => {
-          Xenon.hide();
+          Xenon.isVisible() ? Xenon.hide() : Xenon.show();
         }}
       />
 
