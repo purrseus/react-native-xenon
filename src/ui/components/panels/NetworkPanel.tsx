@@ -1,11 +1,10 @@
-import { useCallback, useContext } from 'react';
+import { useCallback, useContext, useMemo } from 'react';
 import { FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
+import colors from '../../../colors';
 import { MainContext } from '../../../contexts';
-import { useScrollToBottom } from '../../../hooks';
 import { NetworkType, type HttpRequest, type ID, type WebSocketRequest } from '../../../types';
 import NetworkPanelHeader from '../headers/NetworkPanelHeader';
 import NetworkPanelItem from '../items/NetworkPanelItem';
-import colors from '../../../colors';
 
 const Separator = () => <View style={styles.divider} />;
 
@@ -16,7 +15,7 @@ export default function NetworkPanel() {
     detailsData,
   } = useContext(MainContext)!;
 
-  const listRef = useScrollToBottom(networkRequests.size);
+  const data = useMemo(() => Array.from(networkRequests).reverse(), [networkRequests]);
 
   const renderItem = useCallback<ListRenderItem<[NonNullable<ID>, HttpRequest | WebSocketRequest]>>(
     ({ item: [_, item] }) => {
@@ -41,16 +40,17 @@ export default function NetworkPanel() {
   );
 
   return (
-    <FlatList
-      ref={listRef}
-      data={Array.from(networkRequests)}
-      style={styles.container}
-      ListHeaderComponent={NetworkPanelHeader}
-      stickyHeaderIndices={[0]}
-      ItemSeparatorComponent={Separator}
-      keyExtractor={([key]) => key}
-      renderItem={renderItem}
-    />
+    <>
+      <NetworkPanelHeader />
+      <FlatList
+        inverted
+        data={data}
+        renderItem={renderItem}
+        keyExtractor={([key]) => key}
+        ItemSeparatorComponent={Separator}
+        style={styles.container}
+      />
+    </>
   );
 }
 

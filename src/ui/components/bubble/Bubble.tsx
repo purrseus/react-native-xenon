@@ -16,6 +16,8 @@ interface BubbleProps {
 }
 
 export default function Bubble({ bubbleSize, pan }: BubbleProps) {
+  const iconSize = bubbleSize * 0.65;
+
   const { setDebuggerVisibility, screenWidth, screenHeight, verticalSafeMargin } =
     useContext(MainContext)!;
 
@@ -74,13 +76,7 @@ export default function Bubble({ bubbleSize, pan }: BubbleProps) {
         },
       ]}
     >
-      <Image
-        source={icons.code}
-        style={{
-          width: bubbleSize * 0.75,
-          height: bubbleSize * 0.75,
-        }}
-      />
+      <Image source={icons.bug} style={{ width: iconSize, height: iconSize }} />
     </Animated.View>
   );
 }

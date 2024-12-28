@@ -1,6 +1,6 @@
 import { NETWORK_REQUEST_HEADER } from '../constants';
 import { NetworkType } from '../types';
-import { formatRequestMethod, getHttpInterceptorId, keyValueToString } from '../utils';
+import { formatRequestMethod, frozen, getHttpInterceptorId, keyValueToString } from '../utils';
 import HttpInterceptor from './HttpInterceptor';
 
 const originalFetch = global.fetch;
@@ -12,6 +12,7 @@ export default class FetchInterceptor extends HttpInterceptor {
     super();
   }
 
+  @frozen
   enableInterception() {
     if (this.isInterceptorEnabled) return;
 
@@ -90,13 +91,10 @@ export default class FetchInterceptor extends HttpInterceptor {
       const contentTypeString = clonedResponseHeaders.get('Content-Type');
       const contentLengthString = clonedResponseHeaders.get('Content-Length');
 
-      let responseContentType: string | undefined;
-      let responseSize: number | undefined;
+      const responseContentType = contentTypeString ? contentTypeString.split(';')[0] : undefined;
+      const responseSize = contentLengthString ? parseInt(contentLengthString, 10) : undefined;
+
       let responseHeaders: string = '';
-
-      if (contentTypeString) responseContentType = contentTypeString.split(';')[0];
-
-      if (contentLengthString) responseSize = parseInt(contentLengthString, 10);
 
       for (const [headerKey, headerValue] of clonedResponseHeaders.entries()) {
         responseHeaders += keyValueToString(headerKey, headerValue);
@@ -126,6 +124,7 @@ export default class FetchInterceptor extends HttpInterceptor {
     this.isInterceptorEnabled = true;
   }
 
+  @frozen
   disableInterception() {
     if (!this.isInterceptorEnabled) return;
 

@@ -15,6 +15,7 @@ import { DebuggerPanel, type DebuggerPosition, type DebuggerVisibility } from '.
 import { Bubble, ConsolePanel, DebuggerHeader, DetailsViewer, NetworkPanel } from './components';
 
 interface XenonComponentMethods {
+  isVisible(): boolean;
   show(): void;
   hide(): void;
 }
@@ -37,15 +38,10 @@ const XenonComponent = memo<XenonComponentProps>(
   ({ autoInspectNetworkEnabled = true, autoInspectConsoleEnabled = true, bubbleSize = 40 }) => {
     const { width: screenWidth, height: screenHeight } = useWindowDimensions();
     const verticalSafeMargin = screenHeight / 8;
-
     const pan = useRef(new Animated.ValueXY({ x: 0, y: verticalSafeMargin }));
-
     const detailsData: MainContextValue['detailsData'] = useRef(null);
-
     const [debuggerVisibility, setDebuggerVisibility] = useState<DebuggerVisibility>('hidden');
-
     const [debuggerPosition, setDebuggerPosition] = useState<DebuggerPosition>('bottom');
-
     const [panelSelected, setPanelSelected] = useState<DebuggerPanel | null>(DebuggerPanel.Network);
 
     const networkInterceptor = useNetworkInterceptor({
@@ -59,18 +55,20 @@ const XenonComponent = memo<XenonComponentProps>(
     useImperativeHandle(
       rootRef,
       () => ({
+        isVisible() {
+          return debuggerVisibility !== 'hidden';
+        },
         show() {
-          setDebuggerVisibility('bubble');
+          if (!this.isVisible()) setDebuggerVisibility('bubble');
         },
         hide() {
-          setDebuggerVisibility('hidden');
+          if (this.isVisible()) setDebuggerVisibility('hidden');
         },
       }),
-      [],
+      [debuggerVisibility],
     );
 
     let content;
-
     switch (debuggerVisibility) {
       case 'bubble':
         content = (
@@ -92,10 +90,8 @@ const XenonComponent = memo<XenonComponentProps>(
             ]}
           >
             <DebuggerHeader />
-
             {panelSelected === DebuggerPanel.Network && <NetworkPanel />}
             {panelSelected === DebuggerPanel.Console && <ConsolePanel />}
-
             {!panelSelected && !!detailsData.current && <DetailsViewer />}
           </SafeAreaView>
         );
@@ -146,6 +142,9 @@ const styles = StyleSheet.create({
 XenonComponent.displayName = 'Xenon';
 
 const Xenon: ReactNativeXenon = {
+  isVisible() {
+    return rootRef.current?.isVisible() ?? false;
+  },
   show() {
     rootRef.current?.show();
   },

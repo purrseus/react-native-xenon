@@ -14,15 +14,15 @@ export interface HttpRequest extends NetworkRequest {
   responseType?: string;
 }
 
-export type HttpOpenCallback =
+type HttpOpenCallback =
   | ((id: ID, type: HttpRequest['type'], method: string, url: string) => void)
   | null;
 
-export type HttpRequestHeaderCallback = ((id: ID, header: string, value: string) => void) | null;
+type HttpRequestHeaderCallback = ((id: ID, header: string, value: string) => void) | null;
 
-export type HttpSendCallback = ((id: ID, data?: any) => void) | null;
+type HttpSendCallback = ((id: ID, data?: any) => void) | null;
 
-export type HttpHeaderReceivedCallback =
+type HttpHeaderReceivedCallback =
   | ((
       id: ID,
       responseContentType: string | undefined,
@@ -31,7 +31,7 @@ export type HttpHeaderReceivedCallback =
     ) => void)
   | null;
 
-export type HttpResponseCallback =
+type HttpResponseCallback =
   | ((
       id: ID,
       status: number | undefined,
@@ -42,3 +42,11 @@ export type HttpResponseCallback =
       responseType: string | undefined,
     ) => void)
   | null;
+
+export interface HttpHandlers {
+  open: HttpOpenCallback;
+  requestHeader: HttpRequestHeaderCallback;
+  send: HttpSendCallback;
+  headerReceived: HttpHeaderReceivedCallback;
+  response: HttpResponseCallback;
+}
