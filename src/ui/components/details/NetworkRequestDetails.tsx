@@ -1,6 +1,7 @@
 import { useRef, useState, type JSX, type ReactNode } from 'react';
-import { ScrollView, StyleSheet } from 'react-native';
+import { ScrollView, Share, StyleSheet, TouchableOpacity } from 'react-native';
 import { URL } from 'react-native-url-polyfill';
+import colors from '../../../colors';
 import {
   NetworkType,
   type HttpRequest,
@@ -16,7 +17,6 @@ import {
 } from '../../../utils';
 import NetworkDetailsHeader from '../headers/NetworkRequestDetailsHeader';
 import NetworkRequestDetailsItem from '../items/NetworkRequestDetailsItem';
-import colors from '../../../colors';
 
 interface NetworkRequestDetailsProps {
   item: HttpRequest | WebSocketRequest;
@@ -78,10 +78,17 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
         )}
 
         {!isWebSocket && (
-          <NetworkRequestDetailsItem
-            content={convertToCurl(item.method, item.url, item.requestHeaders, item.body)}
-            selectable
-          />
+          <TouchableOpacity
+            activeOpacity={0.8}
+            onPress={() =>
+              Share.share({
+                message: convertToCurl(item.method, item.url, item.requestHeaders, item.body),
+              })
+            }
+            style={styles.buttonContent}
+          >
+            <NetworkRequestDetailsItem content="Share as cURL" />
+          </TouchableOpacity>
         )}
       </>
     );
@@ -122,7 +129,9 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
         responseShown={responseShown}
         messagesShown={messagesShown}
       />
-      <ScrollView style={styles.container}>{content.current[selectedTab]}</ScrollView>
+      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        {content.current[selectedTab]}
+      </ScrollView>
     </>
   );
 }
@@ -130,7 +139,9 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 8,
+  },
+  contentContainer: {
+    padding: 8,
   },
   divider: {
     height: 1,
@@ -144,5 +155,11 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
     color: colors.black,
+  },
+  buttonContent: {
+    padding: 8,
+    borderRadius: 4,
+    borderWidth: 1,
+    alignItems: 'center',
   },
 });

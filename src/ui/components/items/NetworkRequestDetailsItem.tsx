@@ -1,20 +1,20 @@
-import { StyleSheet, Text } from 'react-native';
+import { StyleSheet, Text, type TextProps } from 'react-native';
 import colors from '../../../colors';
 
-interface NetworkRequestDetailsItemProps {
+interface NetworkRequestDetailsItemProps extends TextProps {
   label?: string;
   content?: string;
-  selectable?: boolean;
 }
 
 export default function NetworkRequestDetailsItem({
   label,
   content,
-  selectable,
+  style,
+  ...props
 }: NetworkRequestDetailsItemProps) {
   if (label) {
     return (
-      <Text style={styles.text} selectable={selectable}>
+      <Text {...props} style={[styles.text, style]}>
         <Text style={styles.label}>
           {label}
           {': '}
@@ -25,7 +25,7 @@ export default function NetworkRequestDetailsItem({
   }
 
   return (
-    <Text style={styles.text} selectable={selectable}>
+    <Text {...props} style={[styles.text, style]}>
       {content}
     </Text>
   );
