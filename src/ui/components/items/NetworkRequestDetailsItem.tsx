@@ -1,5 +1,5 @@
 import { StyleSheet, Text, type TextProps } from 'react-native';
-import colors from '../../../colors';
+import colors from '../../../theme/colors';
 
 interface NetworkRequestDetailsItemProps extends TextProps {
   label?: string;

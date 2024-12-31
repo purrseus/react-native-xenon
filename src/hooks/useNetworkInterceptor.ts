@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useImmer } from 'use-immer';
-import { NETWORK_REQUEST_HEADER } from '../constants';
+import { NETWORK_REQUEST_HEADER } from '../core/constants';
 import { FetchInterceptor, WebSocketInterceptor, XHRInterceptor } from '../interceptors';
 import {
   NetworkType,
@@ -10,7 +10,7 @@ import {
   type WebSocketHandlers,
   type WebSocketRequest,
 } from '../types';
-import { keyValueToString } from '../utils';
+import { keyValueToString } from '../core/utils';
 
 interface NetworkInterceptorParams {
   autoEnabled: boolean;

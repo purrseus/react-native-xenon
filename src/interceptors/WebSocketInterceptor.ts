@@ -2,7 +2,7 @@ import { NativeEventEmitter, type EmitterSubscription } from 'react-native';
 import NativeWebSocketModule from 'react-native/Libraries/WebSocket/NativeWebSocketModule';
 import type { WebSocketHandlers } from '../types';
 import { NetworkInterceptor } from './NetworkInterceptor';
-import { frozen } from '../utils';
+import { frozen } from '../core/utils';
 
 const originalWebSocketConnect = NativeWebSocketModule.connect;
 const originalWebSocketSend = NativeWebSocketModule.send;

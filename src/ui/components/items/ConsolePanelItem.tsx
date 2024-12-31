@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import type { LogMessage } from '../../../types';
-import { formatLogMessage } from '../../../utils';
-import colors from '../../../colors';
+import { formatLogMessage } from '../../../core/utils';
+import colors from '../../../theme/colors';
 
 interface ConsolePanelItemProps extends LogMessage {
   onPress: () => void;

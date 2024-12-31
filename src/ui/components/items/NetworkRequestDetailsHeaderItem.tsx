@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import colors from '../../../colors';
+import colors from '../../../theme/colors';
 
 interface NetworkRequestDetailsHeaderItemProps {
   visible: boolean;

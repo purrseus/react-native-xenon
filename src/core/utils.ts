@@ -1,4 +1,6 @@
-import type { HttpRequest } from './types';
+import type { HttpRequest } from '../types';
+
+export const getVerticalSafeMargin = (screenHeight: number) => screenHeight / 8;
 
 export const limitChar = (value: any, limit = 5000) => {
   const stringValue = typeof value === 'string' ? value : JSON.stringify(value ?? '');

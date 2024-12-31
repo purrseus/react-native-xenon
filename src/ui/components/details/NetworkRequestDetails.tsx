@@ -1,7 +1,7 @@
 import { useRef, useState, type JSX, type ReactNode } from 'react';
 import { ScrollView, Share, StyleSheet, TouchableOpacity } from 'react-native';
 import { URL } from 'react-native-url-polyfill';
-import colors from '../../../colors';
+import colors from '../../../theme/colors';
 import {
   NetworkType,
   type HttpRequest,
@@ -14,7 +14,7 @@ import {
   formatRequestMethod,
   formatRequestStatusCode,
   limitChar,
-} from '../../../utils';
+} from '../../../core/utils';
 import NetworkDetailsHeader from '../headers/NetworkRequestDetailsHeader';
 import NetworkRequestDetailsItem from '../items/NetworkRequestDetailsItem';
 

@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import type { ConsoleHandlers } from '../types';
-import { frozen } from '../utils';
+import { frozen } from '../core/utils';
 import Interceptor from './Interceptor';
 
 const originalConsoleError = console.error;
