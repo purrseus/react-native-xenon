@@ -2,12 +2,12 @@ import { enableMapSet } from 'immer';
 import { createRef, memo, useImperativeHandle, useRef, type NamedExoticComponent } from 'react';
 import { Animated, SafeAreaView, StyleSheet, useWindowDimensions } from 'react-native';
 import { useImmer } from 'use-immer';
-import colors from '../colors';
+import colors from '../theme/colors';
 import MainContext from '../contexts/MainContext';
-import { detailsData } from '../data';
+import { detailsData } from '../core/data';
 import { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
 import { DebuggerPanel, type DebuggerState } from '../types';
-import { getVerticalSafeMargin } from '../utils';
+import { getVerticalSafeMargin } from '../core/utils';
 import { Bubble, ConsolePanel, DebuggerHeader, DetailsViewer, NetworkPanel } from './components';
 
 interface XenonComponentMethods {

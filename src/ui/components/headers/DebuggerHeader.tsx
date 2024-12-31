@@ -3,8 +3,8 @@ import { ScrollView, StyleSheet, View } from 'react-native';
 import { MainContext } from '../../../contexts';
 import { DebuggerPanel } from '../../../types';
 import DebuggerHeaderItem from '../items/DebuggerHeaderItem';
-import icons from '../../../icons';
-import colors from '../../../colors';
+import icons from '../../../theme/icons';
+import colors from '../../../theme/colors';
 
 export default function DebuggerHeader() {
   const { debuggerState, setDebuggerState, networkInterceptor, logInterceptor } =

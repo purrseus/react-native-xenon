@@ -6,8 +6,8 @@ import {
   formatRequestDuration,
   formatRequestMethod,
   formatRequestStatusCode,
-} from '../../../utils';
-import colors from '../../../colors';
+} from '../../../core/utils';
+import colors from '../../../theme/colors';
 
 interface NetworkPanelItemProps {
   method?: HttpRequest['method'];

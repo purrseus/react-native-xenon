@@ -1,4 +1,4 @@
-import type { DebuggerPanel, LogMessage, HttpRequest, WebSocketRequest } from './types';
+import type { DebuggerPanel, LogMessage, HttpRequest, WebSocketRequest } from '../types';
 
 const detailsData: {
   value:

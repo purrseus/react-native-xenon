@@ -1,7 +1,7 @@
 import { ScrollView, StyleSheet, Text } from 'react-native';
 import type { LogMessage } from '../../../types';
-import { formatLogMessage } from '../../../utils';
-import colors from '../../../colors';
+import { formatLogMessage } from '../../../core/utils';
+import colors from '../../../theme/colors';
 
 interface LogMessageDetailsProps {
   item: LogMessage;

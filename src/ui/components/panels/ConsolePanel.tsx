@@ -1,10 +1,10 @@
 import { useCallback, useContext } from 'react';
 import { FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
-import colors from '../../../colors';
+import colors from '../../../theme/colors';
 import { MainContext } from '../../../contexts';
 import type { LogMessage } from '../../../types';
 import ConsolePanelItem from '../items/ConsolePanelItem';
-import { detailsData } from '../../../data';
+import { detailsData } from '../../../core/data';
 
 const Separator = () => <View style={styles.divider} />;
 

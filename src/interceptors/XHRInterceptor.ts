@@ -1,5 +1,5 @@
 import { NetworkType } from '../types';
-import { frozen, getHttpInterceptorId } from '../utils';
+import { frozen, getHttpInterceptorId } from '../core/utils';
 import HttpInterceptor from './HttpInterceptor';
 
 const originalXHROpen = XMLHttpRequest.prototype.open;

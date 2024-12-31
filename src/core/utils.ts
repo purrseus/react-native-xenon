@@ -1,4 +1,4 @@
-import type { HttpRequest } from './types';
+import type { HttpRequest } from '../types';
 
 export const getVerticalSafeMargin = (screenHeight: number) => screenHeight / 8;
 

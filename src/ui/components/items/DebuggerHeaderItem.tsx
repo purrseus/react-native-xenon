@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, TouchableOpacity, type ImageRequireSource } from 'react-native';
-import colors from '../../../colors';
+import colors from '../../../theme/colors';
 
 interface DebuggerHeaderItemProps {
   content?: ImageRequireSource | string;

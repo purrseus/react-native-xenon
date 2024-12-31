@@ -1,4 +1,4 @@
-import { detailsData } from '../../../data';
+import { detailsData } from '../../../core/data';
 import { DebuggerPanel } from '../../../types';
 import LogMessageDetails from './LogMessageDetails';
 import NetworkRequestDetails from './NetworkRequestDetails';

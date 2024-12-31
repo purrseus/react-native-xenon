@@ -1,4 +1,4 @@
-import { frozen } from '../utils';
+import { frozen } from '../core/utils';
 
 export default abstract class Interceptor<T extends Object> {
   #isInterceptorEnabled = false;

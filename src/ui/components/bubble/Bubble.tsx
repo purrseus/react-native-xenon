@@ -8,9 +8,9 @@ import {
   type PanResponderGestureState,
 } from 'react-native';
 import { MainContext } from '../../../contexts';
-import icons from '../../../icons';
-import colors from '../../../colors';
-import { getVerticalSafeMargin } from '../../../utils';
+import icons from '../../../theme/icons';
+import colors from '../../../theme/colors';
+import { getVerticalSafeMargin } from '../../../core/utils';
 
 interface BubbleProps {
   bubbleSize: number;

@@ -1,11 +1,11 @@
 import { useCallback, useContext, useMemo } from 'react';
 import { FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
-import colors from '../../../colors';
+import colors from '../../../theme/colors';
 import { MainContext } from '../../../contexts';
 import { NetworkType, type HttpRequest, type ID, type WebSocketRequest } from '../../../types';
 import NetworkPanelHeader from '../headers/NetworkPanelHeader';
 import NetworkPanelItem from '../items/NetworkPanelItem';
-import { detailsData } from '../../../data';
+import { detailsData } from '../../../core/data';
 
 const Separator = () => <View style={styles.divider} />;
 
