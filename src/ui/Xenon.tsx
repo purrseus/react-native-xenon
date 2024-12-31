@@ -1,17 +1,13 @@
 import { enableMapSet } from 'immer';
-import {
-  createRef,
-  memo,
-  useImperativeHandle,
-  useRef,
-  useState,
-  type NamedExoticComponent,
-} from 'react';
-import { Animated, SafeAreaView, StyleSheet, useWindowDimensions, View } from 'react-native';
+import { createRef, memo, useImperativeHandle, useRef, type NamedExoticComponent } from 'react';
+import { Animated, SafeAreaView, StyleSheet, useWindowDimensions } from 'react-native';
+import { useImmer } from 'use-immer';
 import colors from '../colors';
-import MainContext, { type MainContextValue } from '../contexts/MainContext';
+import MainContext from '../contexts/MainContext';
+import { detailsData } from '../data';
 import { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
-import { DebuggerPanel, type DebuggerPosition, type DebuggerVisibility } from '../types';
+import { DebuggerPanel, type DebuggerState } from '../types';
+import { getVerticalSafeMargin } from '../utils';
 import { Bubble, ConsolePanel, DebuggerHeader, DetailsViewer, NetworkPanel } from './components';
 
 interface XenonComponentMethods {
@@ -36,13 +32,14 @@ const rootRef = createRef<XenonComponentMethods>();
 
 const XenonComponent = memo<XenonComponentProps>(
   ({ autoInspectNetworkEnabled = true, autoInspectConsoleEnabled = true, bubbleSize = 40 }) => {
-    const { width: screenWidth, height: screenHeight } = useWindowDimensions();
-    const verticalSafeMargin = screenHeight / 8;
-    const pan = useRef(new Animated.ValueXY({ x: 0, y: verticalSafeMargin }));
-    const detailsData: MainContextValue['detailsData'] = useRef(null);
-    const [debuggerVisibility, setDebuggerVisibility] = useState<DebuggerVisibility>('hidden');
-    const [debuggerPosition, setDebuggerPosition] = useState<DebuggerPosition>('bottom');
-    const [panelSelected, setPanelSelected] = useState<DebuggerPanel | null>(DebuggerPanel.Network);
+    const { width, height } = useWindowDimensions();
+    const pan = useRef(new Animated.ValueXY({ x: 0, y: getVerticalSafeMargin(height) }));
+
+    const [debuggerState, setDebuggerState] = useImmer<DebuggerState>({
+      visibility: 'hidden',
+      position: 'bottom',
+      selectedPanel: DebuggerPanel.Network,
+    });
 
     const networkInterceptor = useNetworkInterceptor({
       autoEnabled: autoInspectNetworkEnabled,
@@ -52,72 +49,62 @@ const XenonComponent = memo<XenonComponentProps>(
       autoEnabled: autoInspectConsoleEnabled,
     });
 
-    useImperativeHandle(
-      rootRef,
-      () => ({
+    useImperativeHandle(rootRef, () => {
+      const changeVisibility = (condition: boolean, value: DebuggerState['visibility']) => {
+        if (!condition) return;
+
+        setDebuggerState(draft => {
+          draft.visibility = value;
+        });
+      };
+
+      return {
         isVisible() {
-          return debuggerVisibility !== 'hidden';
+          return debuggerState.visibility !== 'hidden';
         },
         show() {
-          if (!this.isVisible()) setDebuggerVisibility('bubble');
+          changeVisibility(!this.isVisible(), 'bubble');
         },
         hide() {
-          if (this.isVisible()) setDebuggerVisibility('hidden');
+          changeVisibility(this.isVisible(), 'hidden');
         },
-      }),
-      [debuggerVisibility],
-    );
+      };
+    }, [debuggerState.visibility, setDebuggerState]);
 
-    let content;
-    switch (debuggerVisibility) {
-      case 'bubble':
-        content = (
-          <View style={styles.bubbleBackdrop}>
-            <Bubble bubbleSize={bubbleSize} pan={pan} />
-          </View>
-        );
-        break;
-      case 'panel':
-        content = (
-          <SafeAreaView
-            style={[
-              styles.container,
-              // eslint-disable-next-line react-native/no-inline-styles
-              {
-                [debuggerPosition]: 0,
-                height: Math.min(screenWidth, screenHeight) * 0.75,
-              },
-            ]}
-          >
-            <DebuggerHeader />
-            {panelSelected === DebuggerPanel.Network && <NetworkPanel />}
-            {panelSelected === DebuggerPanel.Console && <ConsolePanel />}
-            {!panelSelected && !!detailsData.current && <DetailsViewer />}
-          </SafeAreaView>
-        );
-        break;
-      default:
-        content = null;
-    }
+    const renderContent = () => {
+      switch (debuggerState.visibility) {
+        case 'bubble':
+          return (
+            <Bubble bubbleSize={bubbleSize} pan={pan} screenWidth={width} screenHeight={height} />
+          );
+        case 'panel':
+          return (
+            <SafeAreaView
+              style={[
+                styles.container,
+                // eslint-disable-next-line react-native/no-inline-styles
+                {
+                  [debuggerState.position]: 0,
+                  height: Math.min(width, height) * 0.75,
+                },
+              ]}
+            >
+              <DebuggerHeader />
+              {debuggerState.selectedPanel === DebuggerPanel.Network && <NetworkPanel />}
+              {debuggerState.selectedPanel === DebuggerPanel.Console && <ConsolePanel />}
+              {!debuggerState.selectedPanel && !!detailsData.value && <DetailsViewer />}
+            </SafeAreaView>
+          );
+        default:
+          return null;
+      }
+    };
 
     return (
       <MainContext.Provider
-        value={{
-          debuggerVisibility,
-          setDebuggerVisibility,
-          debuggerPosition,
-          setDebuggerPosition,
-          panelSelected,
-          setPanelSelected,
-          networkInterceptor,
-          logInterceptor,
-          detailsData,
-          screenWidth,
-          screenHeight,
-          verticalSafeMargin,
-        }}
+        value={{ debuggerState, setDebuggerState, networkInterceptor, logInterceptor }}
       >
-        {content}
+        {renderContent()}
       </MainContext.Provider>
     );
   },
@@ -131,11 +118,6 @@ const styles = StyleSheet.create({
     bottom: undefined,
     zIndex: 9999,
     backgroundColor: colors.lightGray,
-  },
-  bubbleBackdrop: {
-    flex: 1,
-    ...StyleSheet.absoluteFillObject,
-    pointerEvents: 'box-none',
   },
 });
 

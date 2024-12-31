@@ -37,7 +37,6 @@ export default class FetchInterceptor extends HttpInterceptor {
       const method = formatRequestMethod(init?.method);
 
       let url: string;
-
       switch (true) {
         case input instanceof Request:
           url = input.url;

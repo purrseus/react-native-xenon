@@ -7,17 +7,13 @@ import icons from '../../../icons';
 import colors from '../../../colors';
 
 export default function DebuggerHeader() {
-  const {
-    setDebuggerVisibility,
-    setDebuggerPosition,
-    panelSelected,
-    setPanelSelected,
-    networkInterceptor,
-    logInterceptor,
-  } = useContext(MainContext)!;
+  const { debuggerState, setDebuggerState, networkInterceptor, logInterceptor } =
+    useContext(MainContext)!;
 
   const hideDebugger = () => {
-    setDebuggerVisibility('bubble');
+    setDebuggerState(draft => {
+      draft.visibility = 'hidden';
+    });
   };
 
   const toggleNetworkInterception = () => {
@@ -33,15 +29,21 @@ export default function DebuggerHeader() {
   };
 
   const toggleDebuggerPosition = () => {
-    setDebuggerPosition(prevState => (prevState === 'bottom' ? 'top' : 'bottom'));
+    setDebuggerState(draft => {
+      draft.position = draft.position === 'bottom' ? 'top' : 'bottom';
+    });
   };
 
   const switchToNetworkPanel = () => {
-    setPanelSelected(DebuggerPanel.Network);
+    setDebuggerState(draft => {
+      draft.selectedPanel = DebuggerPanel.Network;
+    });
   };
 
   const switchToConsolePanel = () => {
-    setPanelSelected(DebuggerPanel.Console);
+    setDebuggerState(draft => {
+      draft.selectedPanel = DebuggerPanel.Console;
+    });
   };
 
   return (
@@ -57,7 +59,7 @@ export default function DebuggerHeader() {
 
       <DebuggerHeaderItem
         isLabel
-        isActive={panelSelected === DebuggerPanel.Network}
+        isActive={debuggerState.selectedPanel === DebuggerPanel.Network}
         content="Network Panel"
         onPress={switchToNetworkPanel}
       />
@@ -77,7 +79,7 @@ export default function DebuggerHeader() {
 
       <DebuggerHeaderItem
         isLabel
-        isActive={panelSelected === DebuggerPanel.Console}
+        isActive={debuggerState.selectedPanel === DebuggerPanel.Console}
         content="Log Panel"
         onPress={switchToConsolePanel}
       />
