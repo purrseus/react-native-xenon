@@ -1,6 +1,7 @@
 import { enableMapSet } from 'immer';
 import { createRef, memo, useImperativeHandle, useRef, type NamedExoticComponent } from 'react';
-import { Animated, SafeAreaView, StyleSheet, useWindowDimensions } from 'react-native';
+import { Animated, StyleSheet, useWindowDimensions } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useImmer } from 'use-immer';
 import MainContext from '../contexts/MainContext';
 import { detailsData } from '../core/data';
