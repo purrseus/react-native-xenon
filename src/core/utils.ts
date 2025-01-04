@@ -63,3 +63,18 @@ export function frozen(_target: Object) {
   descriptor.configurable = false;
   descriptor.writable = false;
 }
+
+export function singleton<T extends { new (...args: any[]): {} }>(constructor: T) {
+  class Singleton extends constructor {
+    static #instance: Singleton;
+
+    constructor(...args: any[]) {
+      if (Singleton.#instance) return Singleton.#instance;
+
+      super(...args);
+      Singleton.#instance = this;
+    }
+  }
+
+  return Singleton;
+}

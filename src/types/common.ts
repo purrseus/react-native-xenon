@@ -9,6 +9,8 @@ export enum DebuggerPanel {
   Console = 'console',
 }
 
+export type AnyFunction = (...args: any[]) => any;
+
 export type ID = string | undefined;
 
 export interface NetworkRequest {

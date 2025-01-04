@@ -20,15 +20,19 @@ type NetworkRequests<T> = Map<NonNullable<ID>, T>;
 
 const initRequests = new Map<NonNullable<ID>, HttpRequest & WebSocketRequest>();
 
+const xhrInterceptor = new XHRInterceptor();
+const fetchInterceptor = new FetchInterceptor();
+const webSocketInterceptor = new WebSocketInterceptor();
+
 export default function useNetworkInterceptor({ autoEnabled }: NetworkInterceptorParams) {
   const [isInterceptorEnabled, setIsInterceptorEnabled] = useState(autoEnabled);
 
   const [networkRequests, setNetworkRequests] = useImmer(initRequests);
 
   const isEnabled = () =>
-    XHRInterceptor.instance.isInterceptorEnabled &&
-    FetchInterceptor.instance.isInterceptorEnabled &&
-    WebSocketInterceptor.instance.isInterceptorEnabled;
+    xhrInterceptor.isInterceptorEnabled &&
+    fetchInterceptor.isInterceptorEnabled &&
+    webSocketInterceptor.isInterceptorEnabled;
 
   const clearAllNetworkRequests = () => {
     setNetworkRequests(initRequests);
@@ -121,7 +125,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       });
     };
 
-    XHRInterceptor.instance
+    xhrInterceptor
       .set('open', openCallback)
       .set('requestHeader', requestHeaderCallback)
       .set('send', sendCallback)
@@ -129,7 +133,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       .set('response', responseCallback)
       .enableInterception();
 
-    FetchInterceptor.instance
+    fetchInterceptor
       .set('open', openCallback)
       .set('requestHeader', requestHeaderCallback)
       .set('send', sendCallback)
@@ -215,7 +219,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       });
     };
 
-    WebSocketInterceptor.instance
+    webSocketInterceptor
       .set('connect', connectCallback)
       .set('send', sendCallback)
       .set('close', closeCallback)
@@ -231,22 +235,25 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
 
     enableHttpInterceptions();
     enableWebSocketInterception();
+
     setIsInterceptorEnabled(true);
   }, [enableHttpInterceptions, enableWebSocketInterception]);
 
   const disableInterception = useCallback(() => {
     if (!isEnabled()) return;
 
-    XHRInterceptor.instance.disableInterception();
-    FetchInterceptor.instance.disableInterception();
-    WebSocketInterceptor.instance.disableInterception();
+    xhrInterceptor.disableInterception();
+    fetchInterceptor.disableInterception();
+    webSocketInterceptor.disableInterception();
+
     setIsInterceptorEnabled(false);
   }, []);
 
   useEffect(() => {
-    if (autoEnabled) enableInterception();
-
-    if (autoEnabled) return disableInterception;
+    if (autoEnabled) {
+      enableInterception();
+      return disableInterception;
+    }
   }, [autoEnabled, disableInterception, enableInterception]);
 
   return {

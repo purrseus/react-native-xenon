@@ -13,37 +13,19 @@ export interface WebSocketRequest extends NetworkRequest {
   serverClose?: { code?: number; reason?: string };
 }
 
-type WebSocketConnectCallback =
-  | ((
-      url: string,
-      protocols?: WebSocketRequest['protocols'],
-      options?: WebSocketRequest['options'],
-      socketId?: number,
-    ) => void)
-  | null;
-
-type WebSocketSendCallback = ((data: string, socketId: number) => void) | null;
-
-type WebSocketCloseCallback = ((code: number, reason: string, socketId: number) => void) | null;
-
-type WebSocketOnOpenCallback = ((socketId: number, duration: number) => void) | null;
-
-type WebSocketOnMessageCallback = ((socketId: number, message: any) => void) | null;
-
-type WebSocketOnErrorCallback =
-  | ((socketId: number, error: WebSocketRequest['serverError']) => void)
-  | null;
-
-type WebSocketOnCloseCallback =
-  | ((socketId: number, data: WebSocketRequest['serverClose']) => void)
-  | null;
-
 export interface WebSocketHandlers {
-  connect: WebSocketConnectCallback;
-  send: WebSocketSendCallback;
-  close: WebSocketCloseCallback;
-  onOpen: WebSocketOnOpenCallback;
-  onMessage: WebSocketOnMessageCallback;
-  onError: WebSocketOnErrorCallback;
-  onClose: WebSocketOnCloseCallback;
+  connect:
+    | ((
+        url: string,
+        protocols?: WebSocketRequest['protocols'],
+        options?: WebSocketRequest['options'],
+        socketId?: number,
+      ) => void)
+    | null;
+  send: ((data: string, socketId: number) => void) | null;
+  close: ((code: number, reason: string, socketId: number) => void) | null;
+  onOpen: ((socketId: number, duration: number) => void) | null;
+  onMessage: ((socketId: number, message: any) => void) | null;
+  onError: ((socketId: number, error: WebSocketRequest['serverError']) => void) | null;
+  onClose: ((socketId: number, data: WebSocketRequest['serverClose']) => void) | null;
 }

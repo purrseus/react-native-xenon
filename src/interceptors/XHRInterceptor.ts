@@ -1,18 +1,13 @@
+import { frozen, getHttpInterceptorId, singleton } from '../core/utils';
 import { NetworkType } from '../types';
-import { frozen, getHttpInterceptorId } from '../core/utils';
 import HttpInterceptor from './HttpInterceptor';
 
 const originalXHROpen = XMLHttpRequest.prototype.open;
 const originalXHRSend = XMLHttpRequest.prototype.send;
 const originalXHRSetRequestHeader = XMLHttpRequest.prototype.setRequestHeader;
 
+@singleton
 export default class XHRInterceptor extends HttpInterceptor {
-  static readonly instance = new XHRInterceptor();
-
-  private constructor() {
-    super();
-  }
-
   @frozen
   enableInterception() {
     if (this.isInterceptorEnabled) return;
@@ -44,7 +39,7 @@ export default class XHRInterceptor extends HttpInterceptor {
     XMLHttpRequest.prototype.send = function (data) {
       sendCallback?.(this._interceptionId, data);
 
-      const timeStart = Date.now();
+      const startTime = Date.now();
 
       this.addEventListener?.('readystatechange', () => {
         if (!isInterceptorEnabled()) return;
@@ -68,8 +63,8 @@ export default class XHRInterceptor extends HttpInterceptor {
         }
 
         if (this.readyState === this.DONE) {
-          const timeEnd = Date.now();
-          const duration = timeEnd - timeStart;
+          const endTime = Date.now();
+          const duration = endTime - startTime;
 
           responseCallback?.(
             this._interceptionId,
