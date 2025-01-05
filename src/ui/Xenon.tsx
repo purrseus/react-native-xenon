@@ -1,7 +1,7 @@
 import { enableMapSet } from 'immer';
 import { createRef, memo, useImperativeHandle, useRef, type NamedExoticComponent } from 'react';
 import { Animated, StyleSheet, useWindowDimensions } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useImmer } from 'use-immer';
 import MainContext from '../contexts/MainContext';
 import { detailsData } from '../core/data';
@@ -21,6 +21,7 @@ interface XenonComponentProps {
   autoInspectNetworkEnabled?: boolean;
   autoInspectConsoleEnabled?: boolean;
   bubbleSize?: number;
+  idleBubbleOpacity?: number;
 }
 
 interface ReactNativeXenon extends XenonComponentMethods {
@@ -32,7 +33,12 @@ enableMapSet();
 const rootRef = createRef<XenonComponentMethods>();
 
 const XenonComponent = memo<XenonComponentProps>(
-  ({ autoInspectNetworkEnabled = true, autoInspectConsoleEnabled = true, bubbleSize = 40 }) => {
+  ({
+    autoInspectNetworkEnabled = true,
+    autoInspectConsoleEnabled = true,
+    bubbleSize = 40,
+    idleBubbleOpacity = 0.5,
+  }) => {
     const { width, height } = useWindowDimensions();
     const pan = useRef(new Animated.ValueXY({ x: 0, y: getVerticalSafeMargin(height) }));
 
@@ -76,11 +82,17 @@ const XenonComponent = memo<XenonComponentProps>(
       switch (debuggerState.visibility) {
         case 'bubble':
           return (
-            <Bubble bubbleSize={bubbleSize} pan={pan} screenWidth={width} screenHeight={height} />
+            <Bubble
+              bubbleSize={bubbleSize}
+              idleBubbleOpacity={idleBubbleOpacity}
+              pan={pan}
+              screenWidth={width}
+              screenHeight={height}
+            />
           );
         case 'panel':
           return (
-            <SafeAreaView
+            <SafeAreaProvider
               style={[
                 styles.container,
                 // eslint-disable-next-line react-native/no-inline-styles
@@ -90,11 +102,13 @@ const XenonComponent = memo<XenonComponentProps>(
                 },
               ]}
             >
-              <DebuggerHeader />
-              {debuggerState.selectedPanel === DebuggerPanel.Network && <NetworkPanel />}
-              {debuggerState.selectedPanel === DebuggerPanel.Console && <ConsolePanel />}
-              {!debuggerState.selectedPanel && !!detailsData.value && <DetailsViewer />}
-            </SafeAreaView>
+              <SafeAreaView style={styles.safeArea}>
+                <DebuggerHeader />
+                {debuggerState.selectedPanel === DebuggerPanel.Network && <NetworkPanel />}
+                {debuggerState.selectedPanel === DebuggerPanel.Console && <ConsolePanel />}
+                {!debuggerState.selectedPanel && !!detailsData.value && <DetailsViewer />}
+              </SafeAreaView>
+            </SafeAreaProvider>
           );
         default:
           return null;
@@ -119,6 +133,9 @@ const styles = StyleSheet.create({
     bottom: undefined,
     zIndex: 9999,
     backgroundColor: colors.lightGray,
+  },
+  safeArea: {
+    flex: 1,
   },
 });
 

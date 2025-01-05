@@ -12,7 +12,7 @@ export default function DebuggerHeader() {
 
   const hideDebugger = () => {
     setDebuggerState(draft => {
-      draft.visibility = 'hidden';
+      draft.visibility = 'bubble';
     });
   };
 

@@ -1,4 +1,4 @@
-import { useContext, useMemo, type MutableRefObject } from 'react';
+import { useContext, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import {
   Animated,
   Image,
@@ -10,67 +10,90 @@ import {
 import { MainContext } from '../../../contexts';
 import icons from '../../../theme/icons';
 import colors from '../../../theme/colors';
-import { getVerticalSafeMargin } from '../../../core/utils';
+import { clamp, getVerticalSafeMargin } from '../../../core/utils';
 
 interface BubbleProps {
   bubbleSize: number;
+  idleBubbleOpacity: number;
   pan: MutableRefObject<Animated.ValueXY>;
   screenWidth: number;
   screenHeight: number;
 }
 
-export default function Bubble({ bubbleSize, pan, screenWidth, screenHeight }: BubbleProps) {
+export default function Bubble({
+  bubbleSize,
+  idleBubbleOpacity,
+  pan,
+  screenWidth,
+  screenHeight,
+}: BubbleProps) {
   const iconSize = bubbleSize * 0.65;
 
   const { setDebuggerState } = useContext(MainContext)!;
+  const [idleOpacity, setIdleOpacity] = useState(idleBubbleOpacity);
+  const opacityTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const panResponder = useMemo(
-    () =>
-      PanResponder.create({
-        onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponder: () => true,
-        onPanResponderGrant: () => {
-          pan.current.setOffset({
-            // @ts-ignore
-            x: pan.current.x._value,
-            // @ts-ignore
-            y: pan.current.y._value,
-          });
-          pan.current.setValue({ x: 0, y: 0 });
-        },
-        onPanResponderMove: Animated.event([null, { dx: pan.current.x, dy: pan.current.y }], {
-          useNativeDriver: false,
-        }),
-        onPanResponderRelease: (_, gesture: PanResponderGestureState) => {
-          const isTapGesture =
-            gesture.dx > -10 && gesture.dx < 10 && gesture.dy > -10 && gesture.dy < 10;
+  const panResponder = useMemo(() => {
+    const clearTimer = () => {
+      if (opacityTimer.current) clearTimeout(opacityTimer.current);
+      opacityTimer.current = null;
+    };
 
-          if (isTapGesture) {
-            setDebuggerState(draft => {
-              draft.visibility = 'panel';
-            });
-          }
+    return PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onMoveShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {
+        pan.current.setOffset({
+          // @ts-ignore
+          x: pan.current.x._value,
+          // @ts-ignore
+          y: pan.current.y._value,
+        });
 
-          pan.current.flattenOffset();
+        pan.current.setValue({ x: 0, y: 0 });
 
-          const finalX =
-            gesture.moveX < (screenWidth - bubbleSize) / 2 ? 0 : screenWidth - bubbleSize;
-
-          const verticalSafeMargin = getVerticalSafeMargin(screenHeight);
-
-          const finalY = Math.min(
-            Math.max(verticalSafeMargin, gesture.moveY),
-            screenHeight - verticalSafeMargin - bubbleSize,
-          );
-
-          Animated.spring(pan.current, {
-            toValue: { x: finalX, y: finalY },
-            useNativeDriver: false,
-          }).start();
-        },
+        clearTimer();
+        setIdleOpacity(1);
+      },
+      onPanResponderMove: Animated.event([null, { dx: pan.current.x, dy: pan.current.y }], {
+        useNativeDriver: false,
       }),
-    [bubbleSize, pan, screenHeight, screenWidth, setDebuggerState],
-  );
+      onPanResponderRelease: (_, gesture: PanResponderGestureState) => {
+        const isTapGesture =
+          gesture.dx > -10 && gesture.dx < 10 && gesture.dy > -10 && gesture.dy < 10;
+
+        if (isTapGesture)
+          setDebuggerState(draft => {
+            draft.visibility = 'panel';
+          });
+
+        pan.current.flattenOffset();
+
+        const finalX =
+          gesture.moveX < (screenWidth - bubbleSize) / 2 ? 0 : screenWidth - bubbleSize;
+
+        const verticalSafeMargin = getVerticalSafeMargin(screenHeight);
+
+        const finalY = clamp(
+          gesture.moveY,
+          verticalSafeMargin,
+          screenHeight - verticalSafeMargin - bubbleSize,
+        );
+
+        Animated.spring(pan.current, {
+          toValue: { x: finalX, y: finalY },
+          useNativeDriver: false,
+        }).start(({ finished }) => {
+          if (!finished) return;
+
+          opacityTimer.current = setTimeout(() => {
+            setIdleOpacity(0.5);
+            clearTimer();
+          }, 1000);
+        });
+      },
+    });
+  }, [bubbleSize, pan, screenHeight, screenWidth, setDebuggerState]);
 
   return (
     <View style={styles.bubbleBackdrop}>
@@ -83,6 +106,7 @@ export default function Bubble({ bubbleSize, pan, screenWidth, screenHeight }: B
             height: bubbleSize,
             borderRadius: bubbleSize / 2,
             transform: pan.current.getTranslateTransform(),
+            opacity: idleOpacity,
           },
         ]}
       >

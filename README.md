@@ -61,6 +61,7 @@ Xenon.hide();
 | `autoInspectNetworkEnabled` | `boolean` | Determines whether the network inspector is automatically enabled upon initialization. Defaults to `true`. |
 | `autoInspectConsoleEnabled` | `boolean` | Determines whether the console inspector is automatically enabled upon initialization. Defaults to `true`. |
 | `bubbleSize`                | `number`  | Defines the size of the interactive bubble used in the UI. Defaults to `40`.                               |
+| `idleBubbleOpacity`         | `number`  | Defines the opacity level of the bubble when it is idle. Defaults to `0.5`.                                |
 
 ## Methods
 
