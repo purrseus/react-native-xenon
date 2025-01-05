@@ -1,14 +1,22 @@
-import { useContext } from 'react';
+import { useContext, useRef } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { MainContext } from '../../../contexts';
+import colors from '../../../theme/colors';
+import icons from '../../../theme/icons';
 import { DebuggerPanel } from '../../../types';
 import DebuggerHeaderItem from '../items/DebuggerHeaderItem';
-import icons from '../../../theme/icons';
-import colors from '../../../theme/colors';
 
-export default function DebuggerHeader() {
+interface DebuggerHeaderProps {
+  detailsShown: boolean;
+}
+
+export default function DebuggerHeader({ detailsShown }: DebuggerHeaderProps) {
   const { debuggerState, setDebuggerState, networkInterceptor, logInterceptor } =
     useContext(MainContext)!;
+
+  const lastSelectedPanel = useRef<DebuggerPanel>(
+    debuggerState.selectedPanel ?? DebuggerPanel.Network,
+  );
 
   const hideDebugger = () => {
     setDebuggerState(draft => {
@@ -34,17 +42,29 @@ export default function DebuggerHeader() {
     });
   };
 
-  const switchToNetworkPanel = () => {
+  const switchTo = (debuggerPanel: DebuggerPanel) => {
     setDebuggerState(draft => {
-      draft.selectedPanel = DebuggerPanel.Network;
+      draft.selectedPanel = debuggerPanel;
+      lastSelectedPanel.current = debuggerPanel;
     });
   };
 
-  const switchToConsolePanel = () => {
-    setDebuggerState(draft => {
-      draft.selectedPanel = DebuggerPanel.Console;
-    });
-  };
+  if (detailsShown) {
+    return (
+      <View style={styles.contentContainer}>
+        <DebuggerHeaderItem
+          isLabel
+          isActive
+          content="Go Back"
+          onPress={() => {
+            setDebuggerState(draft => {
+              draft.selectedPanel = lastSelectedPanel.current;
+            });
+          }}
+        />
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -61,7 +81,7 @@ export default function DebuggerHeader() {
         isLabel
         isActive={debuggerState.selectedPanel === DebuggerPanel.Network}
         content="Network Panel"
-        onPress={switchToNetworkPanel}
+        onPress={() => switchTo(DebuggerPanel.Network)}
       />
 
       <DebuggerHeaderItem
@@ -81,7 +101,7 @@ export default function DebuggerHeader() {
         isLabel
         isActive={debuggerState.selectedPanel === DebuggerPanel.Console}
         content="Log Panel"
-        onPress={switchToConsolePanel}
+        onPress={() => switchTo(DebuggerPanel.Console)}
       />
 
       <DebuggerHeaderItem

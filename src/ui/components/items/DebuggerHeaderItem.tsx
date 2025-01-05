@@ -46,6 +46,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray,
     borderWidth: 1,
     borderColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   labelContainer: {
     backgroundColor: 'transparent',

@@ -1,5 +1,12 @@
 import { enableMapSet } from 'immer';
-import { createRef, memo, useImperativeHandle, useRef, type NamedExoticComponent } from 'react';
+import {
+  createRef,
+  memo,
+  useImperativeHandle,
+  useMemo,
+  useRef,
+  type NamedExoticComponent,
+} from 'react';
 import { Animated, StyleSheet, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useImmer } from 'use-immer';
@@ -47,6 +54,11 @@ const XenonComponent = memo<XenonComponentProps>(
       position: 'bottom',
       selectedPanel: DebuggerPanel.Network,
     });
+
+    const detailsShown = useMemo(
+      () => !debuggerState.selectedPanel && !!detailsData.value,
+      [debuggerState.selectedPanel],
+    );
 
     const networkInterceptor = useNetworkInterceptor({
       autoEnabled: autoInspectNetworkEnabled,
@@ -103,10 +115,10 @@ const XenonComponent = memo<XenonComponentProps>(
               ]}
             >
               <SafeAreaView style={styles.safeArea}>
-                <DebuggerHeader />
+                <DebuggerHeader detailsShown={detailsShown} />
                 {debuggerState.selectedPanel === DebuggerPanel.Network && <NetworkPanel />}
                 {debuggerState.selectedPanel === DebuggerPanel.Console && <ConsolePanel />}
-                {!debuggerState.selectedPanel && !!detailsData.value && <DetailsViewer />}
+                {detailsShown && <DetailsViewer />}
               </SafeAreaView>
             </SafeAreaProvider>
           );
