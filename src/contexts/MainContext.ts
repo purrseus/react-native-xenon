@@ -1,32 +1,13 @@
-import { createContext, type MutableRefObject } from 'react';
+import { createContext } from 'react';
+import type { Updater } from 'use-immer';
 import type { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
-import type {
-  DebuggerPanel,
-  DebuggerPosition,
-  DebuggerVisibility,
-  HttpRequest,
-  LogMessage,
-  SetState,
-  WebSocketRequest,
-} from '../types';
+import type { DebuggerState } from '../types';
 
-export interface MainContextValue {
-  debuggerVisibility: DebuggerVisibility;
-  setDebuggerVisibility: SetState<DebuggerVisibility>;
-  debuggerPosition: DebuggerPosition;
-  setDebuggerPosition: SetState<DebuggerPosition>;
-  panelSelected: DebuggerPanel | null;
-  setPanelSelected: SetState<DebuggerPanel | null>;
+interface MainContextValue {
+  debuggerState: DebuggerState;
+  setDebuggerState: Updater<DebuggerState>;
   networkInterceptor: ReturnType<typeof useNetworkInterceptor>;
   logInterceptor: ReturnType<typeof useConsoleInterceptor>;
-  detailsData: MutableRefObject<
-    | { [DebuggerPanel.Console]: LogMessage }
-    | { [DebuggerPanel.Network]: HttpRequest | WebSocketRequest }
-    | null
-  >;
-  screenWidth: number;
-  screenHeight: number;
-  verticalSafeMargin: number;
 }
 
 const MainContext = createContext<MainContextValue | null>(null);

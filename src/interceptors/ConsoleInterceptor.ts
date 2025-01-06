@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import type { ConsoleHandlers } from '../types';
-import { frozen } from '../utils';
+import { frozen, singleton } from '../core/utils';
 import Interceptor from './Interceptor';
 
 const originalConsoleError = console.error;
@@ -14,16 +14,11 @@ const originalConsoleGroupCollapsed = console.groupCollapsed;
 const originalConsoleGroupEnd = console.groupEnd;
 const originalConsoleGroup = console.group;
 
+@singleton
 export default class ConsoleInterceptor extends Interceptor<ConsoleHandlers> {
-  static readonly instance = new ConsoleInterceptor();
-
   protected readonly handlers: ConsoleHandlers = {
     callback: null,
   };
-
-  private constructor() {
-    super();
-  }
 
   @frozen
   enableInterception(): void {

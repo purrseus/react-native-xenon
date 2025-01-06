@@ -1,5 +1,5 @@
 import { Image, StyleSheet, Text, TouchableOpacity, type ImageRequireSource } from 'react-native';
-import colors from '../../../colors';
+import colors from '../../../theme/colors';
 
 interface DebuggerHeaderItemProps {
   content?: ImageRequireSource | string;
@@ -46,6 +46,8 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray,
     borderWidth: 1,
     borderColor: 'transparent',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   labelContainer: {
     backgroundColor: 'transparent',

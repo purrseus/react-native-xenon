@@ -1,18 +1,15 @@
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
-import type { NetworkTab } from '../../../types';
-import colors from '../../../colors';
+import colors from '../../../theme/colors';
 
 interface NetworkRequestDetailsHeaderItemProps {
   visible: boolean;
   isSelected: boolean;
-  name: NetworkTab;
   label: string;
   onPress: () => void;
 }
 
 export default function NetworkRequestDetailsHeaderItem({
   visible,
-  name,
   isSelected,
   label,
   onPress,
@@ -21,7 +18,6 @@ export default function NetworkRequestDetailsHeaderItem({
 
   return (
     <TouchableOpacity
-      key={name}
       activeOpacity={0.8}
       onPress={onPress}
       style={[styles.item, isSelected && styles.activeItem]}

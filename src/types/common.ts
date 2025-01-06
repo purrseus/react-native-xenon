@@ -1,5 +1,3 @@
-import type { Dispatch, SetStateAction } from 'react';
-
 export enum NetworkType {
   XHR = 'xhr',
   Fetch = 'fetch',
@@ -11,6 +9,8 @@ export enum DebuggerPanel {
   Console = 'console',
 }
 
+export type AnyFunction = (...args: any[]) => any;
+
 export type ID = string | undefined;
 
 export interface NetworkRequest {
@@ -19,10 +19,10 @@ export interface NetworkRequest {
   duration?: number;
 }
 
-export type DebuggerVisibility = 'hidden' | 'bubble' | 'panel';
-
-export type DebuggerPosition = 'top' | 'bottom';
-
-export type SetState<T> = Dispatch<SetStateAction<T>>;
-
 export type NetworkTab = 'headers' | 'queryStringParameters' | 'body' | 'response' | 'messages';
+
+export interface DebuggerState {
+  visibility: 'hidden' | 'bubble' | 'panel';
+  position: 'top' | 'bottom';
+  selectedPanel: DebuggerPanel | null;
+}

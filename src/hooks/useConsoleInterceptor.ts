@@ -7,6 +7,8 @@ interface ConsoleInterceptorParams {
   autoEnabled: boolean;
 }
 
+const consoleInterceptor = new ConsoleInterceptor();
+
 export default function useConsoleInterceptor({ autoEnabled }: ConsoleInterceptorParams) {
   const [isInterceptorEnabled, setIsInterceptorEnabled] = useState(autoEnabled);
 
@@ -16,12 +18,12 @@ export default function useConsoleInterceptor({ autoEnabled }: ConsoleIntercepto
     setLogMessages([]);
   };
 
-  const isEnabled = () => ConsoleInterceptor.instance.isInterceptorEnabled;
+  const isEnabled = () => consoleInterceptor.isInterceptorEnabled;
 
   const enableInterception = useCallback(() => {
     if (isEnabled()) return;
 
-    ConsoleInterceptor.instance
+    consoleInterceptor
       .set('callback', (type, args) => {
         setLogMessages(draft => {
           draft.push({ type, values: args });
@@ -35,15 +37,16 @@ export default function useConsoleInterceptor({ autoEnabled }: ConsoleIntercepto
   const disableInterception = useCallback(() => {
     if (!isEnabled()) return;
 
-    ConsoleInterceptor.instance.disableInterception();
+    consoleInterceptor.disableInterception();
 
     setIsInterceptorEnabled(false);
   }, []);
 
   useEffect(() => {
-    if (autoEnabled) enableInterception();
-
-    if (autoEnabled) return disableInterception;
+    if (autoEnabled) {
+      enableInterception();
+      return disableInterception;
+    }
   }, [autoEnabled, disableInterception, enableInterception]);
 
   return {

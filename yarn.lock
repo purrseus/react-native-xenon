@@ -11683,6 +11683,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-safe-area-context@npm:4.12.0":
+  version: 4.12.0
+  resolution: "react-native-safe-area-context@npm:4.12.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/1db86f38c20c8b22ea274ea895b3cedbb1f8d8260d7f726ab4ee315f5e1e611ba3dde89c43dcb3ccccf97dfc3e7d8b11b79ffe4a6369697b6fed3bd80eaaf7c5
+  languageName: node
+  linkType: hard
+
+"react-native-safe-area-context@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "react-native-safe-area-context@npm:5.0.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/79ccb3b335a53f97fec5751b35b178825e59e86575d6b43a4fb4bc42ffe0e9ed7596b882c709b53007a805f59d77bd7b4ce5ab2a93bf59cf92487872bf264b66
+  languageName: node
+  linkType: hard
+
 "react-native-url-polyfill@npm:^2.0.0":
   version: 2.0.0
   resolution: "react-native-url-polyfill@npm:2.0.0"
@@ -11726,6 +11746,7 @@ __metadata:
     react-dom: "npm:18.3.1"
     react-native: "npm:0.76.3"
     react-native-builder-bob: "npm:^0.33.3"
+    react-native-safe-area-context: "npm:4.12.0"
     react-native-web: "npm:~0.19.13"
   languageName: unknown
   linkType: soft
@@ -11752,6 +11773,7 @@ __metadata:
     react: "npm:18.3.1"
     react-native: "npm:0.76.3"
     react-native-builder-bob: "npm:^0.33.3"
+    react-native-safe-area-context: "npm:^5.0.0"
     react-native-url-polyfill: "npm:^2.0.0"
     release-it: "npm:^17.10.0"
     typescript: "npm:^5.2.2"
@@ -11759,6 +11781,7 @@ __metadata:
   peerDependencies:
     react: "*"
     react-native: "*"
+    react-native-safe-area-context: "*"
   languageName: unknown
   linkType: soft
 

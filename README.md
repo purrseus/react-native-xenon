@@ -4,17 +4,26 @@ A comprehensive tool for analyzing HTTP(S) requests and logs in React Native app
 
 ## Installation
 
-Install the Xenon with `yarn` or `npm`.
+Install the Xenon with `yarn` or `npm`. You will also need to install `react-native-safe-area-context` if you haven't already.
 
 ```sh
-yarn add react-native-xenon
+yarn add react-native-xenon react-native-safe-area-context
 ```
 
 or
 
 ```sh
-npm install react-native-xenon
+npm install react-native-xenon react-native-safe-area-context
 ```
+
+### Expo
+
+```sh
+npx expo install react-native-xenon react-native-safe-area-context
+```
+
+> [!NOTE]
+> You can skip installing `react-native-safe-area-context` if you have created a project using [the default template](https://docs.expo.dev/get-started/create-a-project). This library is installed as peer dependency for Expo Router library.
 
 ## Usage
 
@@ -52,6 +61,7 @@ Xenon.hide();
 | `autoInspectNetworkEnabled` | `boolean` | Determines whether the network inspector is automatically enabled upon initialization. Defaults to `true`. |
 | `autoInspectConsoleEnabled` | `boolean` | Determines whether the console inspector is automatically enabled upon initialization. Defaults to `true`. |
 | `bubbleSize`                | `number`  | Defines the size of the interactive bubble used in the UI. Defaults to `40`.                               |
+| `idleBubbleOpacity`         | `number`  | Defines the opacity level of the bubble when it is idle. Defaults to `0.5`.                                |
 
 ## Methods
 

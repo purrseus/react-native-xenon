@@ -1,4 +1,6 @@
-import type { HttpRequest } from './types';
+import type { HttpRequest } from '../types';
+
+export const getVerticalSafeMargin = (screenHeight: number) => screenHeight / 8;
 
 export const limitChar = (value: any, limit = 5000) => {
   const stringValue = typeof value === 'string' ? value : JSON.stringify(value ?? '');
@@ -13,6 +15,9 @@ export const getHttpInterceptorId = () => {
   const randomNum = Math.random().toString(36).substring(2, 10);
   return timestamp + randomNum;
 };
+
+export const clamp = (value: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, value));
 
 export const keyValueToString = (key: string, value: any): string =>
   `${key}: ${limitChar(value)}\n`;
@@ -60,4 +65,19 @@ export function frozen(_target: Object) {
   const descriptor: PropertyDescriptor = arguments[2];
   descriptor.configurable = false;
   descriptor.writable = false;
+}
+
+export function singleton<T extends { new (...args: any[]): {} }>(constructor: T) {
+  class Singleton extends constructor {
+    static #instance: Singleton;
+
+    constructor(...args: any[]) {
+      if (Singleton.#instance) return Singleton.#instance;
+
+      super(...args);
+      Singleton.#instance = this;
+    }
+  }
+
+  return Singleton;
 }

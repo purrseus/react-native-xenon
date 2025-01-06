@@ -1,23 +1,27 @@
-import { useContext } from 'react';
+import { useContext, useRef } from 'react';
 import { ScrollView, StyleSheet, View } from 'react-native';
 import { MainContext } from '../../../contexts';
+import colors from '../../../theme/colors';
+import icons from '../../../theme/icons';
 import { DebuggerPanel } from '../../../types';
 import DebuggerHeaderItem from '../items/DebuggerHeaderItem';
-import icons from '../../../icons';
-import colors from '../../../colors';
 
-export default function DebuggerHeader() {
-  const {
-    setDebuggerVisibility,
-    setDebuggerPosition,
-    panelSelected,
-    setPanelSelected,
-    networkInterceptor,
-    logInterceptor,
-  } = useContext(MainContext)!;
+interface DebuggerHeaderProps {
+  detailsShown: boolean;
+}
+
+export default function DebuggerHeader({ detailsShown }: DebuggerHeaderProps) {
+  const { debuggerState, setDebuggerState, networkInterceptor, logInterceptor } =
+    useContext(MainContext)!;
+
+  const lastSelectedPanel = useRef<DebuggerPanel>(
+    debuggerState.selectedPanel ?? DebuggerPanel.Network,
+  );
 
   const hideDebugger = () => {
-    setDebuggerVisibility('bubble');
+    setDebuggerState(draft => {
+      draft.visibility = 'bubble';
+    });
   };
 
   const toggleNetworkInterception = () => {
@@ -33,16 +37,34 @@ export default function DebuggerHeader() {
   };
 
   const toggleDebuggerPosition = () => {
-    setDebuggerPosition(prevState => (prevState === 'bottom' ? 'top' : 'bottom'));
+    setDebuggerState(draft => {
+      draft.position = draft.position === 'bottom' ? 'top' : 'bottom';
+    });
   };
 
-  const switchToNetworkPanel = () => {
-    setPanelSelected(DebuggerPanel.Network);
+  const switchTo = (debuggerPanel: DebuggerPanel) => {
+    setDebuggerState(draft => {
+      draft.selectedPanel = debuggerPanel;
+      lastSelectedPanel.current = debuggerPanel;
+    });
   };
 
-  const switchToConsolePanel = () => {
-    setPanelSelected(DebuggerPanel.Console);
-  };
+  if (detailsShown) {
+    return (
+      <View style={styles.contentContainer}>
+        <DebuggerHeaderItem
+          isLabel
+          isActive
+          content="Go Back"
+          onPress={() => {
+            setDebuggerState(draft => {
+              draft.selectedPanel = lastSelectedPanel.current;
+            });
+          }}
+        />
+      </View>
+    );
+  }
 
   return (
     <ScrollView
@@ -57,9 +79,9 @@ export default function DebuggerHeader() {
 
       <DebuggerHeaderItem
         isLabel
-        isActive={panelSelected === DebuggerPanel.Network}
+        isActive={debuggerState.selectedPanel === DebuggerPanel.Network}
         content="Network Panel"
-        onPress={switchToNetworkPanel}
+        onPress={() => switchTo(DebuggerPanel.Network)}
       />
 
       <DebuggerHeaderItem
@@ -77,9 +99,9 @@ export default function DebuggerHeader() {
 
       <DebuggerHeaderItem
         isLabel
-        isActive={panelSelected === DebuggerPanel.Console}
+        isActive={debuggerState.selectedPanel === DebuggerPanel.Console}
         content="Log Panel"
-        onPress={switchToConsolePanel}
+        onPress={() => switchTo(DebuggerPanel.Console)}
       />
 
       <DebuggerHeaderItem

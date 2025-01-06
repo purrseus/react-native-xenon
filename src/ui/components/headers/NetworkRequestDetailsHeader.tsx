@@ -72,7 +72,6 @@ export default function NetworkDetailsHeader({
           onPress={() => onChangeTab(item.name)}
           isSelected={item.name === selectedTab}
           visible={item.visible}
-          name={item.name}
           label={item.label}
         />
       ))}

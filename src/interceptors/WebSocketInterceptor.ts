@@ -1,17 +1,16 @@
 import { NativeEventEmitter, type EmitterSubscription } from 'react-native';
 import NativeWebSocketModule from 'react-native/Libraries/WebSocket/NativeWebSocketModule';
+import { frozen, singleton } from '../core/utils';
 import type { WebSocketHandlers } from '../types';
 import { NetworkInterceptor } from './NetworkInterceptor';
-import { frozen } from '../utils';
 
 const originalWebSocketConnect = NativeWebSocketModule.connect;
 const originalWebSocketSend = NativeWebSocketModule.send;
 const originalWebSocketSendBinary = NativeWebSocketModule.sendBinary;
 const originalWebSocketClose = NativeWebSocketModule.close;
 
+@singleton
 export default class WebSocketInterceptor extends NetworkInterceptor<WebSocketHandlers> {
-  static readonly instance = new WebSocketInterceptor();
-
   protected handlers: WebSocketHandlers = {
     connect: null,
     send: null,
@@ -22,32 +21,9 @@ export default class WebSocketInterceptor extends NetworkInterceptor<WebSocketHa
     onClose: null,
   };
 
-  private constructor() {
-    super();
-  }
-
-  protected getCallbacks() {
-    const connect = this.handlers.connect;
-    const send = this.handlers.send;
-    const close = this.handlers.close;
-    const arrayBufferToString = this.arrayBufferToString;
-
-    return { connect, send, close, arrayBufferToString };
-  }
-
-  protected clearCallbacks(): void {
-    this.handlers.connect = null;
-    this.handlers.send = null;
-    this.handlers.close = null;
-    this.handlers.onOpen = null;
-    this.handlers.onMessage = null;
-    this.handlers.onError = null;
-    this.handlers.onClose = null;
-  }
-
   private eventEmitter: NativeEventEmitter | null = null;
   private subscriptions: EmitterSubscription[] = [];
-  private readonly timeStart: Map<number, number> = new Map();
+  private readonly startTimes: Map<number, number> = new Map();
 
   private arrayBufferToString(data?: string) {
     try {
@@ -68,10 +44,10 @@ export default class WebSocketInterceptor extends NetworkInterceptor<WebSocketHa
 
     this.subscriptions = [
       this.eventEmitter.addListener('websocketOpen', ev => {
-        const timeStart = this.timeStart.get(ev.id);
-        const timeEnd = Date.now();
-        const duration = timeEnd - (timeStart ?? 0);
-        this.timeStart.delete(ev.id);
+        const startTime = this.startTimes.get(ev.id);
+        const endTime = Date.now();
+        const duration = endTime - (startTime ?? 0);
+        this.startTimes.delete(ev.id);
 
         this.handlers.onOpen?.(ev.id, duration);
       }),
@@ -104,31 +80,32 @@ export default class WebSocketInterceptor extends NetworkInterceptor<WebSocketHa
 
     this.registerEvents();
 
-    const { connect, send, close, arrayBufferToString } = this.getCallbacks();
+    const { connectCallback, sendCallback, closeCallback } = this.getCallbacks();
 
-    const timeStart = this.timeStart;
+    const startTimes = this.startTimes;
     NativeWebSocketModule.connect = function (...args) {
-      connect?.(...args);
+      connectCallback?.(...args);
 
-      timeStart.set(args[3], Date.now());
+      startTimes.set(args[3], Date.now());
 
       originalWebSocketConnect.call(this, ...args);
     };
 
     NativeWebSocketModule.send = function (...args) {
-      send?.(...args);
+      sendCallback?.(...args);
 
       originalWebSocketSend.call(this, ...args);
     };
 
+    const arrayBufferToString = this.arrayBufferToString;
     NativeWebSocketModule.sendBinary = function (base64String, socketId) {
-      send?.(arrayBufferToString(base64String), socketId);
+      sendCallback?.(arrayBufferToString(base64String), socketId);
 
       originalWebSocketSendBinary.call(this, base64String, socketId);
     };
 
     NativeWebSocketModule.close = function (code, reason, socketId) {
-      close?.(code, reason, socketId);
+      closeCallback?.(code, reason, socketId);
 
       originalWebSocketClose.call(this, code, reason, socketId);
     };

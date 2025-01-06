@@ -1,17 +1,18 @@
-import { NETWORK_REQUEST_HEADER } from '../constants';
+import { NETWORK_REQUEST_HEADER } from '../core/constants';
+import {
+  formatRequestMethod,
+  frozen,
+  getHttpInterceptorId,
+  keyValueToString,
+  singleton,
+} from '../core/utils';
 import { NetworkType } from '../types';
-import { formatRequestMethod, frozen, getHttpInterceptorId, keyValueToString } from '../utils';
 import HttpInterceptor from './HttpInterceptor';
 
 const originalFetch = global.fetch;
 
+@singleton
 export default class FetchInterceptor extends HttpInterceptor {
-  static readonly instance = new FetchInterceptor();
-
-  private constructor() {
-    super();
-  }
-
   @frozen
   enableInterception() {
     if (this.isInterceptorEnabled) return;
@@ -37,7 +38,6 @@ export default class FetchInterceptor extends HttpInterceptor {
       const method = formatRequestMethod(init?.method);
 
       let url: string;
-
       switch (true) {
         case input instanceof Request:
           url = input.url;
@@ -77,13 +77,13 @@ export default class FetchInterceptor extends HttpInterceptor {
       //#endregion
 
       //#region send
-      const timeStart = Date.now();
+      const startTime = Date.now();
       sendCallback?.(interceptionId, init?.body ?? null);
       //#endregion
 
       const response = await originalFetch.call(this, input, requestInit);
 
-      const timeEnd = Date.now();
+      const endTime = Date.now();
       const clonedResponse = response.clone();
       const clonedResponseHeaders = clonedResponse.headers;
 
@@ -105,7 +105,7 @@ export default class FetchInterceptor extends HttpInterceptor {
 
       //#region response
       const responseBody: string | null = await clonedResponse.text().catch(() => null);
-      const duration = timeEnd - timeStart;
+      const duration = endTime - startTime;
 
       responseCallback?.(
         interceptionId,
