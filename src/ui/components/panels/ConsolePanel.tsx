@@ -32,7 +32,7 @@ export default function ConsolePanel() {
   return (
     <FlatList
       inverted
-      data={logMessages.toReversed()}
+      data={[...logMessages].reverse()}
       renderItem={renderItem}
       keyExtractor={(_, index) => index.toString()}
       ItemSeparatorComponent={Separator}
