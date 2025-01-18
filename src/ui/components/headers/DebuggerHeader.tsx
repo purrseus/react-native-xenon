@@ -1,19 +1,21 @@
-import { useContext, useMemo, useRef } from 'react';
+import { useCallback, useContext, useMemo, useRef } from 'react';
 import { ScrollView, Share, StyleSheet, View } from 'react-native';
 import { MainContext } from '../../../contexts';
 import { convertToCurl, getNetworkUtils } from '../../../core/utils';
 import colors from '../../../theme/colors';
 import icons from '../../../theme/icons';
-import { DebuggerPanel, NetworkType } from '../../../types';
+import { DebuggerPanel, NetworkType, type DetailTab } from '../../../types';
 import DebuggerHeaderItem from '../items/DebuggerHeaderItem';
 
 export default function DebuggerHeader() {
-  const { debuggerState, setDebuggerState, networkInterceptor, consoleInterceptor } =
-    useContext(MainContext)!;
+  const {
+    debuggerState: { detailsData, selectedPanel },
+    setDebuggerState,
+    networkInterceptor,
+    consoleInterceptor,
+  } = useContext(MainContext)!;
 
-  const lastSelectedPanel = useRef<DebuggerPanel>(
-    debuggerState.selectedPanel ?? DebuggerPanel.Network,
-  );
+  const lastSelectedPanel = useRef<DebuggerPanel>(selectedPanel ?? DebuggerPanel.Network);
 
   const backButton = useMemo(
     () => (
@@ -30,17 +32,11 @@ export default function DebuggerHeader() {
     [setDebuggerState],
   );
 
-  const networkHeader = useMemo(() => {
-    if (debuggerState.detailsData?.type !== DebuggerPanel.Network) return null;
-
-    const { data, selectedTab } = debuggerState.detailsData;
-    const { isHttp, overviewShown, headersShown, requestShown, responseShown, messagesShown } =
-      getNetworkUtils(data);
-
-    const renderTabItem = (tab: typeof selectedTab, label: string) => (
+  const renderTabItem = useCallback(
+    (tab: DetailTab, label: string) => (
       <DebuggerHeaderItem
         isLabel
-        isActive={selectedTab === tab}
+        isActive={detailsData?.selectedTab === tab}
         content={label}
         onPress={() => {
           setDebuggerState(draft => {
@@ -48,22 +44,48 @@ export default function DebuggerHeader() {
           });
         }}
       />
-    );
+    ),
+    [detailsData?.selectedTab, setDebuggerState],
+  );
+
+  const networkHeader = useMemo(() => {
+    if (detailsData?.type !== DebuggerPanel.Network) return null;
+
+    const { isHttp, overviewShown, headersShown, requestShown, responseShown, messagesShown } =
+      getNetworkUtils(detailsData.data);
 
     return (
       <>
         {backButton}
 
         {isHttp && (
-          <DebuggerHeaderItem
-            content={icons.share}
-            onPress={() => {
-              if (data.type === NetworkType.WS) return;
-              Share.share({
-                message: convertToCurl(data.method, data.url, data.requestHeaders, data.body),
-              });
-            }}
-          />
+          <>
+            <DebuggerHeaderItem
+              content={icons.share}
+              onPress={() => {
+                if (detailsData.data.type === NetworkType.WS) return;
+                Share.share({
+                  message: convertToCurl(
+                    detailsData.data.method,
+                    detailsData.data.url,
+                    detailsData.data.requestHeaders,
+                    detailsData.data.body,
+                  ),
+                });
+              }}
+            />
+
+            <DebuggerHeaderItem
+              content={icons.beautify}
+              isActive={detailsData.beautified}
+              activeColor={colors.green}
+              onPress={() => {
+                setDebuggerState(draft => {
+                  draft.detailsData!.beautified = !draft.detailsData?.beautified;
+                });
+              }}
+            />
+          </>
         )}
 
         <View style={styles.divider} />
@@ -75,12 +97,17 @@ export default function DebuggerHeader() {
         {messagesShown && renderTabItem('messages', 'Messages')}
       </>
     );
-  }, [debuggerState.detailsData, backButton, setDebuggerState]);
+  }, [
+    detailsData?.type,
+    detailsData?.data,
+    detailsData?.beautified,
+    backButton,
+    renderTabItem,
+    setDebuggerState,
+  ]);
 
   const consoleHeader = useMemo(() => {
-    if (debuggerState.detailsData?.type !== DebuggerPanel.Console) return null;
-
-    const { selectedTab } = debuggerState.detailsData;
+    if (detailsData?.type !== DebuggerPanel.Console) return null;
 
     return (
       <>
@@ -88,19 +115,10 @@ export default function DebuggerHeader() {
 
         <View style={styles.divider} />
 
-        <DebuggerHeaderItem
-          isLabel
-          isActive={selectedTab === 'logMessage'}
-          content="Log Message"
-          onPress={() => {
-            setDebuggerState(draft => {
-              draft.detailsData!.selectedTab = 'logMessage';
-            });
-          }}
-        />
+        {renderTabItem('logMessage', 'Log Message')}
       </>
     );
-  }, [backButton, debuggerState.detailsData, setDebuggerState]);
+  }, [detailsData?.type, backButton, renderTabItem]);
 
   const mainHeader = useMemo(() => {
     const onHide = () => {
@@ -145,7 +163,7 @@ export default function DebuggerHeader() {
 
         <DebuggerHeaderItem
           isLabel
-          isActive={debuggerState.selectedPanel === DebuggerPanel.Network}
+          isActive={selectedPanel === DebuggerPanel.Network}
           content="Network Panel"
           onPress={() => switchTo(DebuggerPanel.Network)}
         />
@@ -165,7 +183,7 @@ export default function DebuggerHeader() {
 
         <DebuggerHeaderItem
           isLabel
-          isActive={debuggerState.selectedPanel === DebuggerPanel.Console}
+          isActive={selectedPanel === DebuggerPanel.Console}
           content="Console Panel"
           onPress={() => switchTo(DebuggerPanel.Console)}
         />
@@ -182,7 +200,7 @@ export default function DebuggerHeader() {
         />
       </>
     );
-  }, [debuggerState.selectedPanel, consoleInterceptor, networkInterceptor, setDebuggerState]);
+  }, [selectedPanel, consoleInterceptor, networkInterceptor, setDebuggerState]);
 
   return (
     <ScrollView
@@ -192,7 +210,7 @@ export default function DebuggerHeader() {
       showsHorizontalScrollIndicator={false}
     >
       {(() => {
-        switch (debuggerState.detailsData?.type) {
+        switch (detailsData?.type) {
           case DebuggerPanel.Network:
             return networkHeader;
           case DebuggerPanel.Console:

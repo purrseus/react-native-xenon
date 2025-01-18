@@ -5,6 +5,7 @@ interface DebuggerHeaderItemProps {
   content?: ImageRequireSource | string;
   isLabel?: boolean;
   isActive?: boolean;
+  activeColor?: string;
   onPress: () => void;
 }
 
@@ -12,6 +13,7 @@ export default function DebuggerHeaderItem({
   content,
   isLabel,
   isActive,
+  activeColor = colors.red,
   onPress,
 }: DebuggerHeaderItemProps) {
   return (
@@ -25,7 +27,7 @@ export default function DebuggerHeaderItem({
             ? styles.activeLabelContainer
             : styles.labelContainer
           : isActive
-            ? styles.activeContainer
+            ? { backgroundColor: activeColor }
             : undefined,
       ]}
     >
@@ -56,9 +58,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: colors.black,
-  },
-  activeContainer: {
-    backgroundColor: colors.red,
   },
   title: {
     fontSize: 14,

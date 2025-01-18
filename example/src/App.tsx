@@ -15,6 +15,15 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Button
+        title="Fetch: Get pokemon"
+        onPress={() => {
+          fetch('https://pokeapi.co/api/v2/pokemon/ditto')
+            .then(res => res.json())
+            .then(console.log);
+        }}
+      />
+
+      <Button
         title="Fetch: Get posts"
         onPress={() => {
           fetch('https://jsonplaceholder.typicode.com/posts?userId=1')
@@ -39,6 +48,13 @@ export default function App() {
           })
             .then(res => res.json())
             .then(console.log);
+        }}
+      />
+
+      <Button
+        title="Axios: Get pokemon"
+        onPress={() => {
+          axios('https://pokeapi.co/api/v2/pokemon/ditto').then(console.log);
         }}
       />
 

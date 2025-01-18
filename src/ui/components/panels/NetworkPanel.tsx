@@ -36,6 +36,7 @@ export default function NetworkPanel() {
               type: DebuggerPanel.Network,
               data: item,
               selectedTab: 'overview',
+              beautified: false,
             };
           });
         }}

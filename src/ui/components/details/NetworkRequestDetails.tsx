@@ -2,6 +2,7 @@ import { useContext, useRef, type JSX, type ReactNode } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { MainContext } from '../../../contexts';
 import {
+  beautify,
   formatRequestDuration,
   formatRequestMethod,
   formatRequestStatusCode,
@@ -18,7 +19,12 @@ interface NetworkRequestDetailsProps {
 }
 
 export default function NetworkRequestDetails({ item }: NetworkRequestDetailsProps) {
-  const { debuggerState } = useContext(MainContext)!;
+  const {
+    debuggerState: { detailsData },
+  } = useContext(MainContext)!;
+
+  const beautified = useRef<boolean | null>(null);
+  const shouldBeautifiedRefUpdate = beautified.current !== detailsData?.beautified;
 
   const {
     isHttp,
@@ -90,15 +96,15 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
     );
   }
 
-  if (requestShown && !content.current.request) {
+  if (requestShown && shouldBeautifiedRefUpdate) {
     const queryStringParameters: ReactNode[] = [];
 
     requestUrl.searchParams.forEach((value, name) => {
       queryStringParameters.push(
         <NetworkRequestDetailsItem
-          key={keyValueToString(name, value)}
+          key={keyValueToString(name, value, null)}
           label="Query String"
-          content={keyValueToString(name, value)}
+          content={keyValueToString(name, value, null)}
         />,
       );
     });
@@ -106,16 +112,19 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
     content.current.request = (
       <>
         {queryStringParameters}
-        <NetworkRequestDetailsItem label="Body" content={limitChar((item as HttpRequest).body)} />
+        <NetworkRequestDetailsItem
+          label="Body"
+          content={beautify((item as HttpRequest).body, detailsData?.beautified ?? false)}
+        />
       </>
     );
   }
 
-  if (responseShown && !content.current.response) {
+  if (responseShown && shouldBeautifiedRefUpdate) {
     content.current.response = (
       <NetworkRequestDetailsItem
         label="Response"
-        content={limitChar((item as HttpRequest).response)}
+        content={beautify((item as HttpRequest).response, detailsData?.beautified ?? false)}
       />
     );
   }
@@ -129,9 +138,13 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
     );
   }
 
+  if (shouldBeautifiedRefUpdate) {
+    beautified.current = detailsData?.beautified ?? false;
+  }
+
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      {content.current[debuggerState.detailsData!.selectedTab as Exclude<DetailTab, 'logMessage'>]}
+      {content.current[detailsData!.selectedTab as keyof typeof content.current]}
     </ScrollView>
   );
 }

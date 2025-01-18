@@ -6,6 +6,7 @@ const icons = Object.freeze({
   record: require('../assets/icons/record.png'),
   share: require('../assets/icons/share.png'),
   arrowLeft: require('../assets/icons/arrow-left.png'),
+  beautify: require('../assets/icons/beautify.png'),
 });
 
 export default icons;

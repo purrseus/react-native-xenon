@@ -97,7 +97,11 @@ export default class FetchInterceptor extends HttpInterceptor {
       let responseHeaders: string = '';
 
       for (const [headerKey, headerValue] of clonedResponseHeaders.entries()) {
-        responseHeaders += keyValueToString(headerKey, headerValue);
+        responseHeaders += keyValueToString(
+          headerKey,
+          headerValue,
+          responseHeaders.length ? 'leading' : null,
+        );
       }
 
       headerReceivedCallback?.(interceptionId, responseContentType, responseSize, responseHeaders);

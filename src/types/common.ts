@@ -21,8 +21,6 @@ export interface NetworkRequest {
   duration?: number;
 }
 
-// TODO: remove this
-export type NetworkTab = 'headers' | 'queryStringParameters' | 'body' | 'response' | 'messages';
 export type DetailTab = 'overview' | 'headers' | 'request' | 'response' | 'messages' | 'logMessage';
 
 export interface DebuggerState {
@@ -31,14 +29,16 @@ export interface DebuggerState {
   selectedPanel: DebuggerPanel | null;
   detailsData:
     | {
-        type: DebuggerPanel.Console;
-        data: LogMessage;
-        selectedTab: Extract<DetailTab, 'logMessage'>;
-      }
-    | {
         type: DebuggerPanel.Network;
         data: HttpRequest | WebSocketRequest;
         selectedTab: Exclude<DetailTab, 'logMessage'>;
+        beautified: boolean;
+      }
+    | {
+        type: DebuggerPanel.Console;
+        data: LogMessage;
+        selectedTab: Extract<DetailTab, 'logMessage'>;
+        beautified: boolean;
       }
     | null;
 }

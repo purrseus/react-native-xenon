@@ -24,6 +24,7 @@ export default function ConsolePanel() {
               type: DebuggerPanel.Console,
               data: item,
               selectedTab: 'logMessage',
+              beautified: false,
             };
           });
         }}
