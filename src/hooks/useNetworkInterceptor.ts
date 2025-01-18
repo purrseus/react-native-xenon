@@ -53,10 +53,15 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       setNetworkRequests((draft: NetworkRequests<HttpRequest>) => {
         if (!draft.get(id)) return draft;
 
-        const currentHeaderLine = keyValueToString(header, value);
+        const requestHeaderNewLine: Parameters<typeof keyValueToString>[2] = draft.get(id)!
+          .requestHeadersString?.length
+          ? 'leading'
+          : null;
+
+        const currentHeaderLine = keyValueToString(header, value, requestHeaderNewLine);
 
         const fetchRequestHeaderLineRegex = RegExp(
-          keyValueToString(NETWORK_REQUEST_HEADER, NetworkType.Fetch),
+          keyValueToString(NETWORK_REQUEST_HEADER, NetworkType.Fetch, requestHeaderNewLine),
           'gi',
         );
 
@@ -163,7 +168,11 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
         if (!draft.get(`${socketId}`)) return draft;
 
         draft.get(`${socketId}`)!.messages ??= '';
-        draft.get(`${socketId}`)!.messages += keyValueToString('SENT', data);
+        draft.get(`${socketId}`)!.messages += keyValueToString(
+          'SENT',
+          data,
+          draft.get(`${socketId}`)!.messages?.length ? 'leading' : null,
+        );
       });
     };
 
@@ -195,7 +204,11 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
         if (!draft.get(`${socketId}`)) return draft;
 
         draft.get(`${socketId}`)!.messages ??= '';
-        draft.get(`${socketId}`)!.messages += keyValueToString('RECEIVED', message);
+        draft.get(`${socketId}`)!.messages += keyValueToString(
+          'RECEIVED',
+          message,
+          draft.get(`${socketId}`)!.messages?.length ? 'leading' : null,
+        );
       });
     };
 

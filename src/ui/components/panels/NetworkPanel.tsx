@@ -2,10 +2,15 @@ import { useCallback, useContext, useMemo } from 'react';
 import { FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
 import colors from '../../../theme/colors';
 import { MainContext } from '../../../contexts';
-import { NetworkType, type HttpRequest, type ID, type WebSocketRequest } from '../../../types';
+import {
+  DebuggerPanel,
+  NetworkType,
+  type HttpRequest,
+  type ID,
+  type WebSocketRequest,
+} from '../../../types';
 import NetworkPanelHeader from '../headers/NetworkPanelHeader';
 import NetworkPanelItem from '../items/NetworkPanelItem';
-import { detailsData } from '../../../core/data';
 
 const Separator = () => <View style={styles.divider} />;
 
@@ -25,9 +30,14 @@ export default function NetworkPanel() {
         duration={item.duration}
         status={item.status}
         onPress={() => {
-          detailsData.value = { network: item };
           setDebuggerState(draft => {
             draft.selectedPanel = null;
+            draft.detailsData = {
+              type: DebuggerPanel.Network,
+              data: item,
+              selectedTab: 'overview',
+              beautified: false,
+            };
           });
         }}
       />

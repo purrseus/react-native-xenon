@@ -1,7 +1,40 @@
-import type { HttpRequest } from '../types';
+import { NetworkType, type HttpRequest, type WebSocketRequest } from '../types';
 
+export const getNetworkUtils = (data: HttpRequest | WebSocketRequest) => {
+  const isHttp = data?.type !== NetworkType.WS;
+  const requestUrl = new URL(data.url);
+
+  const overviewShown = !!data.url;
+  const headersShown = isHttp && (!!data.requestHeaders || !!data.responseHeaders);
+  const requestShown = isHttp && (!!requestUrl.search || !!data.body);
+  const responseShown = isHttp && !!data.response;
+  const messagesShown = !isHttp && !!data.messages;
+
+  return {
+    isHttp,
+    requestUrl,
+    overviewShown,
+    headersShown,
+    requestShown,
+    responseShown,
+    messagesShown,
+  };
+};
+
+//#region metrics
 export const getVerticalSafeMargin = (screenHeight: number) => screenHeight / 8;
 
+export const clamp = (value: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, value));
+
+export const getHttpInterceptorId = () => {
+  const timestamp = Date.now().toString(36);
+  const randomNum = Math.random().toString(36).substring(2, 10);
+  return timestamp + randomNum;
+};
+//#endregion
+
+//#region formatters
 export const limitChar = (value: any, limit = 5000) => {
   const stringValue = typeof value === 'string' ? value : JSON.stringify(value ?? '');
 
@@ -10,17 +43,12 @@ export const limitChar = (value: any, limit = 5000) => {
     : stringValue;
 };
 
-export const getHttpInterceptorId = () => {
-  const timestamp = Date.now().toString(36);
-  const randomNum = Math.random().toString(36).substring(2, 10);
-  return timestamp + randomNum;
-};
-
-export const clamp = (value: number, min: number, max: number) =>
-  Math.max(min, Math.min(max, value));
-
-export const keyValueToString = (key: string, value: any): string =>
-  `${key}: ${limitChar(value)}\n`;
+export const keyValueToString = (
+  key: string,
+  value: any,
+  newLine: 'leading' | 'trailing' | null = 'trailing',
+): string =>
+  `${newLine === 'leading' ? '\n' : ''}${key}: ${limitChar(value)}${newLine === 'trailing' ? '\n' : ''}`;
 
 export const formatRequestMethod = (method?: string) => method ?? 'GET';
 
@@ -30,13 +58,21 @@ export const formatRequestDuration = (duration?: number) =>
 export const formatRequestStatusCode = (statusCode?: number) => `${statusCode ?? 'pending'}`;
 
 export const formatLogMessage = (type: string, values: any[]) => {
-  const message: string = values.reduce((pre, cur, index, array) => {
-    const isLastItem = index === array.length - 1;
-
-    return pre + limitChar(cur) + (isLastItem ? '' : ', ');
-  }, '');
+  const message: string = values.reduce(
+    (pre, cur, index) => pre + (!index ? '' : ', ') + limitChar(cur),
+    '',
+  );
 
   return `${type.toUpperCase()}: ${message}`;
+};
+
+export const beautify = (data: any, beautified: boolean) => {
+  try {
+    const res = typeof data === 'string' ? JSON.parse(data) : data;
+    return beautified ? JSON.stringify(res, null, 2) : limitChar(res);
+  } catch (error) {
+    return limitChar(data);
+  }
 };
 
 export const convertToCurl = (
@@ -60,7 +96,9 @@ export const convertToCurl = (
 
   return curlCommand;
 };
+//#endregion
 
+//#region decorators
 export function frozen(_target: Object) {
   const descriptor: PropertyDescriptor = arguments[2];
   descriptor.configurable = false;
@@ -81,3 +119,4 @@ export function singleton<T extends { new (...args: any[]): {} }>(constructor: T
 
   return Singleton;
 }
+//#endregion

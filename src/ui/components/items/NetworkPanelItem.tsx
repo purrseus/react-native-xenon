@@ -24,7 +24,7 @@ export default function NetworkPanelItem({
   status,
   onPress,
 }: NetworkPanelItemProps) {
-  const requestName = useMemo(() => {
+  const requestPath = useMemo(() => {
     if (!name) return '[failed]';
 
     try {
@@ -46,9 +46,9 @@ export default function NetworkPanelItem({
         </Text>
       </View>
 
-      <View style={[styles.column, styles.nameColumn]}>
+      <View style={[styles.column, styles.pathColumn]}>
         <Text numberOfLines={1} style={styles.text}>
-          {requestName}
+          {requestPath}
         </Text>
       </View>
 
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
-  nameColumn: {
+  pathColumn: {
     flex: 5,
   },
   durationColumn: {

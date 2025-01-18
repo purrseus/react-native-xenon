@@ -2,15 +2,14 @@ import { useCallback, useContext } from 'react';
 import { FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
 import colors from '../../../theme/colors';
 import { MainContext } from '../../../contexts';
-import type { LogMessage } from '../../../types';
+import { DebuggerPanel, type LogMessage } from '../../../types';
 import ConsolePanelItem from '../items/ConsolePanelItem';
-import { detailsData } from '../../../core/data';
 
 const Separator = () => <View style={styles.divider} />;
 
 export default function ConsolePanel() {
   const {
-    logInterceptor: { logMessages },
+    consoleInterceptor: { logMessages },
     setDebuggerState,
   } = useContext(MainContext)!;
 
@@ -19,9 +18,14 @@ export default function ConsolePanel() {
       <ConsolePanelItem
         {...item}
         onPress={() => {
-          detailsData.value = { console: item };
           setDebuggerState(draft => {
             draft.selectedPanel = null;
+            draft.detailsData = {
+              type: DebuggerPanel.Console,
+              data: item,
+              selectedTab: 'logMessage',
+              beautified: false,
+            };
           });
         }}
       />

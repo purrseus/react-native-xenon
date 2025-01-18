@@ -1,70 +1,206 @@
-import { useContext, useRef } from 'react';
-import { ScrollView, StyleSheet, View } from 'react-native';
+import { useCallback, useContext, useMemo, useRef } from 'react';
+import { ScrollView, Share, StyleSheet, View } from 'react-native';
 import { MainContext } from '../../../contexts';
+import { convertToCurl, getNetworkUtils } from '../../../core/utils';
 import colors from '../../../theme/colors';
 import icons from '../../../theme/icons';
-import { DebuggerPanel } from '../../../types';
+import { DebuggerPanel, NetworkType, type DetailTab } from '../../../types';
 import DebuggerHeaderItem from '../items/DebuggerHeaderItem';
 
-interface DebuggerHeaderProps {
-  detailsShown: boolean;
-}
+export default function DebuggerHeader() {
+  const {
+    debuggerState: { detailsData, selectedPanel },
+    setDebuggerState,
+    networkInterceptor,
+    consoleInterceptor,
+  } = useContext(MainContext)!;
 
-export default function DebuggerHeader({ detailsShown }: DebuggerHeaderProps) {
-  const { debuggerState, setDebuggerState, networkInterceptor, logInterceptor } =
-    useContext(MainContext)!;
+  const lastSelectedPanel = useRef<DebuggerPanel>(selectedPanel ?? DebuggerPanel.Network);
 
-  const lastSelectedPanel = useRef<DebuggerPanel>(
-    debuggerState.selectedPanel ?? DebuggerPanel.Network,
+  const backButton = useMemo(
+    () => (
+      <DebuggerHeaderItem
+        content={icons.arrowLeft}
+        onPress={() => {
+          setDebuggerState(draft => {
+            draft.selectedPanel = lastSelectedPanel.current;
+            draft.detailsData = null;
+          });
+        }}
+      />
+    ),
+    [setDebuggerState],
   );
 
-  const hideDebugger = () => {
-    setDebuggerState(draft => {
-      draft.visibility = 'bubble';
-    });
-  };
+  const renderTabItem = useCallback(
+    (tab: DetailTab, label: string) => (
+      <DebuggerHeaderItem
+        isLabel
+        isActive={detailsData?.selectedTab === tab}
+        content={label}
+        onPress={() => {
+          setDebuggerState(draft => {
+            draft.detailsData!.selectedTab = tab;
+          });
+        }}
+      />
+    ),
+    [detailsData?.selectedTab, setDebuggerState],
+  );
 
-  const toggleNetworkInterception = () => {
-    networkInterceptor.isInterceptorEnabled
-      ? networkInterceptor.disableInterception()
-      : networkInterceptor.enableInterception();
-  };
+  const networkHeader = useMemo(() => {
+    if (detailsData?.type !== DebuggerPanel.Network) return null;
 
-  const toggleLogInterception = () => {
-    logInterceptor.isInterceptorEnabled
-      ? logInterceptor.disableInterception()
-      : logInterceptor.enableInterception();
-  };
+    const { isHttp, overviewShown, headersShown, requestShown, responseShown, messagesShown } =
+      getNetworkUtils(detailsData.data);
 
-  const toggleDebuggerPosition = () => {
-    setDebuggerState(draft => {
-      draft.position = draft.position === 'bottom' ? 'top' : 'bottom';
-    });
-  };
-
-  const switchTo = (debuggerPanel: DebuggerPanel) => {
-    setDebuggerState(draft => {
-      draft.selectedPanel = debuggerPanel;
-      lastSelectedPanel.current = debuggerPanel;
-    });
-  };
-
-  if (detailsShown) {
     return (
-      <View style={styles.contentContainer}>
+      <>
+        {backButton}
+
+        {isHttp && (
+          <>
+            <DebuggerHeaderItem
+              content={icons.share}
+              onPress={() => {
+                if (detailsData.data.type === NetworkType.WS) return;
+                Share.share({
+                  message: convertToCurl(
+                    detailsData.data.method,
+                    detailsData.data.url,
+                    detailsData.data.requestHeaders,
+                    detailsData.data.body,
+                  ),
+                });
+              }}
+            />
+
+            <DebuggerHeaderItem
+              content={icons.beautify}
+              isActive={detailsData.beautified}
+              activeColor={colors.green}
+              onPress={() => {
+                setDebuggerState(draft => {
+                  draft.detailsData!.beautified = !draft.detailsData?.beautified;
+                });
+              }}
+            />
+          </>
+        )}
+
+        <View style={styles.divider} />
+
+        {overviewShown && renderTabItem('overview', 'Overview')}
+        {headersShown && renderTabItem('headers', 'Headers')}
+        {requestShown && renderTabItem('request', 'Request')}
+        {responseShown && renderTabItem('response', 'Response')}
+        {messagesShown && renderTabItem('messages', 'Messages')}
+      </>
+    );
+  }, [
+    detailsData?.type,
+    detailsData?.data,
+    detailsData?.beautified,
+    backButton,
+    renderTabItem,
+    setDebuggerState,
+  ]);
+
+  const consoleHeader = useMemo(() => {
+    if (detailsData?.type !== DebuggerPanel.Console) return null;
+
+    return (
+      <>
+        {backButton}
+
+        <View style={styles.divider} />
+
+        {renderTabItem('logMessage', 'Log Message')}
+      </>
+    );
+  }, [detailsData?.type, backButton, renderTabItem]);
+
+  const mainHeader = useMemo(() => {
+    const onHide = () => {
+      setDebuggerState(draft => {
+        draft.visibility = 'bubble';
+      });
+    };
+
+    const onMove = () => {
+      setDebuggerState(draft => {
+        draft.position = draft.position === 'bottom' ? 'top' : 'bottom';
+      });
+    };
+
+    const switchTo = (debuggerPanel: DebuggerPanel) => {
+      setDebuggerState(draft => {
+        draft.selectedPanel = debuggerPanel;
+        draft.detailsData = null;
+        lastSelectedPanel.current = debuggerPanel;
+      });
+    };
+
+    const toggleNetworkInterception = () => {
+      networkInterceptor.isInterceptorEnabled
+        ? networkInterceptor.disableInterception()
+        : networkInterceptor.enableInterception();
+    };
+
+    const toggleConsoleInterception = () => {
+      consoleInterceptor.isInterceptorEnabled
+        ? consoleInterceptor.disableInterception()
+        : consoleInterceptor.enableInterception();
+    };
+
+    return (
+      <>
+        <DebuggerHeaderItem onPress={onHide} content={icons.hide} />
+
+        <DebuggerHeaderItem onPress={onMove} content={icons.move} />
+
+        <View style={styles.divider} />
+
         <DebuggerHeaderItem
           isLabel
-          isActive
-          content="Go Back"
-          onPress={() => {
-            setDebuggerState(draft => {
-              draft.selectedPanel = lastSelectedPanel.current;
-            });
-          }}
+          isActive={selectedPanel === DebuggerPanel.Network}
+          content="Network Panel"
+          onPress={() => switchTo(DebuggerPanel.Network)}
         />
-      </View>
+
+        <DebuggerHeaderItem
+          onPress={toggleNetworkInterception}
+          isActive={networkInterceptor.isInterceptorEnabled}
+          content={icons.record}
+        />
+
+        <DebuggerHeaderItem
+          onPress={networkInterceptor.clearAllNetworkRequests}
+          content={icons.delete}
+        />
+
+        <View style={styles.divider} />
+
+        <DebuggerHeaderItem
+          isLabel
+          isActive={selectedPanel === DebuggerPanel.Console}
+          content="Console Panel"
+          onPress={() => switchTo(DebuggerPanel.Console)}
+        />
+
+        <DebuggerHeaderItem
+          onPress={toggleConsoleInterception}
+          isActive={consoleInterceptor.isInterceptorEnabled}
+          content={icons.record}
+        />
+
+        <DebuggerHeaderItem
+          onPress={consoleInterceptor.clearAllLogMessages}
+          content={icons.delete}
+        />
+      </>
     );
-  }
+  }, [selectedPanel, consoleInterceptor, networkInterceptor, setDebuggerState]);
 
   return (
     <ScrollView
@@ -73,44 +209,16 @@ export default function DebuggerHeader({ detailsShown }: DebuggerHeaderProps) {
       contentContainerStyle={styles.contentContainer}
       showsHorizontalScrollIndicator={false}
     >
-      <DebuggerHeaderItem onPress={hideDebugger} content={icons.hide} />
-
-      <DebuggerHeaderItem onPress={toggleDebuggerPosition} content={icons.move} />
-
-      <DebuggerHeaderItem
-        isLabel
-        isActive={debuggerState.selectedPanel === DebuggerPanel.Network}
-        content="Network Panel"
-        onPress={() => switchTo(DebuggerPanel.Network)}
-      />
-
-      <DebuggerHeaderItem
-        onPress={toggleNetworkInterception}
-        isActive={networkInterceptor.isInterceptorEnabled}
-        content={icons.record}
-      />
-
-      <DebuggerHeaderItem
-        onPress={networkInterceptor.clearAllNetworkRequests}
-        content={icons.delete}
-      />
-
-      <View style={styles.divider} />
-
-      <DebuggerHeaderItem
-        isLabel
-        isActive={debuggerState.selectedPanel === DebuggerPanel.Console}
-        content="Log Panel"
-        onPress={() => switchTo(DebuggerPanel.Console)}
-      />
-
-      <DebuggerHeaderItem
-        onPress={toggleLogInterception}
-        isActive={logInterceptor.isInterceptorEnabled}
-        content={icons.record}
-      />
-
-      <DebuggerHeaderItem onPress={logInterceptor.clearAllLogMessages} content={icons.delete} />
+      {(() => {
+        switch (detailsData?.type) {
+          case DebuggerPanel.Network:
+            return networkHeader;
+          case DebuggerPanel.Console:
+            return consoleHeader;
+          default:
+            return mainHeader;
+        }
+      })()}
     </ScrollView>
   );
 }

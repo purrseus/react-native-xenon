@@ -7,7 +7,7 @@ interface MainContextValue {
   debuggerState: DebuggerState;
   setDebuggerState: Updater<DebuggerState>;
   networkInterceptor: ReturnType<typeof useNetworkInterceptor>;
-  logInterceptor: ReturnType<typeof useConsoleInterceptor>;
+  consoleInterceptor: ReturnType<typeof useConsoleInterceptor>;
 }
 
 const MainContext = createContext<MainContextValue | null>(null);
