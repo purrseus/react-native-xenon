@@ -4,7 +4,6 @@ import { Animated, StyleSheet, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useImmer } from 'use-immer';
 import MainContext from '../contexts/MainContext';
-import { detailsData } from '../core/data';
 import { getVerticalSafeMargin } from '../core/utils';
 import { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
 import colors from '../theme/colors';
@@ -56,11 +55,12 @@ namespace Xenon {
       visibility: 'hidden',
       position: 'bottom',
       selectedPanel: DebuggerPanel.Network,
+      detailsData: null,
     });
 
     const detailsShown = useMemo(
-      () => !debuggerState.selectedPanel && !!detailsData.value,
-      [debuggerState.selectedPanel],
+      () => !debuggerState.selectedPanel && !!debuggerState.detailsData,
+      [debuggerState.detailsData, debuggerState.selectedPanel],
     );
 
     const containerStyle = useMemo(
@@ -75,7 +75,7 @@ namespace Xenon {
       autoEnabled: autoInspectNetworkEnabled,
     });
 
-    const logInterceptor = useConsoleInterceptor({
+    const consoleInterceptor = useConsoleInterceptor({
       autoEnabled: autoInspectConsoleEnabled,
     });
 
@@ -103,7 +103,7 @@ namespace Xenon {
 
     return (
       <MainContext.Provider
-        value={{ debuggerState, setDebuggerState, networkInterceptor, logInterceptor }}
+        value={{ debuggerState, setDebuggerState, networkInterceptor, consoleInterceptor }}
       >
         {debuggerState.visibility === 'bubble' && (
           <Bubble
@@ -118,7 +118,7 @@ namespace Xenon {
         {debuggerState.visibility === 'panel' && (
           <SafeAreaProvider style={containerStyle}>
             <SafeAreaView style={styles.safeArea}>
-              <DebuggerHeader detailsShown={detailsShown} />
+              <DebuggerHeader />
               {debuggerState.selectedPanel === DebuggerPanel.Network && <NetworkPanel />}
               {debuggerState.selectedPanel === DebuggerPanel.Console && <ConsolePanel />}
               {detailsShown && <DetailsViewer />}

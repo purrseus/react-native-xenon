@@ -1,4 +1,4 @@
-import type { HttpRequest } from '../types';
+import { NetworkType, type HttpRequest, type WebSocketRequest } from '../types';
 
 export const getVerticalSafeMargin = (screenHeight: number) => screenHeight / 8;
 
@@ -59,6 +59,27 @@ export const convertToCurl = (
   }
 
   return curlCommand;
+};
+
+export const getNetworkUtils = (data: HttpRequest | WebSocketRequest) => {
+  const isHttp = data?.type !== NetworkType.WS;
+  const requestUrl = new URL(data.url);
+
+  const overviewShown = !!data.url;
+  const headersShown = isHttp && (!!data.requestHeaders || !!data.responseHeaders);
+  const requestShown = isHttp && (!!requestUrl.search || !!data.body);
+  const responseShown = isHttp && !!data.response;
+  const messagesShown = !isHttp && !!data.messages;
+
+  return {
+    isHttp,
+    requestUrl,
+    overviewShown,
+    headersShown,
+    requestShown,
+    responseShown,
+    messagesShown,
+  };
 };
 
 export function frozen(_target: Object) {

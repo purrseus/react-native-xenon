@@ -1,16 +1,18 @@
-import { detailsData } from '../../../core/data';
+import { useContext } from 'react';
+import { MainContext } from '../../../contexts';
 import { DebuggerPanel } from '../../../types';
 import LogMessageDetails from './LogMessageDetails';
 import NetworkRequestDetails from './NetworkRequestDetails';
 
 export default function DetailsViewer() {
-  if (!detailsData.value) return null;
+  const { debuggerState } = useContext(MainContext)!;
+  const detailsData = debuggerState.detailsData;
 
-  switch (true) {
-    case DebuggerPanel.Network in detailsData.value:
-      return <NetworkRequestDetails item={detailsData.value.network} />;
-    case DebuggerPanel.Console in detailsData.value:
-      return <LogMessageDetails item={detailsData.value.console} />;
+  switch (detailsData?.type) {
+    case DebuggerPanel.Network:
+      return <NetworkRequestDetails item={detailsData.data} />;
+    case DebuggerPanel.Console:
+      return <LogMessageDetails item={detailsData.data} />;
     default:
       return null;
   }

@@ -12,9 +12,9 @@ export default function NetworkPanelHeader() {
 
       <View style={styles.divider} />
 
-      <View style={[styles.headerColumn, styles.headerNameColumn]}>
+      <View style={[styles.headerColumn, styles.headerPathColumn]}>
         <Text numberOfLines={1} style={styles.itemText}>
-          Name
+          Path
         </Text>
       </View>
 
@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     backgroundColor: colors.gray,
     borderRadius: 4,
   },
-  headerNameColumn: {
+  headerPathColumn: {
     flex: 5,
   },
   headerDurationColumn: {

@@ -1,21 +1,16 @@
-import { useRef, useState, type JSX, type ReactNode } from 'react';
-import { ScrollView, Share, StyleSheet, TouchableOpacity } from 'react-native';
-import { URL } from 'react-native-url-polyfill';
-import colors from '../../../theme/colors';
+import { useContext, useRef, type JSX, type ReactNode } from 'react';
+import { ScrollView, StyleSheet } from 'react-native';
+import { MainContext } from '../../../contexts';
 import {
-  NetworkType,
-  type HttpRequest,
-  type NetworkTab,
-  type WebSocketRequest,
-} from '../../../types';
-import {
-  convertToCurl,
   formatRequestDuration,
   formatRequestMethod,
   formatRequestStatusCode,
+  getNetworkUtils,
+  keyValueToString,
   limitChar,
 } from '../../../core/utils';
-import NetworkDetailsHeader from '../headers/NetworkRequestDetailsHeader';
+import colors from '../../../theme/colors';
+import { type DetailTab, type HttpRequest, type WebSocketRequest } from '../../../types';
 import NetworkRequestDetailsItem from '../items/NetworkRequestDetailsItem';
 
 interface NetworkRequestDetailsProps {
@@ -23,28 +18,28 @@ interface NetworkRequestDetailsProps {
 }
 
 export default function NetworkRequestDetails({ item }: NetworkRequestDetailsProps) {
-  const [selectedTab, setSelectedTab] = useState<NetworkTab>('headers');
+  const { debuggerState } = useContext(MainContext)!;
 
-  const isWebSocket = item.type === NetworkType.WS;
+  const {
+    isHttp,
+    requestUrl,
+    overviewShown,
+    headersShown,
+    requestShown,
+    responseShown,
+    messagesShown,
+  } = getNetworkUtils(item);
 
-  const requestUrl = new URL(item.url);
-
-  const headerShown = !!item.url;
-  const queryStringParametersShown = !!requestUrl.search;
-  const bodyShown = !isWebSocket && !!item.body;
-  const responseShown = !isWebSocket && !!item.response;
-  const messagesShown = isWebSocket && !!item.messages;
-
-  const content = useRef<Record<NetworkTab, JSX.Element | null>>({
+  const content = useRef<Record<Exclude<DetailTab, 'logMessage'>, JSX.Element | null>>({
+    overview: null,
     headers: null,
-    queryStringParameters: null,
-    body: null,
+    request: null,
     response: null,
     messages: null,
   });
 
-  if (headerShown && !content.current.headers) {
-    content.current.headers = (
+  if (overviewShown && !content.current.overview) {
+    content.current.overview = (
       <>
         <NetworkRequestDetailsItem label="Request Type" content={item.type} />
 
@@ -52,7 +47,7 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
 
         <NetworkRequestDetailsItem
           label="Request Method"
-          content={formatRequestMethod(isWebSocket ? undefined : item.method)}
+          content={formatRequestMethod(isHttp ? (item as HttpRequest).method : undefined)}
         />
 
         <NetworkRequestDetailsItem
@@ -64,75 +59,80 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
           label="Status Code"
           content={formatRequestStatusCode(item.status)}
         />
+      </>
+    );
+  }
 
-        {isWebSocket && (
-          <NetworkRequestDetailsItem label="Headers" content={limitChar(item.options?.headers)} />
+  if (headersShown && !content.current.headers) {
+    content.current.headers = (
+      <>
+        {!isHttp && (
+          <NetworkRequestDetailsItem
+            label="Headers"
+            content={limitChar((item as WebSocketRequest).options?.headers)}
+          />
         )}
 
-        {!isWebSocket && (
-          <NetworkRequestDetailsItem label="Response Headers" content={item.responseHeaders} />
+        {isHttp && (
+          <NetworkRequestDetailsItem
+            label="Request Headers"
+            content={(item as HttpRequest).requestHeadersString}
+          />
         )}
 
-        {!isWebSocket && (
-          <NetworkRequestDetailsItem label="Request Headers" content={item.requestHeadersString} />
-        )}
-
-        {!isWebSocket && (
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() =>
-              Share.share({
-                message: convertToCurl(item.method, item.url, item.requestHeaders, item.body),
-              })
-            }
-            style={styles.buttonContent}
-          >
-            <NetworkRequestDetailsItem content="Share as cURL" />
-          </TouchableOpacity>
+        {isHttp && (
+          <NetworkRequestDetailsItem
+            label="Response Headers"
+            content={(item as HttpRequest).responseHeaders}
+          />
         )}
       </>
     );
   }
 
-  if (queryStringParametersShown && !content.current.queryStringParameters) {
+  if (requestShown && !content.current.request) {
     const queryStringParameters: ReactNode[] = [];
 
     requestUrl.searchParams.forEach((value, name) => {
       queryStringParameters.push(
-        <NetworkRequestDetailsItem key={name} label={name} content={value} />,
+        <NetworkRequestDetailsItem
+          key={keyValueToString(name, value)}
+          label="Query String"
+          content={keyValueToString(name, value)}
+        />,
       );
     });
 
-    content.current.queryStringParameters = <>{queryStringParameters}</>;
-  }
-
-  if (bodyShown && !content.current.body) {
-    content.current.body = <NetworkRequestDetailsItem content={limitChar(item.body)} />;
+    content.current.request = (
+      <>
+        {queryStringParameters}
+        <NetworkRequestDetailsItem label="Body" content={limitChar((item as HttpRequest).body)} />
+      </>
+    );
   }
 
   if (responseShown && !content.current.response) {
-    content.current.response = <NetworkRequestDetailsItem content={limitChar(item.response)} />;
+    content.current.response = (
+      <NetworkRequestDetailsItem
+        label="Response"
+        content={limitChar((item as HttpRequest).response)}
+      />
+    );
   }
 
   if (messagesShown && !content.current.messages) {
-    content.current.messages = <NetworkRequestDetailsItem content={item.messages} />;
+    content.current.messages = (
+      <NetworkRequestDetailsItem
+        label="Messages"
+        content={`\n${(item as WebSocketRequest).messages}`}
+      />
+    );
   }
 
   return (
-    <>
-      <NetworkDetailsHeader
-        selectedTab={selectedTab}
-        onChangeTab={setSelectedTab}
-        headersShown={headerShown}
-        queryStringParametersShown={queryStringParametersShown}
-        bodyShown={bodyShown}
-        responseShown={responseShown}
-        messagesShown={messagesShown}
-      />
-      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-        {content.current[selectedTab]}
-      </ScrollView>
-    </>
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+      {content.current[debuggerState.detailsData!.selectedTab as Exclude<DetailTab, 'logMessage'>]}
+    </ScrollView>
   );
 }
 
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   contentContainer: {
-    padding: 8,
+    paddingHorizontal: 8,
   },
   divider: {
     height: 1,
