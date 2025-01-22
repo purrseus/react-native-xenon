@@ -1,3 +1,4 @@
+import { URL } from 'react-native-url-polyfill';
 import { NetworkType, type HttpRequest, type WebSocketRequest } from '../types';
 
 export const getNetworkUtils = (data: HttpRequest | WebSocketRequest) => {
