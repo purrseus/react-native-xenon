@@ -1,8 +1,35 @@
-# react-native-xenon
+<div align="center">
 
-A comprehensive tool for analyzing HTTP(S) requests and logs in React Native apps. Designed for use across all environments, it offers an intuitive interface for efficient debugging and issue resolution.
+# react-native-xenon :microscope:
+
+### A comprehensive tool for analyzing HTTP(S) requests and logs in React Native apps.
+
+</div>
+
+<div align="center">
+
+[![GitHub Actions Workflow Status][github-actions-status-badge]][github-actions-link]
+[![NPM Version][npm-version-badge]][npm-version-link]
+[![React Native][react-native-badge]][react-native-link]
+[![Runs With Expo][runs-with-expo-badge]][runs-with-expo-link]
+[![Types Included][types-included-badge]][types-included-link]
+[![Buy Me A Coffee][buy-me-a-coffee-badge]][buy-me-a-coffee-link]
+
+</div>
+
+## Features
+
+- HTTP/HTTPS request monitoring with support for **XHR** and **Fetch API**
+- **WebSocket** connection tracking
+- **Console** logging interception (log, info, warn, error, etc.)
+- **Draggable bubble** interface for quick access
+- Request/response inspection with **detailed information**
+- Real-time monitoring capabilities
+- Works with both **React Native** and **Expo** projects
 
 ## Installation
+
+### React Native
 
 Install the Xenon with `yarn` or `npm`. You will also need to install `react-native-safe-area-context` if you haven't already.
 
@@ -65,7 +92,7 @@ Xenon.hide();
 
 ## Methods
 
-| **Method**    | **Return type** | **Description**                                                                             |
+| **Method**    | **Return Type** | **Description**                                                                             |
 | ------------- | --------------- | ------------------------------------------------------------------------------------------- |
 | `isVisible()` | `boolean`       | Checks whether the debugger is currently visible.                                           |
 | `show()`      | `void`          | Makes the debugger visible. If it is already visible, this method has no additional effect. |
@@ -78,3 +105,18 @@ See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the 
 ## License
 
 This project is [MIT](./LICENSE) licensed.
+
+<!-- badges -->
+
+[github-actions-status-badge]: https://img.shields.io/github/actions/workflow/status/purrseus/react-native-xenon/ci.yml?style=for-the-badge&logo=github&label=%20&labelColor=1B1B1D
+[github-actions-link]: https://github.com/purrseus/react-native-xenon/blob/develop/.github/workflows/ci.yml
+[npm-version-badge]: https://img.shields.io/npm/v/react-native-xenon?style=for-the-badge&color=CC3F3E&labelColor=1B1B1D&logo=npm&label=%20&logoColor=CC3F3E
+[npm-version-link]: https://www.npmjs.com/package/react-native-xenon
+[react-native-badge]: https://img.shields.io/badge/%20react%20native-67DAFB?style=for-the-badge&logo=react&logoColor=67DAFB&labelColor=1B1B1D
+[react-native-link]: https://reactnative.dev
+[runs-with-expo-badge]: https://img.shields.io/badge/runs%20with%20Expo-FFFFFF?style=for-the-badge&logo=expo&labelColor=1B1B1D&logoColor=FFFFFF
+[runs-with-expo-link]: https://expo.dev
+[types-included-badge]: https://img.shields.io/badge/included-3077C6?style=for-the-badge&logo=typescript&logoColor=3077C6&labelColor=1B1B1D
+[types-included-link]: https://www.typescriptlang.org
+[buy-me-a-coffee-badge]: https://img.shields.io/badge/%20-Buy%20me%20a%20coffee-FEDD03?style=for-the-badge&logo=buymeacoffee&labelColor=1B1B1D
+[buy-me-a-coffee-link]: https://www.buymeacoffee.com/thiendo261
