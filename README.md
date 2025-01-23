@@ -98,6 +98,21 @@ Xenon.hide();
 | `show()`      | `void`          | Makes the debugger visible. If it is already visible, this method has no additional effect. |
 | `hide()	`      | `void`          | Hides the debugger. If it is already hidden, this method has no additional effect.          |
 
+## Example Project
+
+To try out react-native-xenon, you can run the example project:
+
+```sh
+git clone https://github.com/purrseus/react-native-xenon.git
+cd react-native-xenon
+
+# Install dependencies
+yarn install
+
+# Start the Expo development server
+yarn example start
+```
+
 ## Contributing
 
 See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the repository and the development workflow.
