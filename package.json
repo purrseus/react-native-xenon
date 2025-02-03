@@ -1,7 +1,7 @@
 {
   "name": "react-native-xenon",
   "version": "0.5.1",
-  "description": "A comprehensive tool for analyzing HTTP(S) requests and logs in React Native apps. 🔬",
+  "description": "A powerful in-app debugging tool for React Native.",
   "source": "./src/index.ts",
   "main": "./lib/commonjs/index.js",
   "module": "./lib/module/index.js",

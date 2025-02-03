@@ -2,7 +2,7 @@
 
 # React Native Xenon
 
-### A comprehensive tool for analyzing HTTP(S) requests and logs in React Native apps. :microscope:
+### A powerful in-app debugging tool for React Native.
 
 </div>
 
@@ -22,13 +22,11 @@
 
 ## Features
 
-- HTTP/HTTPS request monitoring with support for **XHR** and **Fetch API**
-- **WebSocket** connection tracking
-- **Console** logging interception (log, info, warn, error, etc.)
-- **Draggable bubble** interface for quick access
-- Request/response inspection with **detailed information**
-- Real-time monitoring capabilities
-- Works with both **React Native** and **Expo** projects
+- :iphone: **In-app debugging** – No need to build a debug version; inspect your app in any environment.
+- :globe_with_meridians: **Network & WebSocket Monitoring** – Track **HTTP(S) requests** (XHR, Fetch) and **WebSocket connections** in real-time.
+- :page_with_curl: **Console Log Capture** – Intercept **log, info, warn, and error** messages for better debugging insights.
+- :zap: **Seamless Debugging** – Debug without disrupting your workflow, with a draggable bubble for instant access.
+- :sparkles: **Cross-Platform Support** – Works with both **React Native** and **Expo** projects.
 
 ## Installation
 
