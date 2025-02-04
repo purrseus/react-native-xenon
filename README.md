@@ -81,6 +81,13 @@ And hide it by calling the `hide` method.
 ```tsx
 Xenon.hide();
 ```
+> [!WARNING]
+> By default, `<Xenon.Component />` is **visible in all environments**. If you don’t want it to show in certain environments (like **production**) to prevent end users from accessing it, you can hide it with a simple condition. For example:
+> ```tsx
+> {!isProduction && <Xenon.Component />}
+> ```
+
+Alternatively, you can use any approach that restricts access to the component, ensuring only your development team can interact with it.
 
 ## Props
 
