@@ -95,6 +95,7 @@
     "react-native": "0.76.3",
     "react-native-builder-bob": "^0.33.3",
     "react-native-safe-area-context": "^5.0.0",
+    "react-native-screens": "^4.6.0",
     "release-it": "^17.10.0",
     "typescript": "^5.2.2"
   },
@@ -104,7 +105,8 @@
   "peerDependencies": {
     "react": "*",
     "react-native": "*",
-    "react-native-safe-area-context": "*"
+    "react-native-safe-area-context": "*",
+    "react-native-screens": "*"
   },
   "workspaces": [
     "example"

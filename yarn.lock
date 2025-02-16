@@ -11637,6 +11637,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-freeze@npm:^1.0.0":
+  version: 1.0.4
+  resolution: "react-freeze@npm:1.0.4"
+  peerDependencies:
+    react: ">=17.0.0"
+  checksum: 10/1dc433319341ec3dca84513c4197ef4f4c8232604d35f83546a8abfb41d9591f934b66aaaa4dc3dc8b1b65f488705a2a48ae6c1d9792660119a9cdedeab4ca8f
+  languageName: node
+  linkType: hard
+
 "react-is@npm:^16.13.1":
   version: 16.13.1
   resolution: "react-is@npm:16.13.1"
@@ -11703,6 +11712,32 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-screens@npm:^4.6.0":
+  version: 4.6.0
+  resolution: "react-native-screens@npm:4.6.0"
+  dependencies:
+    react-freeze: "npm:^1.0.0"
+    warn-once: "npm:^0.1.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/c3200fb6e7962c8b7713645e8c2efd0fd6305d284c82c923fcba6cd32bf7e281c4669b8ae169dc49e3ac939429b5c1ffa4bf5d45373cb20e8094567d797fa903
+  languageName: node
+  linkType: hard
+
+"react-native-screens@npm:~4.4.0":
+  version: 4.4.0
+  resolution: "react-native-screens@npm:4.4.0"
+  dependencies:
+    react-freeze: "npm:^1.0.0"
+    warn-once: "npm:^0.1.0"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/a70d036674611b327c01e6c3a147b9d22b59d7e58cfd82a9df5a070fac26af17b65bcd1ec911ec3516c6d9e2782a48577b5ac2f576a196ad5fff1fddcf17bf38
+  languageName: node
+  linkType: hard
+
 "react-native-url-polyfill@npm:^2.0.0":
   version: 2.0.0
   resolution: "react-native-url-polyfill@npm:2.0.0"
@@ -11747,6 +11782,7 @@ __metadata:
     react-native: "npm:0.76.3"
     react-native-builder-bob: "npm:^0.33.3"
     react-native-safe-area-context: "npm:4.12.0"
+    react-native-screens: "npm:~4.4.0"
     react-native-web: "npm:~0.19.13"
   languageName: unknown
   linkType: soft
@@ -11774,6 +11810,7 @@ __metadata:
     react-native: "npm:0.76.3"
     react-native-builder-bob: "npm:^0.33.3"
     react-native-safe-area-context: "npm:^5.0.0"
+    react-native-screens: "npm:^4.6.0"
     react-native-url-polyfill: "npm:^2.0.0"
     release-it: "npm:^17.10.0"
     typescript: "npm:^5.2.2"
@@ -11782,6 +11819,7 @@ __metadata:
     react: "*"
     react-native: "*"
     react-native-safe-area-context: "*"
+    react-native-screens: "*"
   languageName: unknown
   linkType: soft
 
@@ -14018,6 +14056,13 @@ __metadata:
   dependencies:
     makeerror: "npm:1.0.12"
   checksum: 10/ad7a257ea1e662e57ef2e018f97b3c02a7240ad5093c392186ce0bcf1f1a60bbadd520d073b9beb921ed99f64f065efb63dfc8eec689a80e569f93c1c5d5e16c
+  languageName: node
+  linkType: hard
+
+"warn-once@npm:^0.1.0":
+  version: 0.1.1
+  resolution: "warn-once@npm:0.1.1"
+  checksum: 10/e6a5a1f5a8dba7744399743d3cfb571db4c3947897875d4962a7c5b1bf2195ab4518c838cb4cea652e71729f21bba2e98dc75686f5fccde0fabbd894e2ed0c0d
   languageName: node
   linkType: hard
 

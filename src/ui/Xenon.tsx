@@ -1,6 +1,6 @@
 import { enableMapSet } from 'immer';
 import { createRef, memo, useImperativeHandle, useMemo, useRef } from 'react';
-import { Animated, StyleSheet, useWindowDimensions } from 'react-native';
+import { Animated, Platform, StyleSheet, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useImmer } from 'use-immer';
 import MainContext from '../contexts/MainContext';
@@ -9,6 +9,7 @@ import { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
 import colors from '../theme/colors';
 import { DebuggerPanel, type DebuggerState } from '../types';
 import { Bubble, ConsolePanel, DebuggerHeader, DetailsViewer, NetworkPanel } from './components';
+import { FullWindowOverlay } from 'react-native-screens';
 
 namespace Xenon {
   interface Methods {
@@ -45,7 +46,7 @@ namespace Xenon {
   export const show = (): void => ref.current?.show();
   export const hide = (): void => ref.current?.hide();
 
-  export const Component = memo(
+  const Debugger = memo(
     ({
       autoInspectNetworkEnabled = true,
       autoInspectConsoleEnabled = true,
@@ -133,6 +134,18 @@ namespace Xenon {
       );
     },
   );
+
+  export function Component(props: Props) {
+    if (Platform.OS === 'ios') {
+      return (
+        <FullWindowOverlay>
+          <Debugger {...props} />
+        </FullWindowOverlay>
+      );
+    }
+
+    return <Debugger {...props} />;
+  }
 
   Component.displayName = 'Xenon';
 }
