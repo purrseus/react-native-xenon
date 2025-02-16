@@ -22,36 +22,58 @@
 
 ## Features
 
-- :iphone: **In-app debugging** – No need to build a debug version; inspect your app in any environment.
-- :globe_with_meridians: **Network & WebSocket Monitoring** – Track **HTTP(S) requests** (XHR, Fetch) and **WebSocket connections** in real-time.
-- :page_with_curl: **Console Log Capture** – Intercept **log, info, warn, and error** messages for better debugging insights.
-- :zap: **Seamless Debugging** – Debug without disrupting your workflow, with a draggable bubble for instant access.
-- :sparkles: **Cross-Platform Support** – Works with both **React Native** and **Expo** projects.
+- :iphone: **In-app debugging** – Debug apps in any environment without the need for debug builds.
+- :globe_with_meridians: **Network Inspection** – Monitor HTTP(S) requests (XHR, Fetch) and WebSocket connections.
+- :page_with_curl: **Log Capture** – Intercept console messages like log, info, warn, and error for enhanced debugging.
+- :zap: **Draggable Bubble UI** – Seamlessly debug without disrupting your workflow.
+- :sparkles: **React Native & Expo Support** – Built for compatibility across both platforms.
 
 ## Installation
 
+Install Xenon and its dependencies.
+
 ### React Native
 
-Install the Xenon with **yarn** or **npm**. You will also need to install `react-native-safe-area-context` if you haven't already.
-
 ```sh
-yarn add react-native-xenon react-native-safe-area-context
+yarn add react-native-xenon
+yarn add react-native-safe-area-context react-native-screens
 ```
 
-or
+#### Android
+
+`react-native-screens` package requires one additional configuration step to properly work on Android devices. Edit `MainActivity.kt` file which is located under `android/app/src/main/java/<your package name>/`.
+
+Add the highlighted code to the body of `MainActivity` class:
+
+```diff
++ import android.os.Bundle
+// ...
+
+class MainActivity: ReactActivity() {
+  // ...
++  override fun onCreate(savedInstanceState: Bundle?) {
++    super.onCreate(null)
++  }
+  // ...
+}
+```
+
+This change is required to avoid crashes related to View state being not persisted consistently across Activity restarts.
+
+#### iOS
+
+Don't forget to install pods when you are developing for iOS.
 
 ```sh
-npm install react-native-xenon react-native-safe-area-context
+cd ios && pod install; cd ..
 ```
 
 ### Expo
 
 ```sh
-npx expo install react-native-xenon react-native-safe-area-context
+npx expo install react-native-xenon
+npx expo install react-native-safe-area-context react-native-screens
 ```
-
-> [!NOTE]
-> You can skip installing `react-native-safe-area-context` if you have created a project using [the default template](https://docs.expo.dev/get-started/create-a-project). This library is installed as peer dependency for Expo Router library.
 
 ## Usage
 
@@ -81,13 +103,16 @@ And hide it by calling the `hide` method.
 ```tsx
 Xenon.hide();
 ```
-> [!WARNING]
-> By default, `<Xenon.Component />` is **visible in all environments**. If you don’t want it to show in certain environments (like **production**) to prevent end users from accessing it, you can hide it with a simple condition. For example:
-> ```tsx
-> {!isProduction && <Xenon.Component />}
-> ```
 
-Alternatively, you can use any approach that restricts access to the component, ensuring only your development team can interact with it.
+> [!WARNING]
+> `<Xenon.Component />` is enabled by default in all environments, **including production**. This could expose sensitive debugging tools to end users, creating potential security risks.
+> To avoid this, make sure to conditionally render the component only in non-production environments. For example:
+>
+> ```tsx
+> {isProduction ? null : <Xenon.Component />}
+> ```
+>
+> Additionally, consider other approaches such as environment-based feature flags or access control to ensure only authorized users (e.g., developers) can interact with it.
 
 ## Props
 
