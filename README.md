@@ -1,29 +1,79 @@
-# react-native-xenon
+<div align="center">
 
-A comprehensive tool for analyzing HTTP(S) requests and logs in React Native apps. Designed for use across all environments, it offers an intuitive interface for efficient debugging and issue resolution.
+# React Native Xenon
+
+### A powerful in-app debugging tool for React Native.
+
+</div>
+
+<div align="center">
+
+[![GitHub Actions Workflow Status][github-actions-status-badge]][github-actions-status-link]
+[![NPM Version][npm-version-badge]][npm-version-link]
+[![React Native][react-native-badge]][react-native-link]
+[![Runs With Expo][expo-badge]][expo-link]
+[![Types Included][typescript-badge]][typescript-link]
+<br />
+[![GitHub License][github-license-badge]][github-license-link]
+[![NPM Downloads Per Month][npm-downloads-per-month-badge]][npm-downloads-per-month-link]
+[![Buy Me A Coffee][buy-me-a-coffee-badge]][buy-me-a-coffee-link]
+
+</div>
+
+## Features
+
+- :iphone: **In-app debugging** – Debug apps in any environment without the need for debug builds.
+- :globe_with_meridians: **Network Inspection** – Monitor HTTP(S) requests (XHR, Fetch) and WebSocket connections.
+- :page_with_curl: **Log Capture** – Intercept console messages like log, info, warn, and error for enhanced debugging.
+- :zap: **Draggable Bubble UI** – Seamlessly debug without disrupting your workflow.
+- :sparkles: **React Native & Expo Support** – Built for compatibility across both platforms.
 
 ## Installation
 
-Install the Xenon with `yarn` or `npm`. You will also need to install `react-native-safe-area-context` if you haven't already.
+Install Xenon and its dependencies.
+
+### React Native
 
 ```sh
-yarn add react-native-xenon react-native-safe-area-context
+yarn add react-native-xenon
+yarn add react-native-safe-area-context react-native-screens
 ```
 
-or
+#### Android
+
+`react-native-screens` package requires one additional configuration step to properly work on Android devices. Edit `MainActivity.kt` file which is located under `android/app/src/main/java/<your package name>/`.
+
+Add the highlighted code to the body of `MainActivity` class:
+
+```diff
++ import android.os.Bundle
+// ...
+
+class MainActivity: ReactActivity() {
+  // ...
++  override fun onCreate(savedInstanceState: Bundle?) {
++    super.onCreate(null)
++  }
+  // ...
+}
+```
+
+This change is required to avoid crashes related to View state being not persisted consistently across Activity restarts.
+
+#### iOS
+
+Don't forget to install pods when you are developing for iOS.
 
 ```sh
-npm install react-native-xenon react-native-safe-area-context
+cd ios && pod install; cd ..
 ```
 
 ### Expo
 
 ```sh
-npx expo install react-native-xenon react-native-safe-area-context
+npx expo install react-native-xenon
+npx expo install react-native-safe-area-context react-native-screens
 ```
-
-> [!NOTE]
-> You can skip installing `react-native-safe-area-context` if you have created a project using [the default template](https://docs.expo.dev/get-started/create-a-project). This library is installed as peer dependency for Expo Router library.
 
 ## Usage
 
@@ -54,6 +104,16 @@ And hide it by calling the `hide` method.
 Xenon.hide();
 ```
 
+> [!WARNING]
+> `<Xenon.Component />` is enabled by default in all environments, **including production**. This could expose sensitive debugging tools to end users, creating potential security risks.
+> To avoid this, make sure to conditionally render the component only in non-production environments. For example:
+>
+> ```tsx
+> {isProduction ? null : <Xenon.Component />}
+> ```
+>
+> Additionally, consider other approaches such as environment-based feature flags or access control to ensure only authorized users (e.g., developers) can interact with it.
+
 ## Props
 
 | **Prop**                    | **Type**  | **Description**                                                                                            |
@@ -65,11 +125,29 @@ Xenon.hide();
 
 ## Methods
 
-| **Method**    | **Return type** | **Description**                                                                             |
+| **Method**    | **Return Type** | **Description**                                                                             |
 | ------------- | --------------- | ------------------------------------------------------------------------------------------- |
 | `isVisible()` | `boolean`       | Checks whether the debugger is currently visible.                                           |
 | `show()`      | `void`          | Makes the debugger visible. If it is already visible, this method has no additional effect. |
 | `hide()	`      | `void`          | Hides the debugger. If it is already hidden, this method has no additional effect.          |
+
+## Examples
+
+To try out Xenon, you can run the example project:
+
+```sh
+# Clone the repo
+git clone https://github.com/purrseus/react-native-xenon.git
+cd react-native-xenon
+
+# Install dependencies
+yarn install
+
+# Start the Expo development server
+yarn example start
+```
+
+See the [example](./example) directory for more information.
 
 ## Contributing
 
@@ -78,3 +156,22 @@ See the [contributing guide](CONTRIBUTING.md) to learn how to contribute to the 
 ## License
 
 This project is [MIT](./LICENSE) licensed.
+
+<!-- badges -->
+
+[github-actions-status-badge]: https://img.shields.io/github/actions/workflow/status/purrseus/react-native-xenon/ci.yml?style=for-the-badge&logo=github&label=%20&labelColor=1B1B1D
+[github-actions-status-link]: ./.github/workflows/ci.yml
+[npm-version-badge]: https://img.shields.io/npm/v/react-native-xenon?style=for-the-badge&color=CC3F3E&labelColor=1B1B1D&logo=npm&label=%20&logoColor=CC3F3E
+[npm-version-link]: https://www.npmjs.com/package/react-native-xenon
+[react-native-badge]: https://img.shields.io/badge/%20React%20Native-67DAFB?style=for-the-badge&logo=react&logoColor=67DAFB&labelColor=1B1B1D
+[react-native-link]: https://reactnative.dev
+[expo-badge]: https://img.shields.io/badge/Expo-FFFFFF?style=for-the-badge&logo=expo&labelColor=1B1B1D&logoColor=FFFFFF
+[expo-link]: https://expo.dev
+[typescript-badge]: https://img.shields.io/badge/TypeScript-3077C6?style=for-the-badge&logo=typescript&logoColor=3077C6&labelColor=1B1B1D
+[typescript-link]: https://www.typescriptlang.org
+[github-license-badge]: https://img.shields.io/badge/License-MIT-44CD11?style=for-the-badge&labelColor=1B1B1D
+[github-license-link]: ./LICENSE
+[npm-downloads-per-month-badge]: https://img.shields.io/npm/dm/react-native-xenon?style=for-the-badge&labelColor=1B1B1D
+[npm-downloads-per-month-link]: https://www.npmjs.com/package/react-native-xenon
+[buy-me-a-coffee-badge]: https://img.shields.io/badge/%20-Buy%20me%20a%20coffee-FEDD03?style=for-the-badge&logo=buymeacoffee&labelColor=1B1B1D
+[buy-me-a-coffee-link]: https://www.buymeacoffee.com/thiendo261

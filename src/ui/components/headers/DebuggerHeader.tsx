@@ -7,6 +7,8 @@ import icons from '../../../theme/icons';
 import { DebuggerPanel, NetworkType, type DetailTab } from '../../../types';
 import DebuggerHeaderItem from '../items/DebuggerHeaderItem';
 
+let isSharing = false;
+
 export default function DebuggerHeader() {
   const {
     debuggerState: { detailsData, selectedPanel },
@@ -62,16 +64,28 @@ export default function DebuggerHeader() {
           <>
             <DebuggerHeaderItem
               content={icons.share}
-              onPress={() => {
-                if (detailsData.data.type === NetworkType.WS) return;
-                Share.share({
-                  message: convertToCurl(
-                    detailsData.data.method,
-                    detailsData.data.url,
-                    detailsData.data.requestHeaders,
-                    detailsData.data.body,
-                  ),
-                });
+              onPress={async () => {
+                if (isSharing || detailsData.data.type === NetworkType.WS) return;
+
+                try {
+                  isSharing = true;
+                  setDebuggerState(draft => {
+                    draft.visibility = 'bubble';
+                  });
+
+                  await Share.share({
+                    message: convertToCurl(
+                      detailsData.data.method,
+                      detailsData.data.url,
+                      detailsData.data.requestHeaders,
+                      detailsData.data.body,
+                    ),
+                  });
+                } catch (error) {
+                  // Handle error
+                } finally {
+                  isSharing = false;
+                }
               }}
             />
 
