@@ -36,6 +36,8 @@ namespace Xenon {
       bottom: undefined,
       zIndex: 9999,
       backgroundColor: colors.lightGray,
+      borderBottomColor: colors.gray,
+      borderBottomWidth: StyleSheet.hairlineWidth,
     },
     safeArea: {
       flex: 1,

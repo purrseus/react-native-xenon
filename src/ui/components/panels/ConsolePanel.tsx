@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   divider: {
-    height: 1,
+    height: StyleSheet.hairlineWidth,
     backgroundColor: colors.gray,
   },
 });

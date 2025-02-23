@@ -240,13 +240,17 @@ export default function DebuggerHeader() {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 0,
+    borderTopColor: colors.gray,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: colors.gray,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
   contentContainer: {
     padding: 8,
     columnGap: 8,
   },
   divider: {
-    width: 1,
+    width: StyleSheet.hairlineWidth,
     backgroundColor: colors.gray,
   },
 });
