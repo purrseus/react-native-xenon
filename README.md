@@ -43,8 +43,6 @@ yarn add react-native-safe-area-context react-native-screens
 
 `react-native-screens` package requires one additional configuration step to properly work on Android devices. Edit `MainActivity.kt` file which is located under `android/app/src/main/java/<your package name>/`.
 
-Add the highlighted code to the body of `MainActivity` class:
-
 ```diff
 + import android.os.Bundle
 // ...
@@ -105,7 +103,7 @@ Xenon.hide();
 ```
 
 > [!WARNING]
-> `<Xenon.Component />` is enabled by default in all environments, **including production**. This could expose sensitive debugging tools to end users, creating potential security risks.
+> `<Xenon.Component />` is enabled by default in all environments, **including production**. This could expose sensitive tools to end users, creating potential security risks.
 > To avoid this, make sure to conditionally render the component only in non-production environments. For example:
 >
 > ```tsx
