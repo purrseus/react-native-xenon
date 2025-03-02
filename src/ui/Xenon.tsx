@@ -32,6 +32,7 @@ namespace Xenon {
     container: {
       flex: 1,
       ...StyleSheet.absoluteFillObject,
+      pointerEvents: 'box-none',
       top: undefined,
       bottom: undefined,
       zIndex: 9999,
