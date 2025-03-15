@@ -35,7 +35,7 @@ namespace Xenon {
       pointerEvents: 'box-none',
       top: undefined,
       bottom: undefined,
-      zIndex: 9999,
+      ...(Platform.OS === 'android' ? { zIndex: 9999 } : {}),
       backgroundColor: colors.lightGray,
       borderBottomColor: colors.gray,
       borderBottomWidth: StyleSheet.hairlineWidth,
