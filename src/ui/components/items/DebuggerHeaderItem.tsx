@@ -61,12 +61,13 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    lineHeight: 17,
-    fontWeight: '500',
+    lineHeight: 18,
+    fontWeight: '600',
     color: colors.black,
   },
   icon: {
-    width: 17,
-    height: 17,
+    width: 18,
+    height: 18,
+    tintColor: colors.black,
   },
 });

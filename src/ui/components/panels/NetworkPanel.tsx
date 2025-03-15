@@ -9,7 +9,6 @@ import {
   type ID,
   type WebSocketRequest,
 } from '../../../types';
-import NetworkPanelHeader from '../headers/NetworkPanelHeader';
 import NetworkPanelItem from '../items/NetworkPanelItem';
 
 const Separator = () => <View style={styles.divider} />;
@@ -46,17 +45,14 @@ export default function NetworkPanel() {
   );
 
   return (
-    <>
-      <NetworkPanelHeader />
-      <FlatList
-        inverted
-        data={data}
-        renderItem={renderItem}
-        keyExtractor={([key]) => key}
-        ItemSeparatorComponent={Separator}
-        style={styles.container}
-      />
-    </>
+    <FlatList
+      inverted
+      data={data}
+      renderItem={renderItem}
+      keyExtractor={([key]) => key}
+      ItemSeparatorComponent={Separator}
+      style={styles.container}
+    />
   );
 }
 
@@ -66,7 +62,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   divider: {
-    height: 1,
+    height: StyleSheet.hairlineWidth,
     backgroundColor: colors.gray,
   },
 });
