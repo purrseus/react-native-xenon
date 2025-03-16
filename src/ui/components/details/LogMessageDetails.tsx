@@ -1,6 +1,6 @@
 import { ScrollView, StyleSheet, Text } from 'react-native';
+import { formatLogMessage, getConsoleTypeColor } from '../../../core/utils';
 import type { LogMessage } from '../../../types';
-import { formatLogMessage } from '../../../core/utils';
 import colors from '../../../theme/colors';
 
 interface LogMessageDetailsProps {
@@ -9,8 +9,8 @@ interface LogMessageDetailsProps {
 
 export default function LogMessageDetails({ item }: LogMessageDetailsProps) {
   return (
-    <ScrollView style={styles.container}>
-      <Text>{formatLogMessage(item.type, item.values)}</Text>
+    <ScrollView style={[styles.container, { backgroundColor: getConsoleTypeColor(item.type) }]}>
+      <Text style={styles.text}>{formatLogMessage(item.values)}</Text>
     </ScrollView>
   );
 }
@@ -18,10 +18,10 @@ export default function LogMessageDetails({ item }: LogMessageDetailsProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 8,
+    padding: 8,
   },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: colors.gray,
+  text: {
+    color: colors.black,
+    fontSize: 14,
   },
 });

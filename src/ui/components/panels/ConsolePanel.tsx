@@ -1,6 +1,5 @@
 import { useCallback, useContext } from 'react';
 import { FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
-import colors from '../../../theme/colors';
 import { MainContext } from '../../../contexts';
 import { DebuggerPanel, type LogMessage } from '../../../types';
 import ConsolePanelItem from '../items/ConsolePanelItem';
@@ -41,6 +40,7 @@ export default function ConsolePanel() {
       keyExtractor={(_, index) => index.toString()}
       ItemSeparatorComponent={Separator}
       style={styles.container}
+      contentContainerStyle={styles.contentContainer}
     />
   );
 }
@@ -48,10 +48,11 @@ export default function ConsolePanel() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 8,
+  },
+  contentContainer: {
+    padding: 8,
   },
   divider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: colors.gray,
+    height: 4,
   },
 });

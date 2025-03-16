@@ -1,16 +1,16 @@
 import { useContext, useMemo, useRef, useState, type MutableRefObject } from 'react';
 import {
   Animated,
-  Image,
   PanResponder,
   StyleSheet,
   View,
   type PanResponderGestureState,
 } from 'react-native';
 import { MainContext } from '../../../contexts';
-import icons from '../../../theme/icons';
-import colors from '../../../theme/colors';
 import { clamp, getVerticalSafeMargin } from '../../../core/utils';
+import colors from '../../../theme/colors';
+import icons from '../../../theme/icons';
+import Icon from '../common/Icon';
 
 interface BubbleProps {
   bubbleSize: number;
@@ -27,8 +27,6 @@ export default function Bubble({
   screenWidth,
   screenHeight,
 }: BubbleProps) {
-  const iconSize = bubbleSize * 0.65;
-
   const { setDebuggerState } = useContext(MainContext)!;
   const [idleOpacity, setIdleOpacity] = useState(idleBubbleOpacity);
   const opacityTimer = useRef<NodeJS.Timeout | null>(null);
@@ -110,7 +108,7 @@ export default function Bubble({
           },
         ]}
       >
-        <Image source={icons.bug} style={{ width: iconSize, height: iconSize }} />
+        <Icon source={icons.bug} size={bubbleSize * 0.65} />
       </Animated.View>
     </View>
   );

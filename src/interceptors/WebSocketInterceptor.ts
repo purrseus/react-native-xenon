@@ -23,7 +23,6 @@ export default class WebSocketInterceptor extends NetworkInterceptor<WebSocketHa
 
   private eventEmitter: NativeEventEmitter | null = null;
   private subscriptions: EmitterSubscription[] = [];
-  private readonly startTimes: Map<number, number> = new Map();
 
   private arrayBufferToString(data?: string) {
     try {
@@ -44,12 +43,7 @@ export default class WebSocketInterceptor extends NetworkInterceptor<WebSocketHa
 
     this.subscriptions = [
       this.eventEmitter.addListener('websocketOpen', ev => {
-        const startTime = this.startTimes.get(ev.id);
-        const endTime = Date.now();
-        const duration = endTime - (startTime ?? 0);
-        this.startTimes.delete(ev.id);
-
-        this.handlers.onOpen?.(ev.id, duration);
+        this.handlers.onOpen?.(ev.id, Date.now());
       }),
       this.eventEmitter.addListener('websocketMessage', ev => {
         this.handlers.onMessage?.(
@@ -82,11 +76,8 @@ export default class WebSocketInterceptor extends NetworkInterceptor<WebSocketHa
 
     const { connectCallback, sendCallback, closeCallback } = this.getCallbacks();
 
-    const startTimes = this.startTimes;
     NativeWebSocketModule.connect = function (...args) {
-      connectCallback?.(...args);
-
-      startTimes.set(args[3], Date.now());
+      connectCallback?.(Date.now(), ...args);
 
       originalWebSocketConnect.call(this, ...args);
     };

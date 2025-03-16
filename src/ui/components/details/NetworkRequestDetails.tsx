@@ -1,4 +1,4 @@
-import { useContext, useRef, type JSX, type ReactNode } from 'react';
+import { useContext, useRef, type JSX } from 'react';
 import { ScrollView, StyleSheet } from 'react-native';
 import { MainContext } from '../../../contexts';
 import {
@@ -7,8 +7,6 @@ import {
   formatRequestMethod,
   formatRequestStatusCode,
   getNetworkUtils,
-  keyValueToString,
-  limitChar,
 } from '../../../core/utils';
 import colors from '../../../theme/colors';
 import { type DetailTab, type HttpRequest, type WebSocketRequest } from '../../../types';
@@ -57,65 +55,79 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
         />
 
         <NetworkRequestDetailsItem
-          label="Duration"
-          content={formatRequestDuration(item.duration)}
+          label="Status Code"
+          content={formatRequestStatusCode(item.status)}
         />
 
         <NetworkRequestDetailsItem
-          label="Status Code"
-          content={formatRequestStatusCode(item.status)}
+          label="Start Time"
+          content={new Date(item.startTime ?? 0).toUTCString()}
+        />
+
+        <NetworkRequestDetailsItem
+          label="End Time"
+          content={new Date(item.endTime ?? 0).toUTCString()}
+        />
+
+        <NetworkRequestDetailsItem
+          label="Duration"
+          content={formatRequestDuration(item.startTime, item.endTime)}
         />
       </>
     );
   }
 
   if (headersShown && !content.current.headers) {
+    let headers: [string, string][] = [];
+    let requestHeaders: [string, string][] = [];
+    let responseHeaders: [string, string][] = [];
+
+    if (!isHttp) {
+      headers = Object.entries((item as WebSocketRequest).options?.headers ?? {});
+    }
+
+    if (isHttp) {
+      for (const [key, value] of ((item as HttpRequest).requestHeaders ?? new Map()).entries()) {
+        requestHeaders.push([key, value]);
+      }
+      for (const [key, value] of ((item as HttpRequest).responseHeaders ?? new Map()).entries()) {
+        responseHeaders.push([key, value]);
+      }
+    }
+
     content.current.headers = (
       <>
-        {!isHttp && (
-          <NetworkRequestDetailsItem
-            label="Headers"
-            content={limitChar((item as WebSocketRequest).options?.headers)}
-          />
+        {!isHttp && !!headers.length && (
+          <NetworkRequestDetailsItem label="Headers" content={headers} />
         )}
 
-        {isHttp && (
-          <NetworkRequestDetailsItem
-            label="Request Headers"
-            content={(item as HttpRequest).requestHeadersString}
-          />
+        {isHttp && !!requestHeaders.length && (
+          <NetworkRequestDetailsItem label="Request Headers" content={requestHeaders} />
         )}
 
-        {isHttp && (
-          <NetworkRequestDetailsItem
-            label="Response Headers"
-            content={(item as HttpRequest).responseHeaders}
-          />
+        {isHttp && !!responseHeaders.length && (
+          <NetworkRequestDetailsItem label="Response Headers" content={responseHeaders} />
         )}
       </>
     );
   }
 
   if (requestShown && shouldBeautifiedRefUpdate) {
-    const queryStringParameters: ReactNode[] = [];
+    let queryStringParameters: [string, string][] = [];
 
     requestUrl.searchParams.forEach((value, name) => {
-      queryStringParameters.push(
-        <NetworkRequestDetailsItem
-          key={keyValueToString(name, value, null)}
-          label="Query String"
-          content={keyValueToString(name, value, null)}
-        />,
-      );
+      queryStringParameters.push([name, value]);
     });
+
+    const body = beautify((item as HttpRequest).body, detailsData?.beautified ?? false);
 
     content.current.request = (
       <>
-        {queryStringParameters}
-        <NetworkRequestDetailsItem
-          label="Body"
-          content={beautify((item as HttpRequest).body, detailsData?.beautified ?? false)}
-        />
+        {!!queryStringParameters.length && (
+          <NetworkRequestDetailsItem label="Query String" content={queryStringParameters} />
+        )}
+
+        {!!body && <NetworkRequestDetailsItem label="Body" content={body} />}
       </>
     );
   }
@@ -131,10 +143,7 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
 
   if (messagesShown && !content.current.messages) {
     content.current.messages = (
-      <NetworkRequestDetailsItem
-        label="Messages"
-        content={`\n${(item as WebSocketRequest).messages}`}
-      />
+      <NetworkRequestDetailsItem label="Messages" content={(item as WebSocketRequest).messages!} />
     );
   }
 
@@ -143,7 +152,7 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+    <ScrollView style={styles.container}>
       {content.current[detailsData!.selectedTab as keyof typeof content.current]}
     </ScrollView>
   );
@@ -152,9 +161,7 @@ export default function NetworkRequestDetails({ item }: NetworkRequestDetailsPro
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  },
-  contentContainer: {
-    paddingHorizontal: 8,
+    padding: 8,
   },
   divider: {
     height: StyleSheet.hairlineWidth,

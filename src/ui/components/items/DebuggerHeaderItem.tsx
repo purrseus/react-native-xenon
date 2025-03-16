@@ -1,5 +1,7 @@
-import { Image, StyleSheet, Text, TouchableOpacity, type ImageRequireSource } from 'react-native';
+import { StyleSheet, Text, type ImageRequireSource } from 'react-native';
 import colors from '../../../theme/colors';
+import Icon from '../common/Icon';
+import Touchable from '../common/Touchable';
 
 interface DebuggerHeaderItemProps {
   content?: ImageRequireSource | string;
@@ -17,9 +19,8 @@ export default function DebuggerHeaderItem({
   onPress,
 }: DebuggerHeaderItemProps) {
   return (
-    <TouchableOpacity
+    <Touchable
       onPress={onPress}
-      activeOpacity={0.8}
       style={[
         styles.container,
         isLabel
@@ -34,9 +35,9 @@ export default function DebuggerHeaderItem({
       {typeof content === 'string' ? (
         <Text style={styles.title}>{content}</Text>
       ) : (
-        <Image source={content} style={styles.icon} />
+        <Icon source={content} size={18} />
       )}
-    </TouchableOpacity>
+    </Touchable>
   );
 }
 
@@ -64,10 +65,5 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     fontWeight: '600',
     color: colors.black,
-  },
-  icon: {
-    width: 18,
-    height: 18,
-    tintColor: colors.black,
   },
 });

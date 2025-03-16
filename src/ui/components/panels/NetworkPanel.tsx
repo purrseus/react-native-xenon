@@ -26,7 +26,8 @@ export default function NetworkPanel() {
       <NetworkPanelItem
         method={item.type === NetworkType.WS ? undefined : item.method}
         name={item.url}
-        duration={item.duration}
+        startTime={item.startTime}
+        endTime={item.endTime}
         status={item.status}
         onPress={() => {
           setDebuggerState(draft => {
