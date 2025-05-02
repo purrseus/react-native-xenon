@@ -1,12 +1,20 @@
-import { useCallback, useContext } from 'react';
-import { FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
+import { forwardRef, useCallback, useContext } from 'react';
+import {
+  FlatList,
+  StyleSheet,
+  View,
+  type ListRenderItem,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import { MainContext } from '../../../contexts';
 import { DebuggerPanel, type LogMessage } from '../../../types';
 import ConsolePanelItem from '../items/ConsolePanelItem';
+import refs, { HeaderState, PanelState } from '../../../core/refs';
 
 const Separator = () => <View style={styles.divider} />;
 
-export default function ConsolePanel() {
+const ConsolePanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ style }, ref) => {
   const {
     consoleInterceptor: { logMessages },
     setDebuggerState,
@@ -17,8 +25,9 @@ export default function ConsolePanel() {
       <ConsolePanelItem
         {...item}
         onPress={() => {
+          refs.panel.current?.setCurrentIndex(PanelState.Details);
+          refs.header.current?.setCurrentIndex(HeaderState.Console);
           setDebuggerState(draft => {
-            draft.selectedPanel = null;
             draft.detailsData = {
               type: DebuggerPanel.Console,
               data: item,
@@ -34,16 +43,17 @@ export default function ConsolePanel() {
 
   return (
     <FlatList
+      ref={ref}
       inverted
       data={[...logMessages].reverse()}
       renderItem={renderItem}
       keyExtractor={(_, index) => index.toString()}
       ItemSeparatorComponent={Separator}
-      style={styles.container}
+      style={[styles.container, style]}
       contentContainerStyle={styles.contentContainer}
     />
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
@@ -56,3 +66,5 @@ const styles = StyleSheet.create({
     height: 4,
   },
 });
+
+export default ConsolePanel;

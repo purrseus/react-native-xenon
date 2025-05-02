@@ -23,9 +23,7 @@ export interface NetworkRequest {
 export type DetailTab = 'overview' | 'headers' | 'request' | 'response' | 'messages' | 'logMessage';
 
 export interface DebuggerState {
-  visibility: 'hidden' | 'bubble' | 'panel';
   position: 'top' | 'bottom';
-  selectedPanel: DebuggerPanel | null;
   detailsData:
     | {
         type: DebuggerPanel.Network;
