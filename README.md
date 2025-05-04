@@ -1,5 +1,7 @@
 <div align="center">
 
+<img src="./images/logo.svg" alt="React Native Xenon Logo" width="128px" height="128px" />
+
 # React Native Xenon
 
 ### A powerful in-app debugging tool for React Native.
