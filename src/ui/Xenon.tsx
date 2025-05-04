@@ -1,15 +1,18 @@
 import { enableMapSet } from 'immer';
-import { createRef, memo, useImperativeHandle, useMemo, useRef } from 'react';
-import { Animated, Platform, StyleSheet, useWindowDimensions } from 'react-native';
+import { createRef, memo, useImperativeHandle, useMemo } from 'react';
+import { Platform, StyleSheet, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { FullWindowOverlay } from 'react-native-screens';
 import { useImmer } from 'use-immer';
 import MainContext from '../contexts/MainContext';
-import { getVerticalSafeMargin } from '../core/utils';
+import refs, { DebuggerVisibility } from '../core/refs';
 import { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
 import colors from '../theme/colors';
-import { DebuggerPanel, type DebuggerState } from '../types';
-import { Bubble, ConsolePanel, DebuggerHeader, DetailsViewer, NetworkPanel } from './components';
-import { FullWindowOverlay } from 'react-native-screens';
+import { type DebuggerState } from '../types';
+import { Bubble } from './components';
+import IndexedStack from './components/common/IndexedStack';
+import Header from './components/headers/Header';
+import Panel from './components/panels/Panel';
 
 namespace Xenon {
   interface Methods {
@@ -57,19 +60,11 @@ namespace Xenon {
       idleBubbleOpacity = 0.5,
     }: Props) => {
       const { width, height } = useWindowDimensions();
-      const pan = useRef(new Animated.ValueXY({ x: 0, y: getVerticalSafeMargin(height) }));
 
       const [debuggerState, setDebuggerState] = useImmer<DebuggerState>({
-        visibility: 'hidden',
         position: 'bottom',
-        selectedPanel: DebuggerPanel.Network,
         detailsData: null,
       });
-
-      const detailsShown = useMemo(
-        () => !debuggerState.selectedPanel && !!debuggerState.detailsData,
-        [debuggerState.detailsData, debuggerState.selectedPanel],
-      );
 
       const containerStyle = useMemo(
         () => [
@@ -84,55 +79,50 @@ namespace Xenon {
       });
 
       const consoleInterceptor = useConsoleInterceptor({
+        // Disable console log tracking in development to prevent infinite loops
+        // autoEnabled: __DEV__ ? false : autoInspectConsoleEnabled,
         autoEnabled: autoInspectConsoleEnabled,
       });
 
       useImperativeHandle(ref, () => {
-        const changeVisibility = (condition: boolean, value: DebuggerState['visibility']) => {
+        const changeVisibility = (condition: boolean, value: DebuggerVisibility) => {
           if (!condition) return;
 
-          setDebuggerState(draft => {
-            draft.visibility = value;
-          });
+          refs.debugger.current?.setCurrentIndex(value);
         };
 
         return {
           isVisible() {
-            return debuggerState.visibility !== 'hidden';
+            return refs.debugger.current?.getCurrentIndex() !== DebuggerVisibility.Hidden;
           },
           show() {
-            changeVisibility(!this.isVisible(), 'bubble');
+            changeVisibility(!this.isVisible(), DebuggerVisibility.Bubble);
           },
           hide() {
-            changeVisibility(this.isVisible(), 'hidden');
+            changeVisibility(this.isVisible(), DebuggerVisibility.Hidden);
           },
         };
-      }, [debuggerState.visibility, setDebuggerState]);
+      }, []);
 
       return (
         <MainContext.Provider
           value={{ debuggerState, setDebuggerState, networkInterceptor, consoleInterceptor }}
         >
-          {debuggerState.visibility === 'bubble' && (
+          <IndexedStack defaultIndex={DebuggerVisibility.Hidden} id="debugger" ref={refs.debugger}>
             <Bubble
               bubbleSize={bubbleSize}
               idleBubbleOpacity={idleBubbleOpacity}
-              pan={pan}
               screenWidth={width}
               screenHeight={height}
             />
-          )}
 
-          {debuggerState.visibility === 'panel' && (
             <SafeAreaProvider style={containerStyle}>
               <SafeAreaView style={styles.safeArea}>
-                <DebuggerHeader />
-                {debuggerState.selectedPanel === DebuggerPanel.Network && <NetworkPanel />}
-                {debuggerState.selectedPanel === DebuggerPanel.Console && <ConsolePanel />}
-                {detailsShown && <DetailsViewer />}
+                <Header />
+                <Panel />
               </SafeAreaView>
             </SafeAreaProvider>
-          )}
+          </IndexedStack>
         </MainContext.Provider>
       );
     },

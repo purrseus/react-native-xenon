@@ -163,10 +163,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 8,
   },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: colors.gray,
-  },
   text: {
     fontSize: 14,
     color: colors.black,

@@ -2,7 +2,9 @@ import { URL } from 'react-native-url-polyfill';
 import { NetworkType, type HttpRequest, type LogMessage, type WebSocketRequest } from '../types';
 import colors from '../theme/colors';
 
-export const getNetworkUtils = (data: HttpRequest | WebSocketRequest) => {
+export const getNetworkUtils = (data?: HttpRequest | WebSocketRequest) => {
+  if (!data || !data.url) return {};
+
   const isHttp = data?.type !== NetworkType.WS;
   const requestUrl = new URL(data.url);
 
