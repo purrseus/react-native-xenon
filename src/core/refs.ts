@@ -10,7 +10,8 @@ export enum DebuggerVisibility {
 export enum PanelState {
   Network = 0,
   Console = 1,
-  Details = 2,
+  NetworkDetail = 2,
+  ConsoleDetail = 3,
 }
 
 export enum HeaderState {

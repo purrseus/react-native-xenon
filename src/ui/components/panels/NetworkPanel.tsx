@@ -36,8 +36,8 @@ const NetworkPanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
         endTime={item.endTime}
         status={item.status}
         onPress={() => {
-          refs.panel.current?.setCurrentIndex(PanelState.Details);
           refs.header.current?.setCurrentIndex(HeaderState.Network);
+          refs.panel.current?.setCurrentIndex(PanelState.NetworkDetail);
           setDebuggerState(draft => {
             draft.detailsData = {
               type: DebuggerPanel.Network,

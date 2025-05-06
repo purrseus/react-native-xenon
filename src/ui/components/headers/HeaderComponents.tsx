@@ -14,8 +14,8 @@ const Back = ({ selectedPanel }: { selectedPanel: PanelState }) => {
     <DebuggerHeaderItem
       content={icons.arrowLeft}
       onPress={() => {
-        refs.panel.current?.setCurrentIndex(selectedPanel);
         refs.header.current?.setCurrentIndex(HeaderState.Debugger);
+        refs.panel.current?.setCurrentIndex(selectedPanel);
         setDebuggerState(draft => {
           draft.detailsData = null;
         });

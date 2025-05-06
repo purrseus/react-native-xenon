@@ -25,8 +25,8 @@ const ConsolePanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
       <ConsolePanelItem
         {...item}
         onPress={() => {
-          refs.panel.current?.setCurrentIndex(PanelState.Details);
           refs.header.current?.setCurrentIndex(HeaderState.Console);
+          refs.panel.current?.setCurrentIndex(PanelState.ConsoleDetail);
           setDebuggerState(draft => {
             draft.detailsData = {
               type: DebuggerPanel.Console,

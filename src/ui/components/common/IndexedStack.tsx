@@ -17,8 +17,8 @@ interface IndexedStackProps<T extends number> {
 }
 
 export type IndexedStackMethods<T extends number> = {
-  setCurrentIndex: (index: T) => void;
   getCurrentIndex: () => T;
+  setCurrentIndex: (index: T) => void;
 };
 
 function IndexedStackComponent<T extends number>(
