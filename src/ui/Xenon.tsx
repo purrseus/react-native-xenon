@@ -1,5 +1,5 @@
 import { enableMapSet } from 'immer';
-import { createRef, memo, useImperativeHandle, useMemo } from 'react';
+import { createRef, memo, useImperativeHandle, useMemo, type ReactNode } from 'react';
 import { Platform, StyleSheet, useWindowDimensions } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { FullWindowOverlay } from 'react-native-screens';
@@ -22,10 +22,12 @@ namespace Xenon {
   }
 
   interface Props {
+    disabled?: boolean;
     autoInspectNetworkEnabled?: boolean;
     autoInspectConsoleEnabled?: boolean;
     bubbleSize?: number;
     idleBubbleOpacity?: number;
+    children?: ReactNode;
   }
 
   enableMapSet();
@@ -128,19 +130,24 @@ namespace Xenon {
     },
   );
 
-  export function Component(props: Props) {
-    if (Platform.OS === 'ios') {
-      return (
-        <FullWindowOverlay>
-          <Debugger {...props} />
-        </FullWindowOverlay>
-      );
-    }
+  export function Wrapper({ disabled = false, children, ...props }: Props) {
+    if (disabled) return children;
 
-    return <Debugger {...props} />;
+    return (
+      <>
+        {children}
+        {Platform.OS === 'ios' ? (
+          <FullWindowOverlay>
+            <Debugger {...props} />
+          </FullWindowOverlay>
+        ) : (
+          <Debugger {...props} />
+        )}
+      </>
+    );
   }
 
-  Component.displayName = 'Xenon';
+  Wrapper.displayName = 'Xenon';
 }
 
 export default Xenon;

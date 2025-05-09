@@ -13,114 +13,115 @@ function Button({ title, onPress }: { title: string; onPress: () => void }) {
 
 export default function App() {
   return (
-    <SafeAreaProvider>
-      <SafeAreaView style={styles.container}>
-        <Button
-          title="Fetch users"
-          onPress={() => {
-            fetch('https://jsonplaceholder.typicode.com/users?_start=5&_limit=5&_embed=posts')
-              .then(response => response.json())
-              .then(json => console.log(json));
-          }}
-        />
+    <Xenon.Wrapper>
+      <SafeAreaProvider>
+        <SafeAreaView style={styles.container}>
+          <Button
+            title="Fetch users"
+            onPress={() => {
+              fetch('https://jsonplaceholder.typicode.com/users?_start=5&_limit=5&_embed=posts')
+                .then(response => response.json())
+                .then(json => console.log(json));
+            }}
+          />
 
-        <Button
-          title="Create a post"
-          onPress={() => {
-            fetch('https://jsonplaceholder.typicode.com/posts', {
-              method: 'POST',
-              body: JSON.stringify({
-                title: 'foo',
-                body: 'bar',
-                userId: 1,
-              }),
-              headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-              },
-            })
-              .then(response => response.json())
-              .then(json => console.info(json));
-          }}
-        />
+          <Button
+            title="Create a post"
+            onPress={() => {
+              fetch('https://jsonplaceholder.typicode.com/posts', {
+                method: 'POST',
+                body: JSON.stringify({
+                  title: 'foo',
+                  body: 'bar',
+                  userId: 1,
+                }),
+                headers: {
+                  'Content-type': 'application/json; charset=UTF-8',
+                },
+              })
+                .then(response => response.json())
+                .then(json => console.info(json));
+            }}
+          />
 
-        <Button
-          title="Update a post"
-          onPress={() => {
-            fetch('https://jsonplaceholder.typicode.com/posts/1', {
-              method: 'PUT',
-              body: JSON.stringify({
-                id: 1,
-                title: 'foo',
-                body: 'bar',
-                userId: 1,
-              }),
-              headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-              },
-            })
-              .then(response => response.json())
-              .then(json => console.warn(json));
-          }}
-        />
+          <Button
+            title="Update a post"
+            onPress={() => {
+              fetch('https://jsonplaceholder.typicode.com/posts/1', {
+                method: 'PUT',
+                body: JSON.stringify({
+                  id: 1,
+                  title: 'foo',
+                  body: 'bar',
+                  userId: 1,
+                }),
+                headers: {
+                  'Content-type': 'application/json; charset=UTF-8',
+                },
+              })
+                .then(response => response.json())
+                .then(json => console.warn(json));
+            }}
+          />
 
-        <Button
-          title="Patch a post"
-          onPress={() => {
-            fetch('https://jsonplaceholder.typicode.com/posts/1', {
-              method: 'PATCH',
-              body: JSON.stringify({
-                title: 'foo',
-              }),
-              headers: {
-                'Content-type': 'application/json; charset=UTF-8',
-              },
-            })
-              .then(response => response.json())
-              .then(json => console.warn(json));
-          }}
-        />
+          <Button
+            title="Patch a post"
+            onPress={() => {
+              fetch('https://jsonplaceholder.typicode.com/posts/1', {
+                method: 'PATCH',
+                body: JSON.stringify({
+                  title: 'foo',
+                }),
+                headers: {
+                  'Content-type': 'application/json; charset=UTF-8',
+                },
+              })
+                .then(response => response.json())
+                .then(json => console.warn(json));
+            }}
+          />
 
-        <Button
-          title="Delete a post"
-          onPress={() => {
-            fetch('https://jsonplaceholder.typicode.com/posts/1', {
-              method: 'DELETE',
-            })
-              .then(response => response.json())
-              .then(json => console.error(json));
-          }}
-        />
+          <Button
+            title="Delete a post"
+            onPress={() => {
+              fetch('https://jsonplaceholder.typicode.com/posts/1', {
+                method: 'DELETE',
+              })
+                .then(response => response.json())
+                .then(json => console.error(json));
+            }}
+          />
 
-        <Button
-          title="Echo Websocket"
-          onPress={() => {
-            const socket = new WebSocket('wss://echo.websocket.org');
+          <Button
+            title="Echo Websocket"
+            onPress={() => {
+              const socket = new WebSocket('wss://echo.websocket.org');
 
-            const message = `Hello Server! It's ${new Date().toISOString()}`;
+              const message = `Hello Server! It's ${new Date().toISOString()}`;
 
-            socket.onopen = () => {
-              socket.send(message);
-              console.log('WebSocket.send:', message);
-            };
+              socket.onopen = () => {
+                socket.send(message);
+                console.log('WebSocket.send:', message);
+              };
 
-            socket.onmessage = event => {
-              console.log('WebSocket.onmessage:', event.data);
-              if (event.data === message) {
-                socket.close();
-              }
-            };
-          }}
-        />
+              socket.onmessage = event => {
+                console.log('WebSocket.onmessage:', event.data);
+                if (event.data === message) {
+                  socket.close();
+                }
+              };
+            }}
+          />
 
-        <Button
-          title="Toggle Debugger"
-          onPress={() => {
-            Xenon.isVisible() ? Xenon.hide() : Xenon.show();
-          }}
-        />
-      </SafeAreaView>
-      <Xenon.Component />
-    </SafeAreaProvider>
+          <Button
+            title="Toggle Debugger"
+            onPress={() => {
+              Xenon.isVisible() ? Xenon.hide() : Xenon.show();
+            }}
+          />
+        </SafeAreaView>
+      </SafeAreaProvider>
+    </Xenon.Wrapper>
   );
 }
 

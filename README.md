@@ -77,17 +77,16 @@ npx expo install react-native-safe-area-context react-native-screens
 
 ## Usage
 
-Add `Xenon.Component` in your app root component.
+Wrap your top-level component with `<Xenon.Wrapper />`.
 
 ```tsx
 import Xenon from 'react-native-xenon';
 
-function App() {
+function AppContainer() {
   return (
-    <>
-      {/* Your other components here */}
-      <Xenon.Component />
-    </>
+    <Xenon.Wrapper>
+      <App />
+    </Xenon.Wrapper>
   );
 }
 ```
@@ -104,24 +103,20 @@ And hide it by calling the `hide` method.
 Xenon.hide();
 ```
 
-> [!WARNING]
-> `<Xenon.Component />` is enabled by default in all environments, **including production**. This could expose sensitive tools to end users, creating potential security risks.
-> To avoid this, make sure to conditionally render the component only in non-production environments. For example:
->
-> ```tsx
-> {isProduction ? null : <Xenon.Component />}
-> ```
->
-> Additionally, consider other approaches such as environment-based feature flags or access control to ensure only authorized users (e.g., developers) can interact with it.
-
 ## Props
 
-| **Prop**                    | **Type**  | **Description**                                                                                            |
-| --------------------------- | --------- | ---------------------------------------------------------------------------------------------------------- |
-| `autoInspectNetworkEnabled` | `boolean` | Determines whether the network inspector is automatically enabled upon initialization. Defaults to `true`. |
-| `autoInspectConsoleEnabled` | `boolean` | Determines whether the console inspector is automatically enabled upon initialization. Defaults to `true`. |
-| `bubbleSize`                | `number`  | Defines the size of the interactive bubble used in the UI. Defaults to `40`.                               |
-| `idleBubbleOpacity`         | `number`  | Defines the opacity level of the bubble when it is idle. Defaults to `0.5`.                                |
+| **Prop**                    | **Type**  | **Description**                                                                                                                               |
+| --------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `disabled`                  | `boolean` | If true, completely disables the debugger by rendering only the children components without any debugging functionality. Defaults to `false`. |
+| `autoInspectNetworkEnabled` | `boolean` | Determines whether the network inspector is automatically enabled upon initialization. Defaults to `true`.                                    |
+| `autoInspectConsoleEnabled` | `boolean` | Determines whether the console inspector is automatically enabled upon initialization. Defaults to `true`.                                    |
+| `bubbleSize`                | `number`  | Defines the size of the interactive bubble used in the UI. Defaults to `40`.                                                                  |
+| `idleBubbleOpacity`         | `number`  | Defines the opacity level of the bubble when it is idle. Defaults to `0.5`.                                                                   |
+
+<br />
+
+> [!IMPORTANT]
+> The debugger is enabled by default in all environments including production. To prevent exposing sensitive developer tools to end users, always set disabled={true} in production builds (e.g., disabled={isProduction}).
 
 ## Methods
 
