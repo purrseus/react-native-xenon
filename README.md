@@ -33,13 +33,22 @@
 ## Screenshots
 
 | ![screenshot-1](./images/screenshots/1.png) | ![screenshot-2](./images/screenshots/2.png) | ![screenshot-3](./images/screenshots/3.png) |
-| :-----------------------------------------------------------------------: | :-----------------------------------------------------------------------: | :-----------------------------------------------------------------------: |
+| :-----------------------------------------: | :-----------------------------------------: | :-----------------------------------------: |
 
 ## Installation
 
-Install Xenon and its dependencies.
+### Expo
+
+If you are using Expo, just run these commands and you're done. No additional configuration required.
+
+```sh
+npx expo install react-native-xenon
+npx expo install react-native-safe-area-context react-native-screens
+```
 
 ### React Native
+
+For React Native projects, install the packages and follow the platform-specific setup instructions below.
 
 ```sh
 yarn add react-native-xenon
@@ -71,13 +80,6 @@ Don't forget to install pods when you are developing for iOS.
 
 ```sh
 cd ios && pod install; cd ..
-```
-
-### Expo
-
-```sh
-npx expo install react-native-xenon
-npx expo install react-native-safe-area-context react-native-screens
 ```
 
 ## Usage
