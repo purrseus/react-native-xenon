@@ -32,7 +32,7 @@
 
 ## Screenshots
 
-| <img src="./images/screenshots/1.png" alt="screenshot-1" width="256px" /> | <img src="./images/screenshots/2.png" alt="screenshot-2" width="256px" /> | <img src="./images/screenshots/3.png" alt="screenshot-3" width="256px" /> |
+| ![screenshot-1](./images/screenshots/1.png) | ![screenshot-2](./images/screenshots/2.png) | ![screenshot-3](./images/screenshots/3.png) |
 | :-----------------------------------------------------------------------: | :-----------------------------------------------------------------------: | :-----------------------------------------------------------------------: |
 
 ## Installation
