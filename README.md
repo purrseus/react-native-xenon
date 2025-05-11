@@ -30,6 +30,11 @@
 - :zap: **Draggable Bubble UI** – Seamlessly debug without disrupting your workflow.
 - :sparkles: **React Native & Expo Support** – Built for compatibility across both platforms.
 
+## Screenshots
+
+| <img src="./images/screenshots/1.png" alt="screenshot-1" width="256px" /> | <img src="./images/screenshots/2.png" alt="screenshot-2" width="256px" /> | <img src="./images/screenshots/3.png" alt="screenshot-3" width="256px" /> |
+| :-----------------------------------------------------------------------: | :-----------------------------------------------------------------------: | :-----------------------------------------------------------------------: |
+
 ## Installation
 
 Install Xenon and its dependencies.
