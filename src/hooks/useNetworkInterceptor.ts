@@ -53,15 +53,10 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       setNetworkRequests((draft: NetworkRequests<HttpRequest>) => {
         if (!draft.get(id)) return draft;
 
-        const requestHeaderNewLine: Parameters<typeof keyValueToString>[2] = draft.get(id)!
-          .requestHeadersString?.length
-          ? 'leading'
-          : null;
-
-        const currentHeaderLine = keyValueToString(header, value, requestHeaderNewLine);
+        const currentHeaderLine = keyValueToString(header, value);
 
         const fetchRequestHeaderLineRegex = RegExp(
-          keyValueToString(NETWORK_REQUEST_HEADER, NetworkType.Fetch, requestHeaderNewLine),
+          keyValueToString(NETWORK_REQUEST_HEADER, NetworkType.Fetch),
           'gi',
         );
 
@@ -72,20 +67,19 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
         if (isFetchInXHR) {
           draft.delete(id);
         } else {
-          draft.get(id)!.requestHeadersString ??= '';
-          draft.get(id)!.requestHeadersString += currentHeaderLine;
-          draft.get(id)!.requestHeaders ??= {};
-          draft.get(id)!.requestHeaders![header] = value;
+          draft.get(id)!.requestHeaders ??= new Map();
+          draft.get(id)!.requestHeaders!.set(header, value);
         }
       });
     };
 
-    const sendCallback: HttpHandlers['send'] = (id, data) => {
+    const sendCallback: HttpHandlers['send'] = (id, startTime, data) => {
       if (!id) return;
 
       setNetworkRequests((draft: NetworkRequests<HttpRequest>) => {
         if (!draft.get(id)) return draft;
 
+        draft.get(id)!.startTime = startTime;
         draft.get(id)!.body = data;
       });
     };
@@ -111,7 +105,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       id,
       status,
       timeout,
-      duration,
+      endTime,
       response,
       responseURL,
       responseType,
@@ -123,7 +117,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
 
         draft.get(id)!.status = status;
         draft.get(id)!.timeout = timeout;
-        draft.get(id)!.duration = duration;
+        draft.get(id)!.endTime = endTime;
         draft.get(id)!.response = response;
         if (responseURL) draft.get(id)!.url = responseURL;
         draft.get(id)!.responseType = responseType;
@@ -148,11 +142,18 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
   }, [setNetworkRequests]);
 
   const enableWebSocketInterception = useCallback(() => {
-    const connectCallback: WebSocketHandlers['connect'] = (url, protocols, options, socketId) => {
+    const connectCallback: WebSocketHandlers['connect'] = (
+      startTime,
+      url,
+      protocols,
+      options,
+      socketId,
+    ) => {
       if (typeof socketId !== 'number') return;
 
       setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
         draft.set(`${socketId}`, {
+          startTime,
           url,
           type: NetworkType.WS,
           protocols,
@@ -168,11 +169,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
         if (!draft.get(`${socketId}`)) return draft;
 
         draft.get(`${socketId}`)!.messages ??= '';
-        draft.get(`${socketId}`)!.messages += keyValueToString(
-          'SENT',
-          data,
-          draft.get(`${socketId}`)!.messages?.length ? 'leading' : null,
-        );
+        draft.get(`${socketId}`)!.messages += keyValueToString('SENT', data);
       });
     };
 
@@ -187,13 +184,13 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       });
     };
 
-    const onOpenCallback: WebSocketHandlers['onOpen'] = (socketId, duration) => {
+    const onOpenCallback: WebSocketHandlers['onOpen'] = (socketId, endTime) => {
       if (typeof socketId !== 'number') return;
 
       setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
         if (!draft.get(`${socketId}`)) return draft;
 
-        draft.get(`${socketId}`)!.duration = duration;
+        draft.get(`${socketId}`)!.endTime = endTime;
       });
     };
 
@@ -204,11 +201,7 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
         if (!draft.get(`${socketId}`)) return draft;
 
         draft.get(`${socketId}`)!.messages ??= '';
-        draft.get(`${socketId}`)!.messages += keyValueToString(
-          'RECEIVED',
-          message,
-          draft.get(`${socketId}`)!.messages?.length ? 'leading' : null,
-        );
+        draft.get(`${socketId}`)!.messages += keyValueToString('RECEIVED', message);
       });
     };
 

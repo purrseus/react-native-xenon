@@ -37,9 +37,7 @@ export default class XHRInterceptor extends HttpInterceptor {
     };
 
     XMLHttpRequest.prototype.send = function (data) {
-      sendCallback?.(this._interceptionId, data);
-
-      const startTime = Date.now();
+      sendCallback?.(this._interceptionId, Date.now(), data);
 
       this.addEventListener?.('readystatechange', () => {
         if (!isInterceptorEnabled()) return;
@@ -54,23 +52,30 @@ export default class XHRInterceptor extends HttpInterceptor {
 
           const responseSize = contentLengthString ? parseInt(contentLengthString, 10) : undefined;
 
+          const responseHeadersArray = this.getAllResponseHeaders().split('\n');
+          const responseHeaders = responseHeadersArray.reduce<Map<string, string>>(
+            (acc, header) => {
+              const [key, value] = header.split(': ');
+              if (key && value) acc.set(key, value);
+              return acc;
+            },
+            new Map(),
+          );
+
           headerReceivedCallback?.(
             this._interceptionId,
             responseContentType,
             responseSize,
-            this.getAllResponseHeaders(),
+            responseHeaders,
           );
         }
 
         if (this.readyState === this.DONE) {
-          const endTime = Date.now();
-          const duration = endTime - startTime;
-
           responseCallback?.(
             this._interceptionId,
             this.status,
             this.timeout,
-            duration,
+            Date.now(),
             this.response,
             this.responseURL,
             this.responseType,

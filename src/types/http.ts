@@ -3,12 +3,11 @@ import type { ID, NetworkRequest, NetworkType } from './common';
 export interface HttpRequest extends NetworkRequest {
   type: NetworkType.Fetch | NetworkType.XHR;
   method: string;
-  requestHeaders?: Record<string, string>;
-  requestHeadersString?: string;
+  requestHeaders?: Map<string, string>;
   body?: any;
   responseContentType?: string;
   responseSize?: number;
-  responseHeaders?: string;
+  responseHeaders?: Map<string, string>;
   timeout?: number;
   response?: any;
   responseType?: string;
@@ -17,13 +16,13 @@ export interface HttpRequest extends NetworkRequest {
 export interface HttpHandlers {
   open: ((id: ID, type: HttpRequest['type'], method: string, url: string) => void) | null;
   requestHeader: ((id: ID, header: string, value: string) => void) | null;
-  send: ((id: ID, data?: any) => void) | null;
+  send: ((id: ID, startTime: number, data?: any) => void) | null;
   headerReceived:
     | ((
         id: ID,
         responseContentType: string | undefined,
         responseSize: number | undefined,
-        responseHeaders: string,
+        responseHeaders: HttpRequest['responseHeaders'],
       ) => void)
     | null;
   response:
@@ -31,7 +30,7 @@ export interface HttpHandlers {
         id: ID,
         status: number | undefined,
         timeout: number | undefined,
-        duration: number,
+        endTime: number,
         response: any,
         responseURL: string | undefined,
         responseType: string | undefined,

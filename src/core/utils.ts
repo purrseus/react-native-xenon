@@ -1,12 +1,17 @@
 import { URL } from 'react-native-url-polyfill';
-import { NetworkType, type HttpRequest, type WebSocketRequest } from '../types';
+import { NetworkType, type HttpRequest, type LogMessage, type WebSocketRequest } from '../types';
+import colors from '../theme/colors';
 
-export const getNetworkUtils = (data: HttpRequest | WebSocketRequest) => {
+export const getNetworkUtils = (data?: HttpRequest | WebSocketRequest) => {
+  if (!data || !data.url) return {};
+
   const isHttp = data?.type !== NetworkType.WS;
   const requestUrl = new URL(data.url);
 
   const overviewShown = !!data.url;
-  const headersShown = isHttp && (!!data.requestHeaders || !!data.responseHeaders);
+  const httpHeadersShown = isHttp && (!!data.requestHeaders?.size || !!data.responseHeaders?.size);
+  const websocketHeadersShown = !isHttp && !!Object.keys(data.options?.headers ?? {}).length;
+  const headersShown = httpHeadersShown || websocketHeadersShown;
   const requestShown = isHttp && (!!requestUrl.search || !!data.body);
   const responseShown = isHttp && !!data.response;
   const messagesShown = !isHttp && !!data.messages;
@@ -20,6 +25,33 @@ export const getNetworkUtils = (data: HttpRequest | WebSocketRequest) => {
     responseShown,
     messagesShown,
   };
+};
+
+const hexToHexAlpha = (hex: string, opacity: number) =>
+  `${hex}${`${(Math.min(Math.max(opacity, 0), 1) * 255).toString(16)}0`.slice(0, 2)}`;
+
+export const getConsoleTypeColor = (type: LogMessage['type']) => {
+  let color: string;
+  switch (type) {
+    case 'log':
+      color = colors.white;
+      break;
+    case 'info':
+      color = colors.blue;
+      break;
+    case 'warn':
+    case 'debug':
+    case 'trace':
+      color = colors.yellow;
+      break;
+    case 'error':
+      color = colors.red;
+      break;
+    default:
+      color = colors.white;
+  }
+
+  return hexToHexAlpha(color, 0.25);
 };
 
 //#region metrics
@@ -36,7 +68,7 @@ export const getHttpInterceptorId = () => {
 //#endregion
 
 //#region formatters
-export const limitChar = (value: any, limit = 5000) => {
+const limitChar = (value: any, limit = 5000) => {
   const stringValue = typeof value === 'string' ? value : JSON.stringify(value ?? '');
 
   return stringValue.length > limit
@@ -53,24 +85,23 @@ export const keyValueToString = (
 
 export const formatRequestMethod = (method?: string) => method ?? 'GET';
 
-export const formatRequestDuration = (duration?: number) =>
-  duration ? `${duration}ms` : 'pending';
+export const formatRequestDuration = (startTime?: number, endTime?: number) => {
+  if (typeof startTime !== 'number' || typeof endTime !== 'number') return 'pending';
+  return `${endTime - startTime}ms`;
+};
 
 export const formatRequestStatusCode = (statusCode?: number) => `${statusCode ?? 'pending'}`;
 
-export const formatLogMessage = (type: string, values: any[]) => {
-  const message: string = values.reduce(
-    (pre, cur, index) => pre + (!index ? '' : ', ') + limitChar(cur),
-    '',
-  );
-
-  return `${type.toUpperCase()}: ${message}`;
+export const formatLogMessage = (values: any[]) => {
+  return values.reduce((pre, cur, index) => pre + (!index ? '' : ', ') + limitChar(cur), '');
 };
 
 export const beautify = (data: any, beautified: boolean) => {
+  if (!data) return '';
+
   try {
     const res = typeof data === 'string' ? JSON.parse(data) : data;
-    return beautified ? JSON.stringify(res, null, 2) : limitChar(res);
+    return beautified ? JSON.stringify(res, null, 4) : limitChar(res);
   } catch (error) {
     return limitChar(data);
   }

@@ -1,7 +1,13 @@
-import { useCallback, useContext, useMemo } from 'react';
-import { FlatList, StyleSheet, View, type ListRenderItem } from 'react-native';
-import colors from '../../../theme/colors';
+import { forwardRef, useCallback, useContext, useMemo } from 'react';
+import {
+  FlatList,
+  StyleSheet,
+  type ListRenderItem,
+  type StyleProp,
+  type ViewStyle,
+} from 'react-native';
 import { MainContext } from '../../../contexts';
+import refs, { HeaderState, PanelState } from '../../../core/refs';
 import {
   DebuggerPanel,
   NetworkType,
@@ -9,16 +15,16 @@ import {
   type ID,
   type WebSocketRequest,
 } from '../../../types';
+import Divider from '../common/Divider';
 import NetworkPanelItem from '../items/NetworkPanelItem';
 
-const Separator = () => <View style={styles.divider} />;
+const Separator = () => <Divider type="horizontal" />;
 
-export default function NetworkPanel() {
+const NetworkPanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ style }, ref) => {
   const {
     networkInterceptor: { networkRequests },
     setDebuggerState,
   } = useContext(MainContext)!;
-
   const data = useMemo(() => Array.from(networkRequests).reverse(), [networkRequests]);
 
   const renderItem = useCallback<ListRenderItem<[NonNullable<ID>, HttpRequest | WebSocketRequest]>>(
@@ -26,11 +32,13 @@ export default function NetworkPanel() {
       <NetworkPanelItem
         method={item.type === NetworkType.WS ? undefined : item.method}
         name={item.url}
-        duration={item.duration}
+        startTime={item.startTime}
+        endTime={item.endTime}
         status={item.status}
         onPress={() => {
+          refs.header.current?.setCurrentIndex(HeaderState.Network);
+          refs.panel.current?.setCurrentIndex(PanelState.NetworkDetail);
           setDebuggerState(draft => {
-            draft.selectedPanel = null;
             draft.detailsData = {
               type: DebuggerPanel.Network,
               data: item,
@@ -48,21 +56,20 @@ export default function NetworkPanel() {
     <FlatList
       inverted
       data={data}
+      ref={ref}
       renderItem={renderItem}
       keyExtractor={([key]) => key}
       ItemSeparatorComponent={Separator}
-      style={styles.container}
+      style={[styles.container, style]}
     />
   );
-}
+});
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingHorizontal: 8,
   },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: colors.gray,
-  },
 });
+
+export default NetworkPanel;

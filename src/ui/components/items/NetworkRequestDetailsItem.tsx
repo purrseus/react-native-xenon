@@ -1,32 +1,32 @@
-import { StyleSheet, Text, type TextProps } from 'react-native';
+import { StyleSheet, Text } from 'react-native';
 import colors from '../../../theme/colors';
 
-interface NetworkRequestDetailsItemProps extends TextProps {
-  label?: string;
-  content?: string;
+interface NetworkRequestDetailsItemProps {
+  label: string;
+  content: string | [string, string][];
 }
 
 export default function NetworkRequestDetailsItem({
   label,
   content,
-  style,
-  ...props
 }: NetworkRequestDetailsItemProps) {
-  if (label) {
-    return (
-      <Text {...props} style={[styles.text, style]}>
-        <Text style={styles.label}>
-          {label}
-          {': '}
-        </Text>
-        {content}
-      </Text>
-    );
-  }
-
   return (
-    <Text {...props} style={[styles.text, style]}>
-      {content}
+    <Text style={styles.text}>
+      <Text style={styles.label}>
+        {label}
+        {'\n'}
+      </Text>
+      {typeof content === 'string'
+        ? content
+        : content.map(([key, value]) => (
+            <Text key={key} style={[styles.label, styles.subLabel]}>
+              {key}
+              {': '}
+              <Text style={styles.text}>{value}</Text>
+              {'\n'}
+            </Text>
+          ))}
+      {Array.isArray(content) || content?.endsWith('\n') ? '' : '\n'}
     </Text>
   );
 }
@@ -34,11 +34,16 @@ export default function NetworkRequestDetailsItem({
 const styles = StyleSheet.create({
   text: {
     fontSize: 14,
+    fontWeight: 'normal',
     color: colors.black,
   },
   label: {
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
     color: colors.black,
+  },
+  subLabel: {
+    fontSize: 14,
+    fontWeight: 'bold',
   },
 });

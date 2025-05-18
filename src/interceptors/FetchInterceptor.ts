@@ -1,11 +1,5 @@
 import { NETWORK_REQUEST_HEADER } from '../core/constants';
-import {
-  formatRequestMethod,
-  frozen,
-  getHttpInterceptorId,
-  keyValueToString,
-  singleton,
-} from '../core/utils';
+import { formatRequestMethod, frozen, getHttpInterceptorId, singleton } from '../core/utils';
 import { NetworkType } from '../types';
 import HttpInterceptor from './HttpInterceptor';
 
@@ -77,13 +71,11 @@ export default class FetchInterceptor extends HttpInterceptor {
       //#endregion
 
       //#region send
-      const startTime = Date.now();
-      sendCallback?.(interceptionId, init?.body ?? null);
+      sendCallback?.(interceptionId, Date.now(), init?.body ?? null);
       //#endregion
 
       const response = await originalFetch.call(this, input, requestInit);
 
-      const endTime = Date.now();
       const clonedResponse = response.clone();
       const clonedResponseHeaders = clonedResponse.headers;
 
@@ -94,28 +86,23 @@ export default class FetchInterceptor extends HttpInterceptor {
       const responseContentType = contentTypeString ? contentTypeString.split(';')[0] : undefined;
       const responseSize = contentLengthString ? parseInt(contentLengthString, 10) : undefined;
 
-      let responseHeaders: string = '';
+      let responseHeaders: Map<string, string> = new Map();
 
-      for (const [headerKey, headerValue] of clonedResponseHeaders.entries()) {
-        responseHeaders += keyValueToString(
-          headerKey,
-          headerValue,
-          responseHeaders.length ? 'leading' : null,
-        );
-      }
+      clonedResponseHeaders.forEach((headerValue: string, headerKey: string) => {
+        responseHeaders.set(headerKey, headerValue);
+      });
 
       headerReceivedCallback?.(interceptionId, responseContentType, responseSize, responseHeaders);
       //#endregion
 
       //#region response
       const responseBody: string | null = await clonedResponse.text().catch(() => null);
-      const duration = endTime - startTime;
 
       responseCallback?.(
         interceptionId,
         clonedResponse.status,
         0,
-        duration,
+        Date.now(),
         responseBody,
         clonedResponse.url,
         clonedResponse.type,

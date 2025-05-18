@@ -1,27 +1,42 @@
-import { ScrollView, StyleSheet, Text } from 'react-native';
+import { ScrollView, StyleSheet, Text, type StyleProp, type ViewStyle } from 'react-native';
+import { formatLogMessage, getConsoleTypeColor } from '../../../core/utils';
 import type { LogMessage } from '../../../types';
-import { formatLogMessage } from '../../../core/utils';
 import colors from '../../../theme/colors';
+import { forwardRef, useContext } from 'react';
+import { MainContext } from '../../../contexts';
 
-interface LogMessageDetailsProps {
-  item: LogMessage;
-}
+const LogMessageDetails = forwardRef<ScrollView, { style?: StyleProp<ViewStyle> }>(
+  ({ style }, ref) => {
+    const {
+      debuggerState: { detailsData },
+    } = useContext(MainContext)!;
 
-export default function LogMessageDetails({ item }: LogMessageDetailsProps) {
-  return (
-    <ScrollView style={styles.container}>
-      <Text>{formatLogMessage(item.type, item.values)}</Text>
-    </ScrollView>
-  );
-}
+    const item = detailsData?.data as LogMessage | undefined;
+
+    return (
+      <ScrollView
+        ref={ref}
+        style={[
+          styles.container,
+          { backgroundColor: getConsoleTypeColor(item?.type ?? '') },
+          style,
+        ]}
+      >
+        <Text style={styles.text}>{formatLogMessage(item?.values ?? [])}</Text>
+      </ScrollView>
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingHorizontal: 8,
+    padding: 8,
   },
-  divider: {
-    height: StyleSheet.hairlineWidth,
-    backgroundColor: colors.gray,
+  text: {
+    color: colors.black,
+    fontSize: 14,
   },
 });
+
+export default LogMessageDetails;

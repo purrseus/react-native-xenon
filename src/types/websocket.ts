@@ -16,6 +16,7 @@ export interface WebSocketRequest extends NetworkRequest {
 export interface WebSocketHandlers {
   connect:
     | ((
+        startTime: number,
         url: string,
         protocols?: WebSocketRequest['protocols'],
         options?: WebSocketRequest['options'],
@@ -24,7 +25,7 @@ export interface WebSocketHandlers {
     | null;
   send: ((data: string, socketId: number) => void) | null;
   close: ((code: number, reason: string, socketId: number) => void) | null;
-  onOpen: ((socketId: number, duration: number) => void) | null;
+  onOpen: ((socketId: number, endTime: number) => void) | null;
   onMessage: ((socketId: number, message: any) => void) | null;
   onError: ((socketId: number, error: WebSocketRequest['serverError']) => void) | null;
   onClose: ((socketId: number, data: WebSocketRequest['serverClose']) => void) | null;
