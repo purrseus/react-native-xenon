@@ -1,6 +1,6 @@
 import { enableMapSet } from 'immer';
 import { createRef, memo, useImperativeHandle, useMemo, type ReactNode } from 'react';
-import { Platform, StyleSheet, useWindowDimensions } from 'react-native';
+import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { FullWindowOverlay } from 'react-native-screens';
 import { useImmer } from 'use-immer';
@@ -118,12 +118,14 @@ namespace Xenon {
               screenHeight={height}
             />
 
-            <SafeAreaProvider style={containerStyle}>
-              <SafeAreaView style={styles.safeArea}>
-                <Header />
-                <Panel />
-              </SafeAreaView>
-            </SafeAreaProvider>
+            <View style={containerStyle}>
+              <SafeAreaProvider>
+                <SafeAreaView style={styles.safeArea}>
+                  <Header />
+                  <Panel />
+                </SafeAreaView>
+              </SafeAreaProvider>
+            </View>
           </IndexedStack>
         </MainContext.Provider>
       );
