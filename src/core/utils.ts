@@ -116,7 +116,7 @@ export const convertToCurl = (
   let curlCommand = `curl -X ${method.toUpperCase()} "${url}"`;
 
   if (headers) {
-    for (const [key, value] of Object.entries(headers)) {
+    for (const [key, value] of headers.entries()) {
       curlCommand += ` -H "${key}: ${value}"`;
     }
   }
