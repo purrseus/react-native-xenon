@@ -36,7 +36,7 @@ const Bubble = forwardRef<View, BubbleProps>(
 
       const blur = () => {
         opacityTimer.current = setTimeout(() => {
-          setIdleOpacity(0.5);
+          setIdleOpacity(idleBubbleOpacity);
           clearTimer();
         }, 1000);
       };
@@ -94,7 +94,7 @@ const Bubble = forwardRef<View, BubbleProps>(
           });
         },
       });
-    }, [bubbleSize, pan, screenHeight, screenWidth]);
+    }, [bubbleSize, idleBubbleOpacity, screenHeight, screenWidth]);
 
     return (
       <View ref={ref} style={[styles.bubbleBackdrop, style]}>
