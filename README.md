@@ -32,8 +32,7 @@
 
 ## Screenshots
 
-| ![screenshot-1](./images/screenshots/1.png) | ![screenshot-2](./images/screenshots/2.png) | ![screenshot-3](./images/screenshots/3.png) |
-| :-----------------------------------------: | :-----------------------------------------: | :-----------------------------------------: |
+![preview](./images/screenshots/preview.png)
 
 ## Installation
 
