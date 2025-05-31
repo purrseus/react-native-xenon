@@ -1,5 +1,5 @@
 import { enableMapSet } from 'immer';
-import { createRef, memo, useImperativeHandle, useMemo, type ReactNode } from 'react';
+import { createRef, memo, useImperativeHandle, useMemo, type JSX, type ReactNode } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { FullWindowOverlay } from 'react-native-screens';
@@ -22,14 +22,39 @@ namespace Xenon {
   }
 
   interface Props {
+    /**
+     * Determines whether the network inspector is automatically enabled upon initialization.
+     * @default true
+     */
     autoInspectNetworkEnabled?: boolean;
+    /**
+     * Determines whether the console inspector is automatically enabled upon initialization.
+     * @default true
+     */
     autoInspectConsoleEnabled?: boolean;
+    /**
+     * Defines the size of the interactive bubble used in the UI.
+     * @default 40
+     */
     bubbleSize?: number;
+    /**
+     * Defines the opacity level of the bubble when it is idle.
+     * @default 0.5
+     */
     idleBubbleOpacity?: number;
+    /**
+     * Domains to include in network interception. Defaults to all domains.
+     * @default undefined
+     * @example ['example1.com', 'api.example2.com']
+     */
     includeDomains?: string[];
   }
 
   interface WrapperProps extends Props {
+    /**
+     * If true, completely disables the debugger by rendering only the children components without any debugging functionality.
+     * @default false
+     */
     disabled?: boolean;
     children: ReactNode;
   }
@@ -54,8 +79,22 @@ namespace Xenon {
     },
   });
 
+  /**
+   * Checks whether the debugger is currently visible.
+   * @returns `true` if the debugger is currently visible, otherwise `false`.
+   */
   export const isVisible = () => ref.current?.isVisible() ?? false;
+
+  /**
+   * Makes the debugger visible. If it is already visible, this method has no additional effect.
+   * @returns `void`
+   */
   export const show = (): void => ref.current?.show();
+
+  /**
+   * Hides the debugger. If it is already hidden, this method has no additional effect.
+   * @returns `void`
+   */
   export const hide = (): void => ref.current?.hide();
 
   const Debugger = memo(
@@ -138,8 +177,8 @@ namespace Xenon {
     },
   );
 
-  export function Wrapper({ disabled = false, children, ...props }: WrapperProps) {
-    if (disabled) return children;
+  export function Wrapper({ disabled = false, children, ...props }: WrapperProps): JSX.Element {
+    if (disabled) return children as JSX.Element;
 
     return (
       <>
