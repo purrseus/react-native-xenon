@@ -14,6 +14,7 @@ import { keyValueToString } from '../core/utils';
 
 interface NetworkInterceptorParams {
   autoEnabled: boolean;
+  includeDomains?: string[];
 }
 
 type NetworkRequests<T> = Map<NonNullable<ID>, T>;
@@ -24,7 +25,11 @@ const xhrInterceptor = new XHRInterceptor();
 const fetchInterceptor = new FetchInterceptor();
 const webSocketInterceptor = new WebSocketInterceptor();
 
-export default function useNetworkInterceptor({ autoEnabled }: NetworkInterceptorParams) {
+export default function useNetworkInterceptor({
+  autoEnabled,
+  includeDomains,
+}: NetworkInterceptorParams) {
+  const joinedIncludeDomains = includeDomains?.join(',') ?? '';
   const [isInterceptorEnabled, setIsInterceptorEnabled] = useState(autoEnabled);
 
   const [networkRequests, setNetworkRequests] = useImmer(initRequests);
@@ -41,6 +46,11 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
   const enableHttpInterceptions = useCallback(() => {
     const openCallback: HttpHandlers['open'] = (id, type, method, url) => {
       if (!id) return;
+
+      const isNotMatchedDomain =
+        !!joinedIncludeDomains.length && !includeDomains?.some(domain => url.includes(domain));
+
+      if (isNotMatchedDomain) return;
 
       setNetworkRequests((draft: NetworkRequests<HttpRequest>) => {
         draft.set(id, { type, method, url });
@@ -139,7 +149,8 @@ export default function useNetworkInterceptor({ autoEnabled }: NetworkIntercepto
       .set('headerReceived', headerReceivedCallback)
       .set('response', responseCallback)
       .enableInterception();
-  }, [setNetworkRequests]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [joinedIncludeDomains, setNetworkRequests]);
 
   const enableWebSocketInterception = useCallback(() => {
     const connectCallback: WebSocketHandlers['connect'] = (

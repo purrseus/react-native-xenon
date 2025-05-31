@@ -22,12 +22,16 @@ namespace Xenon {
   }
 
   interface Props {
-    disabled?: boolean;
     autoInspectNetworkEnabled?: boolean;
     autoInspectConsoleEnabled?: boolean;
     bubbleSize?: number;
     idleBubbleOpacity?: number;
-    children?: ReactNode;
+    includeDomains?: string[];
+  }
+
+  interface WrapperProps extends Props {
+    disabled?: boolean;
+    children: ReactNode;
   }
 
   enableMapSet();
@@ -60,6 +64,7 @@ namespace Xenon {
       autoInspectConsoleEnabled = true,
       bubbleSize = 40,
       idleBubbleOpacity = 0.5,
+      includeDomains,
     }: Props) => {
       const { width, height } = useWindowDimensions();
 
@@ -78,6 +83,7 @@ namespace Xenon {
 
       const networkInterceptor = useNetworkInterceptor({
         autoEnabled: autoInspectNetworkEnabled,
+        includeDomains,
       });
 
       const consoleInterceptor = useConsoleInterceptor({
@@ -132,7 +138,7 @@ namespace Xenon {
     },
   );
 
-  export function Wrapper({ disabled = false, children, ...props }: Props) {
+  export function Wrapper({ disabled = false, children, ...props }: WrapperProps) {
     if (disabled) return children;
 
     return (
