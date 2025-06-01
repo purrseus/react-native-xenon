@@ -1,5 +1,5 @@
-import { forwardRef, useContext, useRef, type JSX } from 'react';
-import { ScrollView, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
+import { forwardRef, useContext, useRef, type JSX, type ReactNode } from 'react';
+import { ScrollView, StyleSheet, View, type StyleProp, type ViewStyle } from 'react-native';
 import { MainContext } from '../../../contexts';
 import {
   beautify,
@@ -12,7 +12,13 @@ import colors from '../../../theme/colors';
 import { type DetailTab, type HttpRequest, type WebSocketRequest } from '../../../types';
 import NetworkRequestDetailsItem from '../items/NetworkRequestDetailsItem';
 
-const NetworkRequestDetails = forwardRef<ScrollView, { style?: StyleProp<ViewStyle> }>(
+const TabScrollView = ({ id, children }: { id: string; children: ReactNode }) => (
+  <ScrollView key={id} contentContainerStyle={styles.contentContainer}>
+    {children}
+  </ScrollView>
+);
+
+const NetworkRequestDetails = forwardRef<View, { style?: StyleProp<ViewStyle> }>(
   ({ style }, ref) => {
     const {
       debuggerState: { detailsData },
@@ -26,7 +32,7 @@ const NetworkRequestDetails = forwardRef<ScrollView, { style?: StyleProp<ViewSty
       typeof detailsData?.beautified === 'boolean';
 
     const {
-      isHttp,
+      isWS,
       requestUrl,
       overviewShown,
       headersShown,
@@ -54,14 +60,14 @@ const NetworkRequestDetails = forwardRef<ScrollView, { style?: StyleProp<ViewSty
 
     if (overviewShown && !content.current.overview && item) {
       content.current.overview = (
-        <>
+        <TabScrollView id="overview">
           <NetworkRequestDetailsItem label="Request Type" content={item.type} />
 
           <NetworkRequestDetailsItem label="Request URL" content={item.url} />
 
           <NetworkRequestDetailsItem
             label="Request Method"
-            content={formatRequestMethod(isHttp ? (item as HttpRequest).method : undefined)}
+            content={formatRequestMethod(isWS ? undefined : (item as HttpRequest).method)}
           />
 
           <NetworkRequestDetailsItem
@@ -71,32 +77,30 @@ const NetworkRequestDetails = forwardRef<ScrollView, { style?: StyleProp<ViewSty
 
           <NetworkRequestDetailsItem
             label="Start Time"
-            content={new Date(item.startTime ?? 0).toUTCString()}
+            content={new Date(item.startTime ?? 0).toISOString()}
           />
 
           <NetworkRequestDetailsItem
             label="End Time"
-            content={new Date(item.endTime ?? 0).toUTCString()}
+            content={new Date(item.endTime ?? 0).toISOString()}
           />
 
           <NetworkRequestDetailsItem
             label="Duration"
             content={formatRequestDuration(item.startTime, item.endTime)}
           />
-        </>
+        </TabScrollView>
       );
     }
 
     if (headersShown && !content.current.headers && item) {
       let headers: [string, string][] = [];
-      let requestHeaders: [string, string][] = [];
-      let responseHeaders: [string, string][] = [];
+      const requestHeaders: [string, string][] = [];
+      const responseHeaders: [string, string][] = [];
 
-      if (!isHttp) {
+      if (isWS) {
         headers = Object.entries((item as WebSocketRequest).options?.headers ?? {});
-      }
-
-      if (isHttp) {
+      } else {
         for (const [key, value] of ((item as HttpRequest).requestHeaders ?? new Map()).entries()) {
           requestHeaders.push([key, value]);
         }
@@ -106,24 +110,24 @@ const NetworkRequestDetails = forwardRef<ScrollView, { style?: StyleProp<ViewSty
       }
 
       content.current.headers = (
-        <>
-          {!isHttp && !!headers.length && (
+        <TabScrollView id="headers">
+          {isWS && !!headers.length && (
             <NetworkRequestDetailsItem label="Headers" content={headers} />
           )}
 
-          {isHttp && !!requestHeaders.length && (
+          {!isWS && !!requestHeaders.length && (
             <NetworkRequestDetailsItem label="Request Headers" content={requestHeaders} />
           )}
 
-          {isHttp && !!responseHeaders.length && (
+          {!isWS && !!responseHeaders.length && (
             <NetworkRequestDetailsItem label="Response Headers" content={responseHeaders} />
           )}
-        </>
+        </TabScrollView>
       );
     }
 
-    if (requestShown && shouldBeautifiedRefUpdate && item && requestUrl.searchParams) {
-      let queryStringParameters: [string, string][] = [];
+    if (requestShown && shouldBeautifiedRefUpdate && item) {
+      const queryStringParameters: [string, string][] = [];
 
       requestUrl.searchParams.forEach((value, name) => {
         queryStringParameters.push([name, value]);
@@ -132,31 +136,33 @@ const NetworkRequestDetails = forwardRef<ScrollView, { style?: StyleProp<ViewSty
       const body = beautify((item as HttpRequest).body, detailsData?.beautified ?? false);
 
       content.current.request = (
-        <>
+        <TabScrollView id="request">
           {!!queryStringParameters.length && (
             <NetworkRequestDetailsItem label="Query String" content={queryStringParameters} />
           )}
 
           {!!body && <NetworkRequestDetailsItem label="Body" content={body} />}
-        </>
+        </TabScrollView>
       );
     }
 
     if (responseShown && shouldBeautifiedRefUpdate && item) {
+      const response = beautify((item as HttpRequest).response, detailsData?.beautified ?? false);
       content.current.response = (
-        <NetworkRequestDetailsItem
-          label="Response"
-          content={beautify((item as HttpRequest).response, detailsData?.beautified ?? false)}
-        />
+        <TabScrollView id="response">
+          <NetworkRequestDetailsItem label="Response" content={response} />
+        </TabScrollView>
       );
     }
 
     if (messagesShown && !content.current.messages && item) {
       content.current.messages = (
-        <NetworkRequestDetailsItem
-          label="Messages"
-          content={(item as WebSocketRequest).messages!}
-        />
+        <TabScrollView id="messages">
+          <NetworkRequestDetailsItem
+            label="Messages"
+            content={(item as WebSocketRequest).messages!}
+          />
+        </TabScrollView>
       );
     }
 
@@ -165,9 +171,9 @@ const NetworkRequestDetails = forwardRef<ScrollView, { style?: StyleProp<ViewSty
     }
 
     return (
-      <ScrollView ref={ref} style={[styles.container, style]}>
+      <View ref={ref} style={[styles.container, style]}>
         {content.current[detailsData?.selectedTab as keyof typeof content.current]}
-      </ScrollView>
+      </View>
     );
   },
 );
@@ -175,6 +181,8 @@ const NetworkRequestDetails = forwardRef<ScrollView, { style?: StyleProp<ViewSty
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
     padding: 8,
   },
   text: {

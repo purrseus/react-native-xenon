@@ -1,8 +1,8 @@
 import { forwardRef, useContext } from 'react';
-import { Share, type ScrollView, type StyleProp, type ViewStyle } from 'react-native';
+import { type ScrollView, type StyleProp, type ViewStyle } from 'react-native';
 import { MainContext } from '../../../contexts';
-import refs, { DebuggerVisibility, type PanelState } from '../../../core/refs';
-import { convertToCurl, getNetworkUtils } from '../../../core/utils';
+import { type PanelState } from '../../../core/refs';
+import { convertToCurl, getNetworkUtils, shareText } from '../../../core/utils';
 import colors from '../../../theme/colors';
 import icons from '../../../theme/icons';
 import { NetworkType, type HttpRequest, type WebSocketRequest } from '../../../types';
@@ -15,8 +15,6 @@ interface NetworkHeaderProps {
   style?: StyleProp<ViewStyle>;
 }
 
-let isSharing = false;
-
 const NetworkHeader = forwardRef<ScrollView, NetworkHeaderProps>(
   ({ selectedPanel, style }, ref) => {
     const {
@@ -26,7 +24,7 @@ const NetworkHeader = forwardRef<ScrollView, NetworkHeaderProps>(
 
     const data = detailsData?.data as HttpRequest | WebSocketRequest | undefined;
 
-    const { isHttp, overviewShown, headersShown, requestShown, responseShown, messagesShown } =
+    const { isWS, overviewShown, headersShown, requestShown, responseShown, messagesShown } =
       getNetworkUtils(data);
 
     return (
@@ -36,13 +34,13 @@ const NetworkHeader = forwardRef<ScrollView, NetworkHeaderProps>(
 
         <Divider type="vertical" />
 
-        {overviewShown && <HeaderComponents.TabItem tab="overview" label="Overview" />}
-        {headersShown && <HeaderComponents.TabItem tab="headers" label="Headers" />}
-        {requestShown && <HeaderComponents.TabItem tab="request" label="Request" />}
-        {responseShown && <HeaderComponents.TabItem tab="response" label="Response" />}
-        {messagesShown && <HeaderComponents.TabItem tab="messages" label="Messages" />}
+        {!!overviewShown && <HeaderComponents.TabItem tab="overview" label="Overview" />}
+        {!!headersShown && <HeaderComponents.TabItem tab="headers" label="Headers" />}
+        {!!requestShown && <HeaderComponents.TabItem tab="request" label="Request" />}
+        {!!responseShown && <HeaderComponents.TabItem tab="response" label="Response" />}
+        {!!messagesShown && <HeaderComponents.TabItem tab="messages" label="Messages" />}
 
-        {isHttp && (
+        {!isWS && (
           <>
             <Divider type="vertical" />
 
@@ -59,20 +57,10 @@ const NetworkHeader = forwardRef<ScrollView, NetworkHeaderProps>(
             <DebuggerHeaderItem
               content={icons.share}
               onPress={async () => {
-                if (isSharing || !data || data.type === NetworkType.WS) return;
-
-                try {
-                  isSharing = true;
-                  refs.debugger.current?.setCurrentIndex(DebuggerVisibility.Bubble);
-
-                  await Share.share({
-                    message: convertToCurl(data.method, data.url, data.requestHeaders, data.body),
-                  });
-                } catch (error) {
-                  // Handle error
-                } finally {
-                  isSharing = false;
-                }
+                if (data?.type === NetworkType.WS) return;
+                await shareText(
+                  convertToCurl(data!.method, data!.url, data!.requestHeaders, data!.body),
+                );
               }}
             />
           </>

@@ -86,7 +86,7 @@ export default class FetchInterceptor extends HttpInterceptor {
       const responseContentType = contentTypeString ? contentTypeString.split(';')[0] : undefined;
       const responseSize = contentLengthString ? parseInt(contentLengthString, 10) : undefined;
 
-      let responseHeaders: Map<string, string> = new Map();
+      const responseHeaders: Map<string, string> = new Map();
 
       clonedResponseHeaders.forEach((headerValue: string, headerKey: string) => {
         responseHeaders.set(headerKey, headerValue);

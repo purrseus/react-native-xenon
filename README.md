@@ -32,8 +32,7 @@
 
 ## Screenshots
 
-| ![screenshot-1](./images/screenshots/1.png) | ![screenshot-2](./images/screenshots/2.png) | ![screenshot-3](./images/screenshots/3.png) |
-| :-----------------------------------------: | :-----------------------------------------: | :-----------------------------------------: |
+![preview](./images/screenshots/preview.png)
 
 ## Installation
 
@@ -112,13 +111,14 @@ Xenon.hide();
 
 ## Props
 
-| **Prop**                    | **Type**  | **Description**                                                                                                                               |
-| --------------------------- | --------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `disabled`                  | `boolean` | If true, completely disables the debugger by rendering only the children components without any debugging functionality. Defaults to `false`. |
-| `autoInspectNetworkEnabled` | `boolean` | Determines whether the network inspector is automatically enabled upon initialization. Defaults to `true`.                                    |
-| `autoInspectConsoleEnabled` | `boolean` | Determines whether the console inspector is automatically enabled upon initialization. Defaults to `true`.                                    |
-| `bubbleSize`                | `number`  | Defines the size of the interactive bubble used in the UI. Defaults to `40`.                                                                  |
-| `idleBubbleOpacity`         | `number`  | Defines the opacity level of the bubble when it is idle. Defaults to `0.5`.                                                                   |
+| **Prop**                    | **Type**   | **Description**                                                                                                                               |
+| --------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `disabled`                  | `boolean`  | If true, completely disables the debugger by rendering only the children components without any debugging functionality. Defaults to `false`. |
+| `autoInspectNetworkEnabled` | `boolean`  | Determines whether the network inspector is automatically enabled upon initialization. Defaults to `true`.                                    |
+| `autoInspectConsoleEnabled` | `boolean`  | Determines whether the console inspector is automatically enabled upon initialization. Defaults to `true`.                                    |
+| `bubbleSize`                | `number`   | Defines the size of the interactive bubble used in the UI. Defaults to `40`.                                                                  |
+| `idleBubbleOpacity`         | `number`   | Defines the opacity level of the bubble when it is idle. Defaults to `0.5`.                                                                   |
+| `includeDomains`            | `string[]` | Domains to include in network interception. Defaults to all domains.                                                                          |
 
 <br />
 
