@@ -4,15 +4,12 @@ import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { FullWindowOverlay } from 'react-native-screens';
 import { useImmer } from 'use-immer';
-import MainContext from '../contexts/MainContext';
+import { MainContext } from '../contexts';
 import refs, { DebuggerVisibility } from '../core/refs';
 import { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
 import colors from '../theme/colors';
 import { type DebuggerState } from '../types';
-import { Bubble } from './components';
-import IndexedStack from './components/common/IndexedStack';
-import Header from './components/headers/Header';
-import Panel from './components/panels/Panel';
+import { Bubble, Header, IndexedStack, Panel } from './components';
 
 namespace Xenon {
   interface Methods {
