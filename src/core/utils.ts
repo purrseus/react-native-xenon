@@ -1,23 +1,45 @@
 import { URL } from 'react-native-url-polyfill';
 import { NetworkType, type HttpRequest, type LogMessage, type WebSocketRequest } from '../types';
 import colors from '../theme/colors';
+import { Share } from 'react-native';
+import refs, { DebuggerVisibility } from './refs';
+
+let isSharing = false;
+
+export const shareText = async (text: string) => {
+  if (isSharing) return;
+
+  try {
+    isSharing = true;
+    refs.debugger.current?.setCurrentIndex(DebuggerVisibility.Bubble);
+
+    await Share.share({
+      message: text.trim(),
+    });
+  } catch (error) {
+    // Handle error
+  } finally {
+    refs.debugger.current?.setCurrentIndex(DebuggerVisibility.Panel);
+    isSharing = false;
+  }
+};
 
 export const getNetworkUtils = (data?: HttpRequest | WebSocketRequest) => {
   if (!data || !data.url) return {};
 
-  const isHttp = data?.type !== NetworkType.WS;
+  const isWS = data?.type === NetworkType.WS;
   const requestUrl = new URL(data.url);
 
   const overviewShown = !!data.url;
-  const httpHeadersShown = isHttp && (!!data.requestHeaders?.size || !!data.responseHeaders?.size);
-  const websocketHeadersShown = !isHttp && !!Object.keys(data.options?.headers ?? {}).length;
+  const httpHeadersShown = !isWS && (!!data.requestHeaders?.size || !!data.responseHeaders?.size);
+  const websocketHeadersShown = isWS && !!Object.keys(data.options?.headers ?? {}).length;
   const headersShown = httpHeadersShown || websocketHeadersShown;
-  const requestShown = isHttp && (!!requestUrl.search || !!data.body);
-  const responseShown = isHttp && !!data.response;
-  const messagesShown = !isHttp && !!data.messages;
+  const requestShown = !isWS && (!!requestUrl.search || !!data.body);
+  const responseShown = !isWS && !!data.response;
+  const messagesShown = isWS && !!data.messages;
 
   return {
-    isHttp,
+    isWS,
     requestUrl,
     overviewShown,
     headersShown,
@@ -68,6 +90,8 @@ export const getHttpInterceptorId = () => {
 //#endregion
 
 //#region formatters
+export const showNewLine = (when: boolean) => (when ? '\n' : '');
+
 const limitChar = (value: any, limit = 5000) => {
   const stringValue = typeof value === 'string' ? value : JSON.stringify(value ?? '');
 
@@ -81,7 +105,7 @@ export const keyValueToString = (
   value: any,
   newLine: 'leading' | 'trailing' | null = 'trailing',
 ): string =>
-  `${newLine === 'leading' ? '\n' : ''}${key}: ${limitChar(value)}${newLine === 'trailing' ? '\n' : ''}`;
+  `${newLine === 'leading' ? '\n' : ''}${key}: ${limitChar(value)}${showNewLine(newLine === 'trailing')}`;
 
 export const formatRequestMethod = (method?: string) => method ?? 'GET';
 

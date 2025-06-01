@@ -32,7 +32,7 @@ const NetworkRequestDetails = forwardRef<View, { style?: StyleProp<ViewStyle> }>
       typeof detailsData?.beautified === 'boolean';
 
     const {
-      isHttp,
+      isWS,
       requestUrl,
       overviewShown,
       headersShown,
@@ -67,7 +67,7 @@ const NetworkRequestDetails = forwardRef<View, { style?: StyleProp<ViewStyle> }>
 
           <NetworkRequestDetailsItem
             label="Request Method"
-            content={formatRequestMethod(isHttp ? (item as HttpRequest).method : undefined)}
+            content={formatRequestMethod(isWS ? undefined : (item as HttpRequest).method)}
           />
 
           <NetworkRequestDetailsItem
@@ -77,12 +77,12 @@ const NetworkRequestDetails = forwardRef<View, { style?: StyleProp<ViewStyle> }>
 
           <NetworkRequestDetailsItem
             label="Start Time"
-            content={new Date(item.startTime ?? 0).toUTCString()}
+            content={new Date(item.startTime ?? 0).toISOString()}
           />
 
           <NetworkRequestDetailsItem
             label="End Time"
-            content={new Date(item.endTime ?? 0).toUTCString()}
+            content={new Date(item.endTime ?? 0).toISOString()}
           />
 
           <NetworkRequestDetailsItem
@@ -98,11 +98,9 @@ const NetworkRequestDetails = forwardRef<View, { style?: StyleProp<ViewStyle> }>
       const requestHeaders: [string, string][] = [];
       const responseHeaders: [string, string][] = [];
 
-      if (!isHttp) {
+      if (isWS) {
         headers = Object.entries((item as WebSocketRequest).options?.headers ?? {});
-      }
-
-      if (isHttp) {
+      } else {
         for (const [key, value] of ((item as HttpRequest).requestHeaders ?? new Map()).entries()) {
           requestHeaders.push([key, value]);
         }
@@ -113,15 +111,15 @@ const NetworkRequestDetails = forwardRef<View, { style?: StyleProp<ViewStyle> }>
 
       content.current.headers = (
         <TabScrollView id="headers">
-          {!isHttp && !!headers.length && (
+          {isWS && !!headers.length && (
             <NetworkRequestDetailsItem label="Headers" content={headers} />
           )}
 
-          {isHttp && !!requestHeaders.length && (
+          {!isWS && !!requestHeaders.length && (
             <NetworkRequestDetailsItem label="Request Headers" content={requestHeaders} />
           )}
 
-          {isHttp && !!responseHeaders.length && (
+          {!isWS && !!responseHeaders.length && (
             <NetworkRequestDetailsItem label="Response Headers" content={responseHeaders} />
           )}
         </TabScrollView>
