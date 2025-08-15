@@ -1,7 +1,7 @@
 import { forwardRef, useContext } from 'react';
 import type { ScrollView, StyleProp, ViewStyle } from 'react-native';
 import { MainContext } from '../../../contexts';
-import refs, { PanelState } from '../../../core/refs';
+import refs, { DebuggerVisibility, PanelState } from '../../../core/refs';
 import icons from '../../../theme/icons';
 import Divider from '../common/Divider';
 import DebuggerHeaderItem from '../items/DebuggerHeaderItem';
@@ -38,9 +38,16 @@ const DebuggerHeader = forwardRef<ScrollView, DebuggerHeaderProps>(
         : consoleInterceptor.enableInterception();
     };
 
+    const onShowSearchInput = () => {
+      refs.debugger.current?.setCurrentIndex(DebuggerVisibility.Search);
+      refs.searchInput.current?.focus();
+    };
+
     return (
       <HeaderComponents.Wrapper ref={ref} style={style}>
         <HeaderComponents.MainButtons />
+
+        <DebuggerHeaderItem onPress={onShowSearchInput} content={icons.search} />
 
         <Divider type="vertical" />
 

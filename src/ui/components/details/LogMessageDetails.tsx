@@ -21,6 +21,7 @@ const LogMessageDetails = forwardRef<ScrollView, { style?: StyleProp<ViewStyle> 
           { backgroundColor: getConsoleTypeColor(item?.type ?? '') },
           style,
         ]}
+        contentContainerStyle={styles.contentContainer}
       >
         <Text style={styles.text}>{formatLogMessage(item?.values ?? [])}</Text>
       </ScrollView>
@@ -31,6 +32,8 @@ const LogMessageDetails = forwardRef<ScrollView, { style?: StyleProp<ViewStyle> 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  contentContainer: {
     padding: 8,
   },
   text: {

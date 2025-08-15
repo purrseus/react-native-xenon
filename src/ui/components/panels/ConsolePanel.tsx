@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useContext } from 'react';
+import { forwardRef, useCallback, useContext, useMemo } from 'react';
 import {
   FlatList,
   StyleSheet,
@@ -11,14 +11,30 @@ import { MainContext } from '../../../contexts';
 import { DebuggerPanel, type LogMessage } from '../../../types';
 import ConsolePanelItem from '../items/ConsolePanelItem';
 import refs, { HeaderState, PanelState } from '../../../core/refs';
+import { formatLogMessage } from '../../../core/utils';
 
 const Separator = () => <View style={styles.divider} />;
 
 const ConsolePanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ style }, ref) => {
   const {
+    debuggerState: { searchQuery },
     consoleInterceptor: { logMessages },
     setDebuggerState,
   } = useContext(MainContext)!;
+
+  const data = useMemo(() => {
+    let result = [...logMessages];
+
+    if (searchQuery) {
+      result = logMessages.filter(item =>
+        formatLogMessage(item?.values ?? [])
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()),
+      );
+    }
+
+    return result.reverse();
+  }, [logMessages, searchQuery]);
 
   const renderItem = useCallback<ListRenderItem<LogMessage>>(
     ({ item }) => (
@@ -45,7 +61,7 @@ const ConsolePanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
     <FlatList
       ref={ref}
       inverted
-      data={[...logMessages].reverse()}
+      data={data}
       renderItem={renderItem}
       keyExtractor={(_, index) => index.toString()}
       ItemSeparatorComponent={Separator}

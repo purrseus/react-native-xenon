@@ -16,7 +16,7 @@ const ConsoleHeader = forwardRef<ScrollView, ConsoleHeaderProps>(
         <HeaderComponents.Back selectedPanel={selectedPanel} />
         <HeaderComponents.MainButtons />
         <Divider type="vertical" />
-        <HeaderComponents.TabItem tab="logMessage" label="Console" />
+        <HeaderComponents.DetailTabItem tab="logMessage" label="Console" />
       </HeaderComponents.Wrapper>
     );
   },

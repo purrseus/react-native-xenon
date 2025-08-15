@@ -1,20 +1,10 @@
-import { TouchableOpacity, type StyleProp, type ViewStyle } from 'react-native';
+import { TouchableOpacity, type TouchableOpacityProps } from 'react-native';
 
-interface TouchableProps {
-  onPress: () => void;
-  children: React.ReactNode;
-  activeOpacity?: number;
-  style?: StyleProp<ViewStyle>;
-}
+interface TouchableProps extends TouchableOpacityProps {}
 
-export default function Touchable({
-  onPress,
-  children,
-  activeOpacity = 0.8,
-  style,
-}: TouchableProps) {
+export default function Touchable({ children, activeOpacity = 0.8, ...props }: TouchableProps) {
   return (
-    <TouchableOpacity onPress={onPress} activeOpacity={activeOpacity} style={style}>
+    <TouchableOpacity activeOpacity={activeOpacity} {...props}>
       {children}
     </TouchableOpacity>
   );
