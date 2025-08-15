@@ -22,10 +22,24 @@ const Separator = () => <Divider type="horizontal" />;
 
 const NetworkPanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ style }, ref) => {
   const {
+    debuggerState: { searchQuery },
     networkInterceptor: { networkRequests },
     setDebuggerState,
   } = useContext(MainContext)!;
-  const data = useMemo(() => Array.from(networkRequests).reverse(), [networkRequests]);
+
+  const data = useMemo(() => {
+    let result = Array.from(networkRequests);
+
+    if (searchQuery) {
+      result = result.filter(([, item]) =>
+        (item as HttpRequest | WebSocketRequest).url
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()),
+      );
+    }
+
+    return result.reverse();
+  }, [networkRequests, searchQuery]);
 
   const renderItem = useCallback<ListRenderItem<[NonNullable<ID>, HttpRequest | WebSocketRequest]>>(
     ({ item: [_, item] }) => (

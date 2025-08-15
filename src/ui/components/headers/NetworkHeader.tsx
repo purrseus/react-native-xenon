@@ -34,11 +34,11 @@ const NetworkHeader = forwardRef<ScrollView, NetworkHeaderProps>(
 
         <Divider type="vertical" />
 
-        {!!overviewShown && <HeaderComponents.TabItem tab="overview" label="Overview" />}
-        {!!headersShown && <HeaderComponents.TabItem tab="headers" label="Headers" />}
-        {!!requestShown && <HeaderComponents.TabItem tab="request" label="Request" />}
-        {!!responseShown && <HeaderComponents.TabItem tab="response" label="Response" />}
-        {!!messagesShown && <HeaderComponents.TabItem tab="messages" label="Messages" />}
+        {!!overviewShown && <HeaderComponents.DetailTabItem tab="overview" label="Overview" />}
+        {!!headersShown && <HeaderComponents.DetailTabItem tab="headers" label="Headers" />}
+        {!!requestShown && <HeaderComponents.DetailTabItem tab="request" label="Request" />}
+        {!!responseShown && <HeaderComponents.DetailTabItem tab="response" label="Response" />}
+        {!!messagesShown && <HeaderComponents.DetailTabItem tab="messages" label="Messages" />}
 
         {!isWS && (
           <>

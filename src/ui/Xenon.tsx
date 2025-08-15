@@ -9,7 +9,7 @@ import refs, { DebuggerVisibility } from '../core/refs';
 import { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
 import colors from '../theme/colors';
 import { type DebuggerState } from '../types';
-import { Bubble, Header, IndexedStack, Panel } from './components';
+import { Bubble, Header, IndexedStack, Panel, SearchBar } from './components';
 
 namespace Xenon {
   interface Methods {
@@ -64,9 +64,9 @@ namespace Xenon {
       flex: 1,
       ...StyleSheet.absoluteFillObject,
       pointerEvents: 'box-none',
+      ...(Platform.OS === 'android' ? { zIndex: 9999 } : {}),
       top: undefined,
       bottom: undefined,
-      ...(Platform.OS === 'android' ? { zIndex: 9999 } : {}),
       backgroundColor: colors.lightGray,
       borderBottomColor: colors.gray,
       borderBottomWidth: StyleSheet.hairlineWidth,
@@ -107,6 +107,7 @@ namespace Xenon {
       const [debuggerState, setDebuggerState] = useImmer<DebuggerState>({
         position: 'bottom',
         detailsData: null,
+        searchQuery: '',
       });
 
       const containerStyle = useMemo(
@@ -168,6 +169,8 @@ namespace Xenon {
                 </SafeAreaView>
               </SafeAreaProvider>
             </View>
+
+            <SearchBar />
           </IndexedStack>
         </MainContext.Provider>
       );
