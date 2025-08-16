@@ -9,13 +9,14 @@ import {
   type TextInputSubmitEditingEventData,
   type ViewProps,
 } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { MainContext } from '../../../contexts';
 import refs, { DebuggerVisibility } from '../../../core/refs';
 import colors from '../../../theme/colors';
-import Touchable from '../common/Touchable';
-import Icon from '../common/Icon';
 import icons from '../../../theme/icons';
-import { MainContext } from '../../../contexts';
+import Icon from '../common/Icon';
+import Touchable from '../common/Touchable';
+import SafeArea from '../common/SafeArea';
 
 interface SearchBarProps extends ViewProps {}
 
@@ -48,7 +49,9 @@ const SearchBar = forwardRef<View, SearchBarProps>(({ style, ...props }, ref) =>
   return (
     <View ref={ref} style={[styles.container, style]} {...props}>
       <SafeAreaProvider>
-        <SafeAreaView edges={['top']} style={styles.safeArea}>
+        <View style={styles.barView}>
+          <SafeArea inset="top" />
+
           <View style={styles.inputWrapper}>
             <Icon source={icons.search} size={18} />
 
@@ -68,11 +71,11 @@ const SearchBar = forwardRef<View, SearchBarProps>(({ style, ...props }, ref) =>
               onSubmitEditing={onSubmitEditing}
             />
 
-            <Touchable onPress={onClear} style={styles.closeButton}>
+            <Touchable hitSlop={8} onPress={onClear} style={styles.closeButton}>
               <Icon source={icons.close} size={12} color={colors.black} />
             </Touchable>
           </View>
-        </SafeAreaView>
+        </View>
 
         <Touchable onPress={onHideSearchInput} style={styles.background}>
           <View />
@@ -88,7 +91,7 @@ const styles = StyleSheet.create({
     ...(Platform.OS === 'android' ? { zIndex: 9999 } : {}),
     backgroundColor: colors.black + '80', // 80 for 50% opacity
   },
-  safeArea: {
+  barView: {
     backgroundColor: colors.lightGray,
     padding: 8,
   },

@@ -1,7 +1,7 @@
 import { enableMapSet } from 'immer';
 import { createRef, memo, useImperativeHandle, useMemo, type JSX, type ReactNode } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { FullWindowOverlay } from 'react-native-screens';
 import { useImmer } from 'use-immer';
 import { MainContext } from '../contexts';
@@ -10,6 +10,7 @@ import { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
 import colors from '../theme/colors';
 import { type DebuggerState } from '../types';
 import { Bubble, Header, IndexedStack, Panel, SearchBar } from './components';
+import SafeArea from './components/common/SafeArea';
 
 namespace Xenon {
   interface Methods {
@@ -163,10 +164,10 @@ namespace Xenon {
 
             <View style={containerStyle}>
               <SafeAreaProvider>
-                <SafeAreaView style={styles.safeArea}>
-                  <Header />
-                  <Panel />
-                </SafeAreaView>
+                {debuggerState.position === 'top' && <SafeArea inset="top" />}
+                <Header />
+                <Panel />
+                {debuggerState.position === 'bottom' && <SafeArea inset="bottom" />}
               </SafeAreaProvider>
             </View>
 

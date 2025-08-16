@@ -45,9 +45,9 @@ const DebuggerHeader = forwardRef<ScrollView, DebuggerHeaderProps>(
 
     return (
       <HeaderComponents.Wrapper ref={ref} style={style}>
-        <HeaderComponents.MainButtons />
-
         <DebuggerHeaderItem onPress={onShowSearchInput} content={icons.search} />
+
+        <HeaderComponents.MainButtons />
 
         <Divider type="vertical" />
 
