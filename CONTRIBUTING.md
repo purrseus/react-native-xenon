@@ -11,13 +11,15 @@ This project is a monorepo managed using [Yarn workspaces](https://yarnpkg.com/f
 - The library package in the root directory.
 - An example app in the `example/` directory.
 
-To get started with the project, run `yarn` in the root directory to install the required dependencies for each package:
+To get started with the project, make sure you have the correct version of [Node.js](https://nodejs.org/) installed. See the [`.nvmrc`](./.nvmrc) file for the version used in this project.
+
+Run `yarn` in the root directory to install the required dependencies for each package:
 
 ```sh
 yarn
 ```
 
-> Since the project relies on Yarn workspaces, you cannot use [`npm`](https://github.com/npm/cli) for development.
+> Since the project relies on Yarn workspaces, you cannot use [`npm`](https://github.com/npm/cli) for development without manually migrating.
 
 The [example app](/example/) demonstrates usage of the library. You need to run it to test any changes you make.
 
@@ -42,6 +44,14 @@ To run the example app on iOS:
 ```sh
 yarn example ios
 ```
+
+To confirm that the app is running with the new architecture, you can check the Metro logs for a message like this:
+
+```sh
+Running "XenonExample" with {"fabric":true,"initialProps":{"concurrentRoot":true},"rootTag":1}
+```
+
+Note the `"fabric":true` and `"concurrentRoot":true` properties.
 
 To run the example app on Web:
 
