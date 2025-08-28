@@ -24,7 +24,7 @@ const Back = ({ selectedPanel }: { selectedPanel: PanelState }) => {
   );
 };
 
-const TabItem = ({ tab, label }: { tab: DetailTab; label: string }) => {
+const DetailTabItem = ({ tab, label }: { tab: DetailTab; label: string }) => {
   const {
     debuggerState: { detailsData },
     setDebuggerState,
@@ -95,6 +95,6 @@ const styles = StyleSheet.create({
   },
 });
 
-const HeaderComponents = { Back, TabItem, MainButtons, Wrapper };
+const HeaderComponents = { Back, DetailTabItem, MainButtons, Wrapper };
 
 export default HeaderComponents;

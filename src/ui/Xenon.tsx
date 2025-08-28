@@ -1,7 +1,7 @@
 import { enableMapSet } from 'immer';
 import { createRef, memo, useImperativeHandle, useMemo, type JSX, type ReactNode } from 'react';
 import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { FullWindowOverlay } from 'react-native-screens';
 import { useImmer } from 'use-immer';
 import { MainContext } from '../contexts';
@@ -9,7 +9,8 @@ import refs, { DebuggerVisibility } from '../core/refs';
 import { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
 import colors from '../theme/colors';
 import { type DebuggerState } from '../types';
-import { Bubble, Header, IndexedStack, Panel } from './components';
+import { Bubble, Header, IndexedStack, Panel, SearchBar } from './components';
+import SafeArea from './components/common/SafeArea';
 
 namespace Xenon {
   interface Methods {
@@ -64,9 +65,9 @@ namespace Xenon {
       flex: 1,
       ...StyleSheet.absoluteFillObject,
       pointerEvents: 'box-none',
+      ...(Platform.OS === 'android' ? { zIndex: 9999 } : {}),
       top: undefined,
       bottom: undefined,
-      ...(Platform.OS === 'android' ? { zIndex: 9999 } : {}),
       backgroundColor: colors.lightGray,
       borderBottomColor: colors.gray,
       borderBottomWidth: StyleSheet.hairlineWidth,
@@ -107,6 +108,7 @@ namespace Xenon {
       const [debuggerState, setDebuggerState] = useImmer<DebuggerState>({
         position: 'bottom',
         detailsData: null,
+        searchQuery: '',
       });
 
       const containerStyle = useMemo(
@@ -162,12 +164,14 @@ namespace Xenon {
 
             <View style={containerStyle}>
               <SafeAreaProvider>
-                <SafeAreaView style={styles.safeArea}>
-                  <Header />
-                  <Panel />
-                </SafeAreaView>
+                {debuggerState.position === 'top' && <SafeArea inset="top" />}
+                <Header />
+                <Panel />
+                {debuggerState.position === 'bottom' && <SafeArea inset="bottom" />}
               </SafeAreaProvider>
             </View>
+
+            <SearchBar />
           </IndexedStack>
         </MainContext.Provider>
       );

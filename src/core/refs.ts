@@ -1,10 +1,12 @@
 import { createRef } from 'react';
 import type { IndexedStackMethods } from '../ui/components/common/IndexedStack';
+import type { TextInput } from 'react-native';
 
 export enum DebuggerVisibility {
   Hidden = -1,
   Bubble = 0,
   Panel = 1,
+  Search = 2,
 }
 
 export enum PanelState {
@@ -24,6 +26,7 @@ const refs = {
   debugger: createRef<IndexedStackMethods<DebuggerVisibility>>(),
   panel: createRef<IndexedStackMethods<PanelState>>(),
   header: createRef<IndexedStackMethods<HeaderState>>(),
+  searchInput: createRef<TextInput>(),
 };
 
 export default refs;

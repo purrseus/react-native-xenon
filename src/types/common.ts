@@ -24,6 +24,7 @@ export type DetailTab = 'overview' | 'headers' | 'request' | 'response' | 'messa
 
 export interface DebuggerState {
   position: 'top' | 'bottom';
+  searchQuery: string;
   detailsData:
     | {
         type: DebuggerPanel.Network;
