@@ -1,16 +1,13 @@
 import { enableMapSet } from 'immer';
-import { createRef, memo, useImperativeHandle, useMemo, type JSX, type ReactNode } from 'react';
-import { Platform, StyleSheet, useWindowDimensions, View } from 'react-native';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { createRef, memo, useImperativeHandle, type JSX, type ReactNode } from 'react';
+import { Platform, useWindowDimensions } from 'react-native';
 import { FullWindowOverlay } from 'react-native-screens';
 import { useImmer } from 'use-immer';
 import { MainContext } from '../contexts';
 import refs, { DebuggerVisibility } from '../core/refs';
 import { useConsoleInterceptor, useNetworkInterceptor } from '../hooks';
-import colors from '../theme/colors';
 import { type DebuggerState } from '../types';
-import { Bubble, Header, IndexedStack, Panel, SearchBar } from './components';
-import SafeArea from './components/common/SafeArea';
+import { Bubble, IndexedStack, Panel, SearchBar } from './components';
 
 namespace Xenon {
   interface Methods {
@@ -60,23 +57,6 @@ namespace Xenon {
   enableMapSet();
   const ref = createRef<Methods>();
 
-  const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      ...StyleSheet.absoluteFillObject,
-      pointerEvents: 'box-none',
-      ...(Platform.OS === 'android' ? { zIndex: 9999 } : {}),
-      top: undefined,
-      bottom: undefined,
-      backgroundColor: colors.lightGray,
-      borderBottomColor: colors.gray,
-      borderBottomWidth: StyleSheet.hairlineWidth,
-    },
-    safeArea: {
-      flex: 1,
-    },
-  });
-
   /**
    * Checks whether the debugger is currently visible.
    * @returns `true` if the debugger is currently visible, otherwise `false`.
@@ -103,21 +83,13 @@ namespace Xenon {
       idleBubbleOpacity = 0.5,
       includeDomains,
     }: Props) => {
-      const { width, height } = useWindowDimensions();
+      const dimensions = useWindowDimensions();
 
       const [debuggerState, setDebuggerState] = useImmer<DebuggerState>({
         position: 'bottom',
         detailsData: null,
         searchQuery: '',
       });
-
-      const containerStyle = useMemo(
-        () => [
-          styles.container,
-          { [debuggerState.position]: 0, height: Math.min(width, height) * 0.75 },
-        ],
-        [debuggerState.position, height, width],
-      );
 
       const networkInterceptor = useNetworkInterceptor({
         autoEnabled: autoInspectNetworkEnabled,
@@ -152,24 +124,18 @@ namespace Xenon {
 
       return (
         <MainContext.Provider
-          value={{ debuggerState, setDebuggerState, networkInterceptor, consoleInterceptor }}
+          value={{
+            dimensions,
+            debuggerState,
+            setDebuggerState,
+            networkInterceptor,
+            consoleInterceptor,
+          }}
         >
           <IndexedStack defaultIndex={DebuggerVisibility.Hidden} id="debugger" ref={refs.debugger}>
-            <Bubble
-              bubbleSize={bubbleSize}
-              idleBubbleOpacity={idleBubbleOpacity}
-              screenWidth={width}
-              screenHeight={height}
-            />
+            <Bubble bubbleSize={bubbleSize} idleBubbleOpacity={idleBubbleOpacity} />
 
-            <View style={containerStyle}>
-              <SafeAreaProvider>
-                {debuggerState.position === 'top' && <SafeArea inset="top" />}
-                <Header />
-                <Panel />
-                {debuggerState.position === 'bottom' && <SafeArea inset="bottom" />}
-              </SafeAreaProvider>
-            </View>
+            <Panel />
 
             <SearchBar />
           </IndexedStack>

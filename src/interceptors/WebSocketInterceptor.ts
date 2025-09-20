@@ -1,8 +1,9 @@
-import { NativeEventEmitter, type EmitterSubscription } from 'react-native';
-import NativeWebSocketModule from 'react-native/Libraries/WebSocket/NativeWebSocketModule';
+import { NativeEventEmitter, TurboModuleRegistry, type EmitterSubscription } from 'react-native';
 import { frozen, singleton } from '../core/utils';
-import type { WebSocketHandlers } from '../types';
+import type { NativeWebSocket, WebSocketHandlers } from '../types';
 import { NetworkInterceptor } from './NetworkInterceptor';
+
+const NativeWebSocketModule = TurboModuleRegistry.getEnforcing<NativeWebSocket>('WebSocketModule');
 
 const originalWebSocketConnect = NativeWebSocketModule.connect;
 const originalWebSocketSend = NativeWebSocketModule.send;

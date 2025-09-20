@@ -1,29 +1,29 @@
-import { forwardRef, useMemo, useRef, useState } from 'react';
+import { forwardRef, useContext, useMemo, useRef, useState } from 'react';
 import {
   Animated,
   PanResponder,
   StyleSheet,
   View,
   type PanResponderGestureState,
-  type StyleProp,
-  type ViewStyle,
+  type ViewProps,
 } from 'react-native';
+import { MainContext } from '../../../contexts';
 import refs, { DebuggerVisibility } from '../../../core/refs';
 import { clamp, getVerticalSafeMargin } from '../../../core/utils';
 import colors from '../../../theme/colors';
 import icons from '../../../theme/icons';
 import Icon from '../common/Icon';
 
-interface BubbleProps {
+interface BubbleProps extends ViewProps {
   bubbleSize: number;
   idleBubbleOpacity: number;
-  screenWidth: number;
-  screenHeight: number;
-  style?: StyleProp<ViewStyle>;
 }
 
 const Bubble = forwardRef<View, BubbleProps>(
-  ({ bubbleSize, idleBubbleOpacity, screenWidth, screenHeight, style }, ref) => {
+  ({ bubbleSize, idleBubbleOpacity, style, ...props }, ref) => {
+    const {
+      dimensions: { width: screenWidth, height: screenHeight },
+    } = useContext(MainContext)!;
     const [idleOpacity, setIdleOpacity] = useState(idleBubbleOpacity);
     const pan = useRef(new Animated.ValueXY({ x: 0, y: getVerticalSafeMargin(screenHeight) }));
     const opacityTimer = useRef<NodeJS.Timeout | null>(null);
@@ -97,7 +97,7 @@ const Bubble = forwardRef<View, BubbleProps>(
     }, [bubbleSize, idleBubbleOpacity, screenHeight, screenWidth]);
 
     return (
-      <View ref={ref} style={[styles.bubbleBackdrop, style]}>
+      <View ref={ref} style={[styles.bubbleBackdrop, style]} {...props}>
         <Animated.View
           {...panResponder.panHandlers}
           style={[
