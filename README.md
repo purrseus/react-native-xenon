@@ -38,40 +38,22 @@
 
 ### Expo
 
-If you are using Expo, just run these commands and you're done. No additional configuration required.
+If you are using Expo, just run this command and you're done. No additional configuration required.
 
 ```sh
-npx expo install react-native-xenon
-npx expo install react-native-safe-area-context react-native-screens
+npx expo install react-native-xenon react-native-safe-area-context react-native-screens
 ```
 
 ### React Native
 
-For React Native projects, install the packages and follow the platform-specific setup instructions below.
+For bare React Native projects, install the packages and follow the additional peer dependency installation steps below.
 
 ```sh
-yarn add react-native-xenon
-yarn add react-native-safe-area-context react-native-screens
+yarn add react-native-xenon react-native-safe-area-context react-native-screens
 ```
 
-#### Android
-
-`react-native-screens` package requires one additional configuration step to properly work on Android devices. Edit `MainActivity.kt` file which is located under `android/app/src/main/java/<your package name>/`.
-
-```diff
-+ import android.os.Bundle
-// ...
-
-class MainActivity: ReactActivity() {
-  // ...
-+  override fun onCreate(savedInstanceState: Bundle?) {
-+    super.onCreate(null)
-+  }
-  // ...
-}
-```
-
-This change is required to avoid crashes related to View state being not persisted consistently across Activity restarts.
+> [!NOTE]
+> **React Native Screens** needs extra steps to finalize its installation, please follow their [installation instructions](https://github.com/software-mansion/react-native-screens?tab=readme-ov-file#installation).
 
 #### iOS
 

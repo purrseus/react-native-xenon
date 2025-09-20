@@ -47,6 +47,7 @@
     "xenon",
     "inspector",
     "debugger",
+    "devtools",
     "https",
     "network",
     "nsurlsession",
