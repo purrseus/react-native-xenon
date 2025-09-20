@@ -1,3 +1,4 @@
+import type { TurboModule } from 'react-native';
 import type { NetworkRequest, NetworkType } from './common';
 
 export interface WebSocketRequest extends NetworkRequest {
@@ -29,4 +30,19 @@ export interface WebSocketHandlers {
   onMessage: ((socketId: number, message: any) => void) | null;
   onError: ((socketId: number, error: WebSocketRequest['serverError']) => void) | null;
   onClose: ((socketId: number, data: WebSocketRequest['serverClose']) => void) | null;
+}
+
+export interface NativeWebSocket extends TurboModule {
+  connect: (
+    url: string,
+    protocols?: Array<string>,
+    options?: WebSocketRequest['options'],
+    socketID?: number,
+  ) => void;
+  send: (message: string, forSocketID: number) => void;
+  sendBinary: (base64String: string, forSocketID: number) => void;
+  ping: (socketID: number) => void;
+  close: (code: number, reason: string, socketID: number) => void;
+  addListener: (eventName: string) => void;
+  removeListeners: (count: number) => void;
 }
