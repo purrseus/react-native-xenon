@@ -34,6 +34,13 @@
 
 ![preview](./images/screenshots/preview.png)
 
+## Supported react-native versions
+
+| **react-native-xenon version** | **react-native version** |
+| ------------------------------ | ------------------------ |
+| 2.1.0+                         | 0.80.0+                  |
+| 1.0.0+                         | 0.73.0+                  |
+
 ## Installation
 
 ### Expo
