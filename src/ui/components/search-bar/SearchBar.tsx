@@ -20,6 +20,8 @@ import SafeArea from '../common/SafeArea';
 
 interface SearchBarProps extends ViewProps {}
 
+const ICON_SIZE = 20;
+
 const SearchBar = forwardRef<View, SearchBarProps>(({ style, ...props }, ref) => {
   const {
     debuggerState: { searchQuery },
@@ -34,7 +36,7 @@ const SearchBar = forwardRef<View, SearchBarProps>(({ style, ...props }, ref) =>
   };
 
   const onClear = () => {
-    refs.searchInput.current?.clear();
+    setValue('');
   };
 
   const onSubmitEditing = ({
@@ -53,7 +55,7 @@ const SearchBar = forwardRef<View, SearchBarProps>(({ style, ...props }, ref) =>
           <SafeArea inset="top" />
 
           <View style={styles.inputWrapper}>
-            <Icon source={icons.search} size={18} />
+            <Icon source={icons.search} size={ICON_SIZE} />
 
             <TextInput
               autoCapitalize="none"
@@ -71,9 +73,11 @@ const SearchBar = forwardRef<View, SearchBarProps>(({ style, ...props }, ref) =>
               onSubmitEditing={onSubmitEditing}
             />
 
-            <Touchable hitSlop={8} onPress={onClear} style={styles.closeButton}>
-              <Icon source={icons.close} size={12} color={colors.black} />
-            </Touchable>
+            {!!value.length && (
+              <Touchable hitSlop={8} onPress={onClear}>
+                <Icon source={icons.close} size={ICON_SIZE} color={colors.black} />
+              </Touchable>
+            )}
           </View>
         </View>
 
@@ -115,14 +119,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: colors.black,
     flex: 1,
-  },
-  closeButton: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: 18,
-    height: 18,
-    borderRadius: 9,
-    backgroundColor: colors.gray,
   },
 });
 

@@ -16,6 +16,7 @@ import {
   type WebSocketRequest,
 } from '../../../types';
 import Divider from '../common/Divider';
+import Empty from '../common/Empty';
 import NetworkPanelItem from '../items/NetworkPanelItem';
 
 const Separator = () => <Divider type="horizontal" />;
@@ -68,13 +69,14 @@ const NetworkPanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
 
   return (
     <FlatList
-      inverted
+      inverted={!!data.length}
       data={data}
       ref={ref}
       renderItem={renderItem}
       keyExtractor={([key]) => key}
       ItemSeparatorComponent={Separator}
       style={[styles.container, style]}
+      ListEmptyComponent={<Empty>No records yet</Empty>}
     />
   );
 });
