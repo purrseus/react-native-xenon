@@ -8,12 +8,13 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { MainContext } from '../../../contexts';
-import { DebuggerPanel, type LogMessage } from '../../../types';
-import ConsolePanelItem from '../items/ConsolePanelItem';
 import refs, { HeaderState, PanelState } from '../../../core/refs';
 import { formatLogMessage } from '../../../core/utils';
+import { DebuggerPanel, type LogMessage } from '../../../types';
+import Empty from '../common/Empty';
+import ConsolePanelItem from '../items/ConsolePanelItem';
 
-const Separator = () => <View style={styles.divider} />;
+const Separator = () => <View style={styles.spacing} />;
 
 const ConsolePanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ style }, ref) => {
   const {
@@ -60,13 +61,14 @@ const ConsolePanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
   return (
     <FlatList
       ref={ref}
-      inverted
+      inverted={!!data.length}
       data={data}
       renderItem={renderItem}
       keyExtractor={(_, index) => index.toString()}
       ItemSeparatorComponent={Separator}
       style={[styles.container, style]}
-      contentContainerStyle={styles.contentContainer}
+      contentContainerStyle={data.length ? styles.contentContainer : undefined}
+      ListEmptyComponent={<Empty>No logs yet</Empty>}
     />
   );
 });
@@ -78,7 +80,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     padding: 8,
   },
-  divider: {
+  spacing: {
     height: 4,
   },
 });

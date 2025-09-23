@@ -43,14 +43,17 @@ export default function useNetworkInterceptor({
     setNetworkRequests(initRequests);
   };
 
+  const isMatchedDomain = (url: string) => {
+    if (!includeDomains?.length) return true;
+
+    return includeDomains.some(domain => url.includes(domain));
+  };
+
   const enableHttpInterceptions = useCallback(() => {
     const openCallback: HttpHandlers['open'] = (id, type, method, url) => {
       if (!id) return;
 
-      const isNotMatchedDomain =
-        !!joinedIncludeDomains.length && !includeDomains?.some(domain => url.includes(domain));
-
-      if (isNotMatchedDomain) return;
+      if (!isMatchedDomain(url)) return;
 
       setNetworkRequests((draft: NetworkRequests<HttpRequest>) => {
         draft.set(id, { type, method, url });
@@ -162,6 +165,8 @@ export default function useNetworkInterceptor({
     ) => {
       if (typeof socketId !== 'number') return;
 
+      if (!isMatchedDomain(url)) return;
+
       setNetworkRequests((draft: NetworkRequests<WebSocketRequest>) => {
         draft.set(`${socketId}`, {
           startTime,
@@ -245,7 +250,8 @@ export default function useNetworkInterceptor({
       .set('onError', onErrorCallback)
       .set('onClose', onCloseCallback)
       .enableInterception();
-  }, [setNetworkRequests]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [joinedIncludeDomains, setNetworkRequests]);
 
   const enableInterception = useCallback(() => {
     if (isEnabled()) return;
