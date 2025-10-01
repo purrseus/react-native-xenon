@@ -7,7 +7,6 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { MainContext } from '../../../contexts';
-import refs, { HeaderState, PanelState } from '../../../core/refs';
 import {
   DebuggerPanel,
   NetworkType,
@@ -51,8 +50,6 @@ const NetworkPanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
         endTime={item.endTime}
         status={item.status}
         onPress={() => {
-          refs.header.current?.setCurrentIndex(HeaderState.Network);
-          refs.panel.current?.setCurrentIndex(PanelState.NetworkDetail);
           setDebuggerState(draft => {
             draft.detailsData = {
               type: DebuggerPanel.Network,

@@ -79,7 +79,7 @@ export const getConsoleTypeColor = (type: LogMessage['type']) => {
 //#region metrics
 export const getVerticalSafeMargin = (screenHeight: number) => screenHeight / 8;
 
-export const clamp = (value: number, min: number, max: number) =>
+export const clamp = (min: number, max: number, value: number) =>
   Math.max(min, Math.min(max, value));
 
 export const getHttpInterceptorId = () => {

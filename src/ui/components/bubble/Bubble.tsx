@@ -80,9 +80,9 @@ const Bubble = forwardRef<View, BubbleProps>(
           const verticalSafeMargin = getVerticalSafeMargin(screenHeight);
 
           const finalY = clamp(
-            gesture.moveY,
             verticalSafeMargin,
             screenHeight - verticalSafeMargin - bubbleSize,
+            gesture.moveY,
           );
 
           Animated.spring(pan.current, {

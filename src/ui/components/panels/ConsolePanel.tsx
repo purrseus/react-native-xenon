@@ -8,7 +8,6 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { MainContext } from '../../../contexts';
-import refs, { HeaderState, PanelState } from '../../../core/refs';
 import { formatLogMessage } from '../../../core/utils';
 import { DebuggerPanel, type LogMessage } from '../../../types';
 import Empty from '../common/Empty';
@@ -42,8 +41,6 @@ const ConsolePanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
       <ConsolePanelItem
         {...item}
         onPress={() => {
-          refs.header.current?.setCurrentIndex(HeaderState.Console);
-          refs.panel.current?.setCurrentIndex(PanelState.ConsoleDetail);
           setDebuggerState(draft => {
             draft.detailsData = {
               type: DebuggerPanel.Console,
