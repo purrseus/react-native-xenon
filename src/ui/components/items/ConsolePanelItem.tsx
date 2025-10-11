@@ -1,4 +1,6 @@
-import { StyleSheet, Text } from 'react-native';
+import { memo } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import { CONSOLE_ITEM_HEIGHT } from '../../../core/constants';
 import { formatLogMessage, getConsoleTypeColor } from '../../../core/utils';
 import colors from '../../../theme/colors';
 import type { LogMessage } from '../../../types';
@@ -8,23 +10,33 @@ interface ConsolePanelItemProps extends LogMessage {
   onPress: () => void;
 }
 
-export default function ConsolePanelItem({ type, values, onPress }: ConsolePanelItemProps) {
-  return (
-    <Touchable
-      onPress={onPress}
-      style={[styles.container, { backgroundColor: getConsoleTypeColor(type) }]}
-    >
-      <Text numberOfLines={1} style={styles.text}>
-        {formatLogMessage(values)}
-      </Text>
-    </Touchable>
-  );
-}
+const ConsolePanelItem = memo<ConsolePanelItemProps>(
+  ({ type, values, onPress }) => {
+    return (
+      <Touchable onPress={onPress} style={styles.container}>
+        <View style={[styles.wrapper, { backgroundColor: getConsoleTypeColor(type) }]}>
+          <Text numberOfLines={1} style={styles.text}>
+            {formatLogMessage(values)}
+          </Text>
+        </View>
+      </Touchable>
+    );
+  },
+  (prevProps, nextProps) => {
+    return prevProps.type === nextProps.type && prevProps.values === nextProps.values;
+  },
+);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 8,
+    paddingBottom: 4,
+    height: CONSOLE_ITEM_HEIGHT,
+  },
+  wrapper: {
+    flex: 1,
+    paddingHorizontal: 8,
+    justifyContent: 'center',
     borderRadius: 8,
   },
   text: {
@@ -32,3 +44,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
+
+export default ConsolePanelItem;
