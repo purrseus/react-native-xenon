@@ -2,19 +2,16 @@ import { forwardRef, useCallback, useContext, useMemo } from 'react';
 import {
   FlatList,
   StyleSheet,
-  View,
   type ListRenderItem,
   type StyleProp,
   type ViewStyle,
 } from 'react-native';
 import { MainContext } from '../../../contexts';
-import refs, { HeaderState, PanelState } from '../../../core/refs';
+import { CONSOLE_ITEM_HEIGHT } from '../../../core/constants';
 import { formatLogMessage } from '../../../core/utils';
 import { DebuggerPanel, type LogMessage } from '../../../types';
 import Empty from '../common/Empty';
 import ConsolePanelItem from '../items/ConsolePanelItem';
-
-const Separator = () => <View style={styles.spacing} />;
 
 const ConsolePanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ style }, ref) => {
   const {
@@ -42,8 +39,6 @@ const ConsolePanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
       <ConsolePanelItem
         {...item}
         onPress={() => {
-          refs.header.current?.setCurrentIndex(HeaderState.Console);
-          refs.panel.current?.setCurrentIndex(PanelState.ConsoleDetail);
           setDebuggerState(draft => {
             draft.detailsData = {
               type: DebuggerPanel.Console,
@@ -58,6 +53,15 @@ const ConsolePanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
     [setDebuggerState],
   );
 
+  const getItemLayout = useCallback(
+    (_: ArrayLike<LogMessage> | null | undefined, index: number) => ({
+      length: CONSOLE_ITEM_HEIGHT,
+      offset: CONSOLE_ITEM_HEIGHT * index,
+      index,
+    }),
+    [],
+  );
+
   return (
     <FlatList
       ref={ref}
@@ -65,10 +69,10 @@ const ConsolePanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
       data={data}
       renderItem={renderItem}
       keyExtractor={(_, index) => index.toString()}
-      ItemSeparatorComponent={Separator}
       style={[styles.container, style]}
       contentContainerStyle={data.length ? styles.contentContainer : undefined}
       ListEmptyComponent={<Empty>No logs yet</Empty>}
+      getItemLayout={getItemLayout}
     />
   );
 });
@@ -79,9 +83,6 @@ const styles = StyleSheet.create({
   },
   contentContainer: {
     padding: 8,
-  },
-  spacing: {
-    height: 4,
   },
 });
 

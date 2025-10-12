@@ -1,6 +1,6 @@
 import { createRef } from 'react';
 import type { IndexedStackMethods } from '../ui/components/common/IndexedStack';
-import type { TextInput } from 'react-native';
+import { Animated, Dimensions, type TextInput } from 'react-native';
 
 export enum DebuggerVisibility {
   Hidden = -1,
@@ -27,6 +27,15 @@ const refs = {
   panel: createRef<IndexedStackMethods<PanelState>>(),
   header: createRef<IndexedStackMethods<HeaderState>>(),
   searchInput: createRef<TextInput>(),
+  panelSize: (() => {
+    const ref = createRef<Animated.ValueXY>();
+    const dimensions = Dimensions.get('window');
+    ref.current = new Animated.ValueXY({
+      x: dimensions.width,
+      y: Math.min(dimensions.width, dimensions.height) * 0.75,
+    });
+    return ref;
+  })(),
 };
 
 export default refs;

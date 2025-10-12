@@ -1,6 +1,7 @@
-import { useMemo } from 'react';
+import { memo, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { URL } from 'react-native-url-polyfill';
+import { NETWORK_ITEM_HEIGHT } from '../../../core/constants';
 import {
   formatRequestDuration,
   formatRequestMethod,
@@ -8,6 +9,7 @@ import {
 } from '../../../core/utils';
 import colors from '../../../theme/colors';
 import type { HttpRequest, NetworkRequest } from '../../../types';
+import Divider from '../common/Divider';
 import Touchable from '../common/Touchable';
 
 interface NetworkPanelItemProps {
@@ -39,76 +41,85 @@ const getMethodColor = (method: string) => {
   }
 };
 
-export default function NetworkPanelItem({
-  method,
-  name,
-  startTime,
-  endTime,
-  status,
-  onPress,
-}: NetworkPanelItemProps) {
-  const duration = formatRequestDuration(startTime, endTime);
-  const requestMethod = formatRequestMethod(method);
-  const requestStatusCode = formatRequestStatusCode(status);
-  const isRequestFailed = Number.isInteger(status) && status! >= 400 && status! < 600;
-  const textStyle = [styles.text, isRequestFailed && styles.failedText];
+const NetworkPanelItem = memo<NetworkPanelItemProps>(
+  ({ method, name, startTime, endTime, status, onPress }) => {
+    const duration = formatRequestDuration(startTime, endTime);
+    const requestMethod = formatRequestMethod(method);
+    const requestStatusCode = formatRequestStatusCode(status);
+    const isRequestFailed = Number.isInteger(status) && status! >= 400 && status! < 600;
+    const textStyle = [styles.text, isRequestFailed && styles.failedText];
 
-  const requestPath = useMemo(() => {
-    if (!name) return '[failed]';
+    const requestPath = useMemo(() => {
+      if (!name) return '[failed]';
 
-    try {
-      const url = new URL(name);
-      const suffixUrl = url.pathname + url.search;
+      try {
+        const url = new URL(name);
+        const suffixUrl = url.pathname + url.search;
 
-      if (suffixUrl === '/') return url.host;
-      return suffixUrl;
-    } catch (error) {
-      return name;
-    }
-  }, [name]);
+        if (suffixUrl === '/') return url.host;
+        return suffixUrl;
+      } catch (error) {
+        return name;
+      }
+    }, [name]);
 
-  return (
-    <Touchable onPress={onPress} style={styles.container}>
-      <View style={styles.column}>
-        <Text
-          numberOfLines={1}
-          style={[
-            styles.text,
-            styles.methodText,
-            { backgroundColor: getMethodColor(requestMethod) },
-          ]}
-        >
-          {requestMethod}
-        </Text>
+    return (
+      <View style={styles.container}>
+        <Touchable onPress={onPress} style={styles.wrapper}>
+          <View style={styles.column}>
+            <Text
+              numberOfLines={1}
+              style={[
+                styles.text,
+                styles.methodText,
+                { backgroundColor: getMethodColor(requestMethod) },
+              ]}
+            >
+              {requestMethod}
+            </Text>
+          </View>
+
+          <View style={[styles.column, styles.pathColumn]}>
+            <Text numberOfLines={1} style={textStyle}>
+              {requestPath}
+            </Text>
+          </View>
+
+          <View style={[styles.column, styles.durationColumn]}>
+            <Text numberOfLines={1} style={textStyle}>
+              {duration}
+            </Text>
+          </View>
+
+          <View style={styles.column}>
+            <Text numberOfLines={1} style={textStyle}>
+              {requestStatusCode}
+            </Text>
+          </View>
+        </Touchable>
+        <Divider type="horizontal" />
       </View>
-
-      <View style={[styles.column, styles.pathColumn]}>
-        <Text numberOfLines={1} style={textStyle}>
-          {requestPath}
-        </Text>
-      </View>
-
-      <View style={[styles.column, styles.durationColumn]}>
-        <Text numberOfLines={1} style={textStyle}>
-          {duration}
-        </Text>
-      </View>
-
-      <View style={styles.column}>
-        <Text numberOfLines={1} style={textStyle}>
-          {requestStatusCode}
-        </Text>
-      </View>
-    </Touchable>
-  );
-}
+    );
+  },
+  (prevProps, nextProps) => {
+    return (
+      prevProps.method === nextProps.method &&
+      prevProps.name === nextProps.name &&
+      prevProps.startTime === nextProps.startTime &&
+      prevProps.endTime === nextProps.endTime &&
+      prevProps.status === nextProps.status
+    );
+  },
+);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  wrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingVertical: 8,
+    height: NETWORK_ITEM_HEIGHT,
     columnGap: 8,
   },
   pathColumn: {
@@ -138,3 +149,5 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
 });
+
+export default NetworkPanelItem;

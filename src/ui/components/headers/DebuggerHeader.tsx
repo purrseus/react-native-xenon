@@ -6,6 +6,7 @@ import icons from '../../../theme/icons';
 import Divider from '../common/Divider';
 import DebuggerHeaderItem from '../items/DebuggerHeaderItem';
 import HeaderComponents from './HeaderComponents';
+import { formatCount } from '../../../core/utils';
 
 interface DebuggerHeaderProps {
   selectedPanel: PanelState;
@@ -54,7 +55,7 @@ const DebuggerHeader = forwardRef<ScrollView, DebuggerHeaderProps>(
         <DebuggerHeaderItem
           isLabel
           isActive={selectedPanel === PanelState.Network}
-          content="Network Panel"
+          content={`Network (${formatCount(networkInterceptor.networkRequests.size)})`}
           onPress={() => switchTo(PanelState.Network)}
         />
 
@@ -74,7 +75,7 @@ const DebuggerHeader = forwardRef<ScrollView, DebuggerHeaderProps>(
         <DebuggerHeaderItem
           isLabel
           isActive={selectedPanel === PanelState.Console}
-          content="Console Panel"
+          content={`Console (${formatCount(consoleInterceptor.logMessages.length)})`}
           onPress={() => switchTo(PanelState.Console)}
         />
 

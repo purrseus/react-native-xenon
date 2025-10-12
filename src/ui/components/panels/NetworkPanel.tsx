@@ -7,7 +7,7 @@ import {
   type ViewStyle,
 } from 'react-native';
 import { MainContext } from '../../../contexts';
-import refs, { HeaderState, PanelState } from '../../../core/refs';
+import { NETWORK_ITEM_HEIGHT } from '../../../core/constants';
 import {
   DebuggerPanel,
   NetworkType,
@@ -15,11 +15,8 @@ import {
   type ID,
   type WebSocketRequest,
 } from '../../../types';
-import Divider from '../common/Divider';
 import Empty from '../common/Empty';
 import NetworkPanelItem from '../items/NetworkPanelItem';
-
-const Separator = () => <Divider type="horizontal" />;
 
 const NetworkPanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ style }, ref) => {
   const {
@@ -51,8 +48,6 @@ const NetworkPanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
         endTime={item.endTime}
         status={item.status}
         onPress={() => {
-          refs.header.current?.setCurrentIndex(HeaderState.Network);
-          refs.panel.current?.setCurrentIndex(PanelState.NetworkDetail);
           setDebuggerState(draft => {
             draft.detailsData = {
               type: DebuggerPanel.Network,
@@ -67,6 +62,18 @@ const NetworkPanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
     [setDebuggerState],
   );
 
+  const getItemLayout = useCallback(
+    (
+      _: ArrayLike<[NonNullable<ID>, HttpRequest | WebSocketRequest]> | null | undefined,
+      index: number,
+    ) => ({
+      length: NETWORK_ITEM_HEIGHT,
+      offset: NETWORK_ITEM_HEIGHT * index,
+      index,
+    }),
+    [],
+  );
+
   return (
     <FlatList
       inverted={!!data.length}
@@ -74,9 +81,9 @@ const NetworkPanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
       ref={ref}
       renderItem={renderItem}
       keyExtractor={([key]) => key}
-      ItemSeparatorComponent={Separator}
       style={[styles.container, style]}
       ListEmptyComponent={<Empty>No records yet</Empty>}
+      getItemLayout={getItemLayout}
     />
   );
 });
