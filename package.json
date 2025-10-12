@@ -1,6 +1,6 @@
 {
   "name": "react-native-xenon",
-  "version": "2.2.0",
+  "version": "2.3.0",
   "description": "A powerful in-app debugging tool for React Native.",
   "main": "./lib/module/index.js",
   "types": "./lib/typescript/src/index.d.ts",
