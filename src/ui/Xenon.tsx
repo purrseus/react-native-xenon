@@ -10,13 +10,19 @@ import { type DebuggerState } from '../types';
 import { Bubble, IndexedStack, Panel, SearchBar } from './components';
 
 namespace Xenon {
-  interface Methods {
+  export interface Methods {
     isVisible(): boolean;
     show(): void;
     hide(): void;
   }
 
-  interface Props {
+  export interface Props {
+    children: ReactNode;
+    /**
+     * If true, completely disables the debugger by rendering only the children components without any debugging functionality.
+     * @default false
+     */
+    disabled?: boolean;
     /**
      * Determines whether the network inspector is automatically enabled upon initialization.
      * @default true
@@ -45,15 +51,6 @@ namespace Xenon {
     includeDomains?: string[];
   }
 
-  interface WrapperProps extends Props {
-    /**
-     * If true, completely disables the debugger by rendering only the children components without any debugging functionality.
-     * @default false
-     */
-    disabled?: boolean;
-    children: ReactNode;
-  }
-
   enableMapSet();
   const ref = createRef<Methods>();
 
@@ -61,7 +58,7 @@ namespace Xenon {
    * Checks whether the debugger is currently visible.
    * @returns `true` if the debugger is currently visible, otherwise `false`.
    */
-  export const isVisible = () => ref.current?.isVisible() ?? false;
+  export const isVisible = (): boolean => ref.current?.isVisible() ?? false;
 
   /**
    * Makes the debugger visible. If it is already visible, this method has no additional effect.
@@ -75,14 +72,14 @@ namespace Xenon {
    */
   export const hide = (): void => ref.current?.hide();
 
-  const Debugger = memo(
+  const Debugger = memo<Omit<Props, 'children' | 'disabled'>>(
     ({
       autoInspectNetworkEnabled = true,
       autoInspectConsoleEnabled = true,
       bubbleSize = 40,
       idleBubbleOpacity = 0.5,
       includeDomains,
-    }: Props) => {
+    }) => {
       const dimensions = useWindowDimensions();
 
       const [debuggerState, setDebuggerState] = useImmer<DebuggerState>({
@@ -142,9 +139,15 @@ namespace Xenon {
         </MainContext.Provider>
       );
     },
+    (prevProps, nextProps) =>
+      prevProps.autoInspectNetworkEnabled === nextProps.autoInspectNetworkEnabled &&
+      prevProps.autoInspectConsoleEnabled === nextProps.autoInspectConsoleEnabled &&
+      prevProps.bubbleSize === nextProps.bubbleSize &&
+      prevProps.idleBubbleOpacity === nextProps.idleBubbleOpacity &&
+      JSON.stringify(prevProps.includeDomains) === JSON.stringify(nextProps.includeDomains),
   );
 
-  export function Wrapper({ disabled = false, children, ...props }: WrapperProps): JSX.Element {
+  export function Wrapper({ disabled = false, children, ...props }: Props): JSX.Element {
     if (disabled) return children as JSX.Element;
 
     return (

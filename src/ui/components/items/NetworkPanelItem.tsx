@@ -101,15 +101,12 @@ const NetworkPanelItem = memo<NetworkPanelItemProps>(
       </View>
     );
   },
-  (prevProps, nextProps) => {
-    return (
-      prevProps.method === nextProps.method &&
-      prevProps.name === nextProps.name &&
-      prevProps.startTime === nextProps.startTime &&
-      prevProps.endTime === nextProps.endTime &&
-      prevProps.status === nextProps.status
-    );
-  },
+  (prevProps, nextProps) =>
+    prevProps.method === nextProps.method &&
+    prevProps.name === nextProps.name &&
+    prevProps.startTime === nextProps.startTime &&
+    prevProps.endTime === nextProps.endTime &&
+    prevProps.status === nextProps.status,
 );
 
 const styles = StyleSheet.create({
