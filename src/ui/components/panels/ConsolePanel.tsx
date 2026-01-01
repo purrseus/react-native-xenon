@@ -1,4 +1,4 @@
-import { forwardRef, useCallback, useContext, useMemo } from 'react';
+import { useCallback, useContext, useMemo, type Ref } from 'react';
 import {
   FlatList,
   StyleSheet,
@@ -13,7 +13,12 @@ import { DebuggerPanel, type LogMessage } from '../../../types';
 import Empty from '../common/Empty';
 import ConsolePanelItem from '../items/ConsolePanelItem';
 
-const ConsolePanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ style }, ref) => {
+interface ConsolePanelProps {
+  style?: StyleProp<ViewStyle>;
+  ref?: Ref<FlatList<any>>;
+}
+
+export default function ConsolePanel({ style, ref }: ConsolePanelProps) {
   const {
     debuggerState: { searchQuery },
     consoleInterceptor: { logMessages },
@@ -75,7 +80,7 @@ const ConsolePanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
       getItemLayout={getItemLayout}
     />
   );
-});
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -85,5 +90,3 @@ const styles = StyleSheet.create({
     padding: 8,
   },
 });
-
-export default ConsolePanel;

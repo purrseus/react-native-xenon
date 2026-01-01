@@ -1,25 +1,22 @@
-import { forwardRef } from 'react';
+import type { Ref } from 'react';
+import type { ScrollView, StyleProp, ViewStyle } from 'react-native';
 import type { PanelState } from '../../../core/refs';
 import Divider from '../common/Divider';
 import HeaderComponents from './HeaderComponents';
-import type { ScrollView, StyleProp, ViewStyle } from 'react-native';
 
 interface ConsoleHeaderProps {
   selectedPanel: PanelState;
   style?: StyleProp<ViewStyle>;
+  ref?: Ref<ScrollView>;
 }
 
-const ConsoleHeader = forwardRef<ScrollView, ConsoleHeaderProps>(
-  ({ selectedPanel, style }, ref) => {
-    return (
-      <HeaderComponents.Wrapper ref={ref} style={style}>
-        <HeaderComponents.Back selectedPanel={selectedPanel} />
-        <HeaderComponents.MainButtons />
-        <Divider type="vertical" />
-        <HeaderComponents.DetailTabItem tab="logMessage" label="Console" />
-      </HeaderComponents.Wrapper>
-    );
-  },
-);
-
-export default ConsoleHeader;
+export default function ConsoleHeader({ selectedPanel, style, ref }: ConsoleHeaderProps) {
+  return (
+    <HeaderComponents.Wrapper ref={ref} style={style}>
+      <HeaderComponents.Back selectedPanel={selectedPanel} />
+      <HeaderComponents.MainButtons />
+      <Divider type="vertical" />
+      <HeaderComponents.DetailTabItem tab="logMessage" label="Console" />
+    </HeaderComponents.Wrapper>
+  );
+}

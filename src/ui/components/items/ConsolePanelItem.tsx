@@ -22,9 +22,9 @@ const ConsolePanelItem = memo<ConsolePanelItemProps>(
       </Touchable>
     );
   },
-  (prevProps, nextProps) => {
-    return prevProps.type === nextProps.type && prevProps.values === nextProps.values;
-  },
+  (prevProps, nextProps) =>
+    prevProps.type === nextProps.type &&
+    JSON.stringify(prevProps.values) === JSON.stringify(nextProps.values),
 );
 
 const styles = StyleSheet.create({

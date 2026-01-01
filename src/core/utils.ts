@@ -92,7 +92,7 @@ export const getHttpInterceptorId = () => {
 //#region formatters
 export const showNewLine = (when: boolean) => (when ? '\n' : '');
 
-const limitChar = (value: any, limit = 5000) => {
+const limitChar = (value: any, limit = 100000) => {
   const stringValue = typeof value === 'string' ? value : JSON.stringify(value ?? '');
 
   return stringValue.length > limit

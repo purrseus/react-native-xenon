@@ -65,5 +65,6 @@ const styles = StyleSheet.create({
     lineHeight: 18,
     fontWeight: '600',
     color: colors.black,
+    fontVariant: ['tabular-nums'],
   },
 });
