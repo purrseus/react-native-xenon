@@ -1,4 +1,4 @@
-import { forwardRef, useContext, useState } from 'react';
+import { useContext, useState, type Ref } from 'react';
 import {
   Keyboard,
   Platform,
@@ -18,11 +18,13 @@ import Icon from '../common/Icon';
 import Touchable from '../common/Touchable';
 import SafeArea from '../common/SafeArea';
 
-interface SearchBarProps extends ViewProps {}
+interface SearchBarProps extends ViewProps {
+  ref?: Ref<View>;
+}
 
 const ICON_SIZE = 20;
 
-const SearchBar = forwardRef<View, SearchBarProps>(({ style, ...props }, ref) => {
+export default function SearchBar({ style, ...props }: SearchBarProps) {
   const {
     debuggerState: { searchQuery },
     setDebuggerState,
@@ -49,7 +51,7 @@ const SearchBar = forwardRef<View, SearchBarProps>(({ style, ...props }, ref) =>
   };
 
   return (
-    <View ref={ref} style={[styles.container, style]} {...props}>
+    <View style={[styles.container, style]} {...props}>
       <SafeAreaProvider>
         <View style={styles.barView}>
           <SafeArea inset="top" />
@@ -87,7 +89,7 @@ const SearchBar = forwardRef<View, SearchBarProps>(({ style, ...props }, ref) =>
       </SafeAreaProvider>
     </View>
   );
-});
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -121,5 +123,3 @@ const styles = StyleSheet.create({
     flex: 1,
   },
 });
-
-export default SearchBar;

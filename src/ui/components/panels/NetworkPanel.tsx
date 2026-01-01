@@ -1,11 +1,5 @@
-import { forwardRef, useCallback, useContext, useMemo } from 'react';
-import {
-  FlatList,
-  StyleSheet,
-  type ListRenderItem,
-  type StyleProp,
-  type ViewStyle,
-} from 'react-native';
+import { useCallback, useContext, useMemo, type Ref } from 'react';
+import { FlatList, StyleSheet, type ListRenderItem, type ViewProps } from 'react-native';
 import { MainContext } from '../../../contexts';
 import { NETWORK_ITEM_HEIGHT } from '../../../core/constants';
 import {
@@ -18,7 +12,11 @@ import {
 import Empty from '../common/Empty';
 import NetworkPanelItem from '../items/NetworkPanelItem';
 
-const NetworkPanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ style }, ref) => {
+interface NetworkPanelProps extends ViewProps {
+  ref?: Ref<FlatList<any>>;
+}
+
+export default function NetworkPanel({ style, ref }: NetworkPanelProps) {
   const {
     debuggerState: { searchQuery },
     networkInterceptor: { networkRequests },
@@ -76,9 +74,9 @@ const NetworkPanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
 
   return (
     <FlatList
+      ref={ref}
       inverted={!!data.length}
       data={data}
-      ref={ref}
       renderItem={renderItem}
       keyExtractor={([key]) => key}
       style={[styles.container, style]}
@@ -86,7 +84,7 @@ const NetworkPanel = forwardRef<FlatList, { style?: StyleProp<ViewStyle> }>(({ s
       getItemLayout={getItemLayout}
     />
   );
-});
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -94,5 +92,3 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
 });
-
-export default NetworkPanel;

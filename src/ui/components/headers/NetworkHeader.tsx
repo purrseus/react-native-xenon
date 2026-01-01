@@ -1,4 +1,4 @@
-import { forwardRef, useContext } from 'react';
+import { useContext, type Ref } from 'react';
 import { type ScrollView, type StyleProp, type ViewStyle } from 'react-native';
 import { MainContext } from '../../../contexts';
 import { type PanelState } from '../../../core/refs';
@@ -13,61 +13,58 @@ import HeaderComponents from './HeaderComponents';
 interface NetworkHeaderProps {
   selectedPanel: PanelState;
   style?: StyleProp<ViewStyle>;
+  ref?: Ref<ScrollView>;
 }
 
-const NetworkHeader = forwardRef<ScrollView, NetworkHeaderProps>(
-  ({ selectedPanel, style }, ref) => {
-    const {
-      debuggerState: { detailsData },
-      setDebuggerState,
-    } = useContext(MainContext)!;
+export default function NetworkHeader({ selectedPanel, style, ref }: NetworkHeaderProps) {
+  const {
+    debuggerState: { detailsData },
+    setDebuggerState,
+  } = useContext(MainContext)!;
 
-    const data = detailsData?.data as HttpRequest | WebSocketRequest | undefined;
+  const data = detailsData?.data as HttpRequest | WebSocketRequest | undefined;
 
-    const { isWS, overviewShown, headersShown, requestShown, responseShown, messagesShown } =
-      getNetworkUtils(data);
+  const { isWS, overviewShown, headersShown, requestShown, responseShown, messagesShown } =
+    getNetworkUtils(data);
 
-    return (
-      <HeaderComponents.Wrapper ref={ref} style={style}>
-        <HeaderComponents.Back selectedPanel={selectedPanel} />
-        <HeaderComponents.MainButtons />
+  return (
+    <HeaderComponents.Wrapper ref={ref} style={style}>
+      <HeaderComponents.Back selectedPanel={selectedPanel} />
+      <HeaderComponents.MainButtons />
 
-        <Divider type="vertical" />
+      <Divider type="vertical" />
 
-        {!!overviewShown && <HeaderComponents.DetailTabItem tab="overview" label="Overview" />}
-        {!!headersShown && <HeaderComponents.DetailTabItem tab="headers" label="Headers" />}
-        {!!requestShown && <HeaderComponents.DetailTabItem tab="request" label="Request" />}
-        {!!responseShown && <HeaderComponents.DetailTabItem tab="response" label="Response" />}
-        {!!messagesShown && <HeaderComponents.DetailTabItem tab="messages" label="Messages" />}
+      {!!overviewShown && <HeaderComponents.DetailTabItem tab="overview" label="Overview" />}
+      {!!headersShown && <HeaderComponents.DetailTabItem tab="headers" label="Headers" />}
+      {!!requestShown && <HeaderComponents.DetailTabItem tab="request" label="Request" />}
+      {!!responseShown && <HeaderComponents.DetailTabItem tab="response" label="Response" />}
+      {!!messagesShown && <HeaderComponents.DetailTabItem tab="messages" label="Messages" />}
 
-        {!isWS && (
-          <>
-            <Divider type="vertical" />
+      {!isWS && (
+        <>
+          <Divider type="vertical" />
 
-            <DebuggerHeaderItem
-              content={icons.beautify}
-              isActive={detailsData?.beautified}
-              activeColor={colors.green}
-              onPress={() => {
-                setDebuggerState(draft => {
-                  draft.detailsData!.beautified = !draft.detailsData?.beautified;
-                });
-              }}
-            />
-            <DebuggerHeaderItem
-              content={icons.share}
-              onPress={async () => {
-                if (data?.type === NetworkType.WS) return;
-                await shareText(
-                  convertToCurl(data!.method, data!.url, data!.requestHeaders, data!.body),
-                );
-              }}
-            />
-          </>
-        )}
-      </HeaderComponents.Wrapper>
-    );
-  },
-);
-
-export default NetworkHeader;
+          <DebuggerHeaderItem
+            content={icons.beautify}
+            isActive={detailsData?.beautified}
+            activeColor={colors.green}
+            onPress={() => {
+              setDebuggerState(draft => {
+                draft.detailsData!.beautified = !draft.detailsData?.beautified;
+              });
+            }}
+          />
+          <DebuggerHeaderItem
+            content={icons.share}
+            onPress={async () => {
+              if (data?.type === NetworkType.WS) return;
+              await shareText(
+                convertToCurl(data!.method, data!.url, data!.requestHeaders, data!.body),
+              );
+            }}
+          />
+        </>
+      )}
+    </HeaderComponents.Wrapper>
+  );
+}

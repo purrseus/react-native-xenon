@@ -6,7 +6,7 @@ import NetworkRequestDetails from '../details/NetworkRequestDetails';
 import ConsolePanel from './ConsolePanel';
 import NetworkPanel from './NetworkPanel';
 import colors from '../../../theme/colors';
-import { forwardRef, useContext, useEffect, useMemo } from 'react';
+import { useContext, useEffect, useMemo, type Ref } from 'react';
 import Header from '../headers/Header';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import SafeArea from '../common/SafeArea';
@@ -14,9 +14,11 @@ import { MainContext } from '../../../contexts';
 import Handle from '../handle/Handle';
 import { DebuggerPanel } from '../../../types';
 
-interface PanelProps extends ViewProps {}
+interface PanelComponentProps extends ViewProps {
+  ref?: Ref<View>;
+}
 
-const Panel = forwardRef<View, PanelProps>(({ style, ...props }, ref) => {
+export default function Panel({ style, ...props }: PanelComponentProps) {
   const {
     debuggerState: { position, detailsData },
   } = useContext(MainContext)!;
@@ -43,7 +45,7 @@ const Panel = forwardRef<View, PanelProps>(({ style, ...props }, ref) => {
   }, [detailsData?.type]);
 
   return (
-    <Animated.View style={[containerStyle, style]} ref={ref} {...props}>
+    <Animated.View style={[containerStyle, style]} {...props}>
       <SafeAreaProvider>
         {position === 'bottom' && <Handle />}
         {position === 'top' && <SafeArea inset="top" />}
@@ -62,7 +64,7 @@ const Panel = forwardRef<View, PanelProps>(({ style, ...props }, ref) => {
       </SafeAreaProvider>
     </Animated.View>
   );
-});
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -77,5 +79,3 @@ const styles = StyleSheet.create({
     borderBottomWidth: StyleSheet.hairlineWidth,
   },
 });
-
-export default Panel;

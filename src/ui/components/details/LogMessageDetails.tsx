@@ -1,33 +1,32 @@
+import { useContext, type Ref } from 'react';
 import { ScrollView, StyleSheet, Text, type StyleProp, type ViewStyle } from 'react-native';
-import { formatLogMessage, getConsoleTypeColor } from '../../../core/utils';
-import type { LogMessage } from '../../../types';
-import colors from '../../../theme/colors';
-import { forwardRef, useContext } from 'react';
 import { MainContext } from '../../../contexts';
+import { formatLogMessage, getConsoleTypeColor } from '../../../core/utils';
+import colors from '../../../theme/colors';
+import type { LogMessage } from '../../../types';
 
-const LogMessageDetails = forwardRef<ScrollView, { style?: StyleProp<ViewStyle> }>(
-  ({ style }, ref) => {
-    const {
-      debuggerState: { detailsData },
-    } = useContext(MainContext)!;
+interface LogMessageDetailsProps {
+  style?: StyleProp<ViewStyle>;
+  ref?: Ref<ScrollView>;
+}
 
-    const item = detailsData?.data as LogMessage | undefined;
+export default function LogMessageDetails({ style, ref }: LogMessageDetailsProps) {
+  const {
+    debuggerState: { detailsData },
+  } = useContext(MainContext)!;
 
-    return (
-      <ScrollView
-        ref={ref}
-        style={[
-          styles.container,
-          { backgroundColor: getConsoleTypeColor(item?.type ?? '') },
-          style,
-        ]}
-        contentContainerStyle={styles.contentContainer}
-      >
-        <Text style={styles.text}>{formatLogMessage(item?.values ?? [])}</Text>
-      </ScrollView>
-    );
-  },
-);
+  const item = detailsData?.data as LogMessage | undefined;
+
+  return (
+    <ScrollView
+      ref={ref}
+      style={[styles.container, { backgroundColor: getConsoleTypeColor(item?.type ?? '') }, style]}
+      contentContainerStyle={styles.contentContainer}
+    >
+      <Text style={styles.text}>{formatLogMessage(item?.values ?? [])}</Text>
+    </ScrollView>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
@@ -41,5 +40,3 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 });
-
-export default LogMessageDetails;

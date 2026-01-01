@@ -1,4 +1,4 @@
-import { forwardRef, useContext, type PropsWithChildren } from 'react';
+import { useContext, type PropsWithChildren, type Ref } from 'react';
 import { ScrollView, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import { MainContext } from '../../../contexts';
 import refs, { DebuggerVisibility, HeaderState, PanelState } from '../../../core/refs';
@@ -65,21 +65,23 @@ const MainButtons = () => {
   );
 };
 
-const Wrapper = forwardRef<ScrollView, PropsWithChildren<{ style?: StyleProp<ViewStyle> }>>(
-  ({ children, style }, ref) => {
-    return (
-      <ScrollView
-        ref={ref}
-        horizontal
-        style={[styles.container, style]}
-        contentContainerStyle={styles.contentContainer}
-        showsHorizontalScrollIndicator={false}
-      >
-        {children}
-      </ScrollView>
-    );
-  },
-);
+function Wrapper({
+  children,
+  style,
+  ref,
+}: PropsWithChildren<{ style?: StyleProp<ViewStyle>; ref?: Ref<ScrollView> }>) {
+  return (
+    <ScrollView
+      ref={ref}
+      horizontal
+      style={[styles.container, style]}
+      contentContainerStyle={styles.contentContainer}
+      showsHorizontalScrollIndicator={false}
+    >
+      {children}
+    </ScrollView>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
