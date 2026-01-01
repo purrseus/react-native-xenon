@@ -1,9 +1,10 @@
 import { useContext, type Ref } from 'react';
-import { ScrollView, StyleSheet, Text, type StyleProp, type ViewStyle } from 'react-native';
+import { ScrollView, StyleSheet, type StyleProp, type ViewStyle } from 'react-native';
 import { MainContext } from '../../../contexts';
 import { formatLogMessage, getConsoleTypeColor } from '../../../core/utils';
 import colors from '../../../theme/colors';
 import type { LogMessage } from '../../../types';
+import ShareableText from '../common/ShareableText';
 
 interface LogMessageDetailsProps {
   style?: StyleProp<ViewStyle>;
@@ -23,7 +24,7 @@ export default function LogMessageDetails({ style, ref }: LogMessageDetailsProps
       style={[styles.container, { backgroundColor: getConsoleTypeColor(item?.type ?? '') }, style]}
       contentContainerStyle={styles.contentContainer}
     >
-      <Text style={styles.text}>{formatLogMessage(item?.values ?? [])}</Text>
+      <ShareableText style={styles.text}>{formatLogMessage(item?.values ?? [])}</ShareableText>
     </ScrollView>
   );
 }
