@@ -69,7 +69,7 @@ export default function Panel({ style, ...props }: PanelComponentProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     pointerEvents: 'box-none',
     ...(Platform.OS === 'android' ? { zIndex: 9999 } : {}),
     top: undefined,

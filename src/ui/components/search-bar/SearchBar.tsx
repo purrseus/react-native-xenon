@@ -93,7 +93,7 @@ export default function SearchBar({ style, ...props }: SearchBarProps) {
 
 const styles = StyleSheet.create({
   container: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     ...(Platform.OS === 'android' ? { zIndex: 9999 } : {}),
     backgroundColor: colors.black + '80', // 80 for 50% opacity
   },
