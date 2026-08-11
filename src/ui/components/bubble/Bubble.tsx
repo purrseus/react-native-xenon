@@ -120,7 +120,7 @@ export default function Bubble({ bubbleSize, idleBubbleOpacity, style, ...props 
 const styles = StyleSheet.create({
   bubbleBackdrop: {
     flex: 1,
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     pointerEvents: 'box-none',
   },
   bubble: {
